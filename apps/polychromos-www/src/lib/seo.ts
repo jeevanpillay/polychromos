@@ -50,10 +50,17 @@ export function generateSEO(config: SEOConfig) {
       // Preconnect for Clerk API (waitlist form)
       { rel: "preconnect", href: "https://api.clerk.com" },
       { rel: "dns-prefetch", href: "https://api.clerk.com" },
-      // Critical font preloads
+      // Critical font preloads - these are used in the hero typography
       {
         rel: "preload",
         href: "/fonts/hw-animo/hw-animo-semi-expanded-regular.woff2",
+        as: "font",
+        type: "font/woff2",
+        crossOrigin: "anonymous" as const,
+      },
+      {
+        rel: "preload",
+        href: "/fonts/hw-animo/hw-animo-semicondensed-regular-outline.woff2",
         as: "font",
         type: "font/woff2",
         crossOrigin: "anonymous" as const,

@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { setupClerkTestingToken } from "@clerk/testing/playwright";
 
-test.describe("Access Control", () => {
+test.describe("Access Control - Authenticated", () => {
   test.beforeEach(async ({ page }) => {
     await setupClerkTestingToken({ page });
   });
@@ -14,24 +14,6 @@ test.describe("Access Control", () => {
     await expect(
       page.getByText(/failed to load workspace|not found|error/i),
     ).toBeVisible({ timeout: 10000 });
-  });
-
-  test("unauthenticated user cannot create workspace", async ({ page }) => {
-    // Clear auth and go to app
-    await page.goto("/");
-    await page.evaluate(() => {
-      localStorage.clear();
-      sessionStorage.clear();
-    });
-    await page.reload();
-
-    // Should not see create button, should see sign-in
-    await expect(
-      page.getByRole("button", { name: /sign in/i }),
-    ).toBeVisible({ timeout: 10000 });
-    await expect(
-      page.getByRole("button", { name: /create new design/i }),
-    ).not.toBeVisible();
   });
 
   test("authenticated user sees create button", async ({ page }) => {

@@ -8,24 +8,27 @@
   --font-hw-animo-semi-condensed-outline: "HW Animo Semi Condensed Outline", sans-serif;
 }
 
-/* HW Animo Semi Expanded */
+/* HW Animo Semi Expanded - Critical display font for hero typography
+   Using font-display: block to prevent layout shift (shows invisible text for ~100ms
+   instead of fallback font with different metrics that causes 339px vertical shift) */
 @font-face {
   font-family: "HW Animo Semi Expanded";
   src: url("/fonts/hw-animo/hw-animo-semi-expanded-regular.woff2") format("woff2"),
        url("/fonts/hw-animo/hw-animo-semi-expanded-regular.woff") format("woff");
   font-weight: 400;
   font-style: normal;
-  font-display: swap;
+  font-display: block;
 }
 
-/* HW Animo Semi Condensed Outline */
+/* HW Animo Semi Condensed Outline - Critical display font for "EXECUTABLE LOGIC"
+   Using font-display: block for same reason as above */
 @font-face {
   font-family: "HW Animo Semi Condensed Outline";
   src: url("/fonts/hw-animo/hw-animo-semicondensed-regular-outline.woff2") format("woff2"),
        url("/fonts/hw-animo/hw-animo-semicondensed-regular-outline.woff") format("woff");
   font-weight: 400;
   font-style: normal;
-  font-display: swap;
+  font-display: block;
 }
 
 @font-face {

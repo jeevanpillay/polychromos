@@ -27,6 +27,11 @@ test.describe("Authenticated Workspace Flow", () => {
   test("workspace persists after page reload", async ({ page }) => {
     await page.goto("/");
 
+    // Wait for authenticated content
+    await expect(page.locator("[data-testid='authenticated']")).toBeVisible({
+      timeout: 10000,
+    });
+
     // Create workspace
     await page.getByRole("button", { name: /create new design/i }).click();
     await page.waitForURL(/workspace=/);
@@ -45,12 +50,19 @@ test.describe("Authenticated Workspace Flow", () => {
   test("workspace preview shows after creation", async ({ page }) => {
     await page.goto("/");
 
+    // Wait for authenticated content
+    await expect(page.locator("[data-testid='authenticated']")).toBeVisible({
+      timeout: 10000,
+    });
+
     // Create workspace
     await page.getByRole("button", { name: /create new design/i }).click();
     await page.waitForURL(/workspace=/);
 
-    // Should see the workspace name and version controls
-    await expect(page.getByText(/new design|untitled design/i)).toBeVisible({
+    // Should see the workspace name heading (not the button)
+    await expect(
+      page.getByRole("heading", { name: /new design|untitled design/i }),
+    ).toBeVisible({
       timeout: 10000,
     });
   });

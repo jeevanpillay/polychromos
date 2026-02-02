@@ -23,9 +23,21 @@ export default defineConfig({
       testDir: "./e2e",
       testMatch: /global\.setup\.ts/,
     },
-    // Main test project
+    // Tests that require unauthenticated state (no stored auth)
+    {
+      name: "unauthenticated",
+      testDir: "./e2e/browser",
+      testMatch: /\.unauth\.spec\.ts/,
+      use: {
+        ...devices["Desktop Chrome"],
+        // No storageState - fresh browser context
+      },
+    },
+    // Main test project (authenticated)
     {
       name: "chromium",
+      testDir: "./e2e/browser",
+      testIgnore: /\.unauth\.spec\.ts/,
       use: {
         ...devices["Desktop Chrome"],
         storageState: "playwright/.clerk/user.json",

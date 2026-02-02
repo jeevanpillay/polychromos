@@ -1,24 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { setupClerkTestingToken } from "@clerk/testing/playwright";
 
-test.describe("Authentication UI", () => {
-  test("shows sign-in button when unauthenticated", async ({ page }) => {
-    // Don't use stored auth state for this test
-    await page.goto("/");
-
-    // Clear any existing auth
-    await page.evaluate(() => {
-      localStorage.clear();
-      sessionStorage.clear();
-    });
-    await page.reload();
-
-    // Should show sign-in button
-    await expect(
-      page.getByRole("button", { name: /sign in/i }),
-    ).toBeVisible({ timeout: 10000 });
-  });
-
+test.describe("Authentication UI - Authenticated", () => {
   test("shows user button when authenticated", async ({ page }) => {
     await setupClerkTestingToken({ page });
     await page.goto("/");

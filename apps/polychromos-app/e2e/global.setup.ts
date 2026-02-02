@@ -24,50 +24,22 @@ setup("authenticate", async ({ page }) => {
   // Wait for Clerk modal
   await page.waitForSelector(".cl-modalContent", { timeout: 10000 });
 
-  // eslint-disable-next-line turbo/no-undeclared-env-vars
-  const username = process.env.E2E_CLERK_USER_USERNAME;
-  if (!username) throw new Error("E2E_CLERK_USER_USERNAME not set");
-  // eslint-disable-next-line turbo/no-undeclared-env-vars
+  const email = process.env.E2E_CLERK_USER_EMAIL;
+  if (!email) throw new Error("E2E_CLERK_USER_EMAIL not set");
   const password = process.env.E2E_CLERK_USER_PASSWORD;
   if (!password) throw new Error("E2E_CLERK_USER_PASSWORD not set");
 
-  // Check if email/password is available or just GitHub OAuth
-  const emailInput = page.locator('input[name="identifier"]');
-  const githubButton = page.locator('button:has-text("Continue with GitHub")');
+  // Clerk two-step email/password flow
+  // Step 1: Enter email and click Continue
+  const emailInput = page.getByRole("textbox", { name: /email/i });
+  await emailInput.fill(email);
+  await page.getByRole("button", { name: "Continue", exact: true }).click();
 
-  const hasEmailInput = await emailInput.isVisible({ timeout: 2000 }).catch(() => false);
-
-  if (hasEmailInput) {
-    // Clerk email/password flow
-    await emailInput.fill(username);
-    await page.click('button:has-text("Continue")');
-
-    await page.waitForSelector('input[name="password"]', { timeout: 5000 });
-    await page.fill('input[name="password"]', password);
-    await page.click('button:has-text("Continue")');
-  } else {
-    // GitHub OAuth flow - click the button to redirect
-    await githubButton.click();
-
-    // Wait for GitHub login page
-    await page.waitForURL(/github\.com/, { timeout: 10000 });
-
-    // Fill GitHub login form
-    await page.fill('input[name="login"]', username);
-    await page.fill('input[name="password"]', password);
-    await page.click('input[type="submit"][value="Sign in"]');
-
-    // Wait for OAuth authorization page and approve if needed
-    try {
-      await page.waitForURL(/github\.com.*authorize/, { timeout: 5000 });
-      const authorizeButton = page.locator('button[name="authorize"]');
-      if (await authorizeButton.isVisible({ timeout: 2000 })) {
-        await authorizeButton.click();
-      }
-    } catch {
-      // May already be authorized, continue
-    }
-  }
+  // Step 2: Enter password and click Continue
+  await page.waitForSelector('input[name="password"]', { timeout: 10000 });
+  const passwordInput = page.getByRole("textbox", { name: /password/i });
+  await passwordInput.fill(password);
+  await page.getByRole("button", { name: "Continue" }).click();
 
   // Wait for authentication to complete (redirect back to app)
   await expect(page.locator("[data-testid='authenticated']")).toBeVisible({
