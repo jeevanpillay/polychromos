@@ -1,0 +1,30 @@
+set shell := ["bash", "-uc"]
+
+# Download and run local backend (auto-detects platform)
+run-local-backend:
+  #!/usr/bin/env sh
+  if [ ! -x ./convex-local-backend ]; then
+    if [ "$(uname)" = "Darwin" ]; then
+      if [ "$(uname -m)" = "arm64" ]; then
+        pkg=convex-local-backend-aarch64-apple-darwin.zip
+      elif [ "$(uname -m)" = "x86_64" ]; then
+        pkg=convex-local-backend-x86_64-apple-darwin.zip
+      fi
+    elif [ "$(uname -m)" = "x86_64" ]; then
+      pkg=convex-local-backend-x86_64-unknown-linux-gnu.zip
+    fi
+    curl -L -O "https://github.com/get-convex/convex-backend/releases/latest/download/$pkg"
+    unzip "$pkg"
+    rm "$pkg"
+  fi
+  ./convex-local-backend
+
+# Reset all data
+reset-local-backend:
+  rm -rf convex_local_storage && rm -f convex_local_backend.sqlite3
+
+# Run convex CLI against local backend
+convex *ARGS:
+  npx convex {{ ARGS }} \
+    --admin-key 0135d8598650f8f5cb0f30c34ec2e2bb62793bc28717c8eb6fb577996d50be5f4281b59181095065c5d0f86a2c31ddbe9b597ec62b47ded69782cd \
+    --url "http://127.0.0.1:3210"

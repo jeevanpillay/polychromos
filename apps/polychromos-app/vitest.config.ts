@@ -1,0 +1,22 @@
+import { defineConfig } from 'vitest/config';
+
+export default defineConfig({
+  test: {
+    globals: true,
+    environment: 'node',
+    include: ['convex/**/*.test.ts', 'src/**/*.test.{ts,tsx}', 'e2e/**/*.test.ts'],
+    passWithNoTests: true,
+    setupFiles: ['./test/setup.ts'],
+    server: {
+      deps: {
+        inline: ['convex-test'],
+      },
+    },
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'html'],
+      include: ['convex/**/*.ts', 'src/**/*.ts', 'src/**/*.tsx'],
+      exclude: ['**/*.test.ts', '**/*.test.tsx', 'convex/_generated/**'],
+    },
+  },
+});

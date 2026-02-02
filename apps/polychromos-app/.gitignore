@@ -28,3 +28,10 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+
+# Local Convex backend
+convex-local-backend
+convex-local-backend.exe
+convex_local_storage/
+convex_local_backend.sqlite3
+*.zip

@@ -7,11 +7,19 @@
     "./schema": "./src/schema.ts",
     "./validators": "./src/validators.ts"
   },
+  "scripts": {
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit"
+  },
   "dependencies": {
     "zod": "^4.3.6"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
-    "typescript": "catalog:"
+    "@vitest/coverage-v8": "^3.0.0",
+    "typescript": "catalog:",
+    "vitest": "^3.0.0"
   }
 }

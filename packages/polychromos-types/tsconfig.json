@@ -6,8 +6,9 @@
     "baseUrl": ".",
     "paths": {
       "@polychromos/types/*": ["./src/*"]
-    }
+    },
+    "types": ["vitest/globals"]
   },
-  "include": ["src"],
+  "include": ["src", "vitest.config.ts"],
   "exclude": ["node_modules", "dist"]
 }
