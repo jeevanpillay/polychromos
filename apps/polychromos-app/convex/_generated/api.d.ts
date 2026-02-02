@@ -9,6 +9,7 @@
  */
 
 import type * as events from "../events.js";
+import type * as lib_auth from "../lib/auth.js";
 import type * as workspaces from "../workspaces.js";
 
 import type {
@@ -19,6 +20,7 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   events: typeof events;
+  "lib/auth": typeof lib_auth;
   workspaces: typeof workspaces;
 }>;
 

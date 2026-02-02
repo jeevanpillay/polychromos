@@ -6,8 +6,11 @@ import { devCommand } from "./commands/dev.js";
 import { exportCommand } from "./commands/export.js";
 import { historyCommand } from "./commands/history.js";
 import { initCommand } from "./commands/init.js";
+import { loginCommand } from "./commands/login.js";
+import { logoutCommand } from "./commands/logout.js";
 import { redoCommand } from "./commands/redo.js";
 import { undoCommand } from "./commands/undo.js";
+import { whoamiCommand } from "./commands/whoami.js";
 
 const program = new Command();
 
@@ -16,6 +19,23 @@ program
   .description("Code-driven design platform CLI")
   .version("1.0.0");
 
+// Auth commands
+program
+  .command("login")
+  .description("Authenticate with Polychromos")
+  .action(loginCommand);
+
+program
+  .command("logout")
+  .description("Log out of Polychromos")
+  .action(logoutCommand);
+
+program
+  .command("whoami")
+  .description("Show current authentication status")
+  .action(whoamiCommand);
+
+// Project commands
 program
   .command("init <name>")
   .description("Initialize a new design file")

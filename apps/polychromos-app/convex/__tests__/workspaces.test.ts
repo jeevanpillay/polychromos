@@ -1,79 +1,124 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-argument */
-import { convexTest } from 'convex-test';
-import { describe, it, expect } from 'vitest';
+import { convexTest } from "convex-test";
+import { describe, it, expect } from "vitest";
 
-import { api } from '../_generated/api';
-import schema from '../schema';
+import { api } from "../_generated/api";
+import schema from "../schema";
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-const modules = import.meta.glob('../**/*.ts');
+const modules = import.meta.glob("../**/*.ts");
 
 interface WorkspaceData {
   name: string;
   [key: string]: unknown;
 }
 
-describe('workspaces mutations', () => {
-  describe('create', () => {
-    it('creates a workspace with initial version 1', async () => {
-      const t = convexTest(schema, modules);
+// Default test user identity
+const testUser = {
+  name: "Test User",
+  email: "test@example.com",
+  subject: "user_test_123",
+  issuer: "https://clerk.test.com",
+};
 
-      const workspaceId = await t.mutation(api.workspaces.create, {
-        name: 'Test Workspace',
+// Second test user for isolation tests
+const otherUser = {
+  name: "Other User",
+  email: "other@example.com",
+  subject: "user_other_456",
+  issuer: "https://clerk.test.com",
+};
+
+describe("workspaces mutations", () => {
+  describe("create", () => {
+    it("creates a workspace with ownerId from identity", async () => {
+      const t = convexTest(schema, modules);
+      const asUser = t.withIdentity(testUser);
+
+      const workspaceId = await asUser.mutation(api.workspaces.create, {
+        name: "Test Workspace",
         data: {
-          id: 'ws_123',
-          version: '1.0',
-          name: 'Test',
+          id: "ws_123",
+          version: "1.0",
+          name: "Test",
           components: {},
         },
       });
 
       expect(workspaceId).toBeDefined();
 
-      const workspace = await t.query(api.workspaces.get, { id: workspaceId });
-      expect(workspace?.name).toBe('Test Workspace');
+      const workspace = await asUser.query(api.workspaces.get, {
+        id: workspaceId,
+      });
+      expect(workspace?.name).toBe("Test Workspace");
+      expect(workspace?.ownerId).toBe(testUser.subject);
       expect(workspace?.version).toBe(1);
     });
 
-    it('initializes eventVersion and maxEventVersion to 0', async () => {
+    it("rejects unauthenticated create", async () => {
       const t = convexTest(schema, modules);
 
-      const workspaceId = await t.mutation(api.workspaces.create, {
-        name: 'Test',
-        data: { id: 'ws_1', version: '1.0', name: 'Test', components: {} },
+      await expect(
+        t.mutation(api.workspaces.create, {
+          name: "Test",
+          data: { id: "ws_1", version: "1.0", name: "Test", components: {} },
+        }),
+      ).rejects.toThrow("Unauthenticated");
+    });
+
+    it("initializes eventVersion and maxEventVersion to 0", async () => {
+      const t = convexTest(schema, modules);
+      const asUser = t.withIdentity(testUser);
+
+      const workspaceId = await asUser.mutation(api.workspaces.create, {
+        name: "Test",
+        data: { id: "ws_1", version: "1.0", name: "Test", components: {} },
       });
 
-      const workspace = await t.query(api.workspaces.get, { id: workspaceId });
+      const workspace = await asUser.query(api.workspaces.get, {
+        id: workspaceId,
+      });
 
       expect(workspace?.eventVersion).toBe(0);
       expect(workspace?.maxEventVersion).toBe(0);
     });
 
-    it('stores baseData equal to initial data', async () => {
+    it("stores baseData equal to initial data", async () => {
       const t = convexTest(schema, modules);
-      const initialData = { id: 'ws_1', version: '1.0', name: 'Test', components: {} };
+      const asUser = t.withIdentity(testUser);
+      const initialData = {
+        id: "ws_1",
+        version: "1.0",
+        name: "Test",
+        components: {},
+      };
 
-      const workspaceId = await t.mutation(api.workspaces.create, {
-        name: 'Test',
+      const workspaceId = await asUser.mutation(api.workspaces.create, {
+        name: "Test",
         data: initialData,
       });
 
-      const workspace = await t.query(api.workspaces.get, { id: workspaceId });
+      const workspace = await asUser.query(api.workspaces.get, {
+        id: workspaceId,
+      });
 
       expect(workspace?.baseData).toEqual(initialData);
     });
 
-    it('sets createdAt and updatedAt timestamps', async () => {
+    it("sets createdAt and updatedAt timestamps", async () => {
       const t = convexTest(schema, modules);
+      const asUser = t.withIdentity(testUser);
       const before = Date.now();
 
-      const workspaceId = await t.mutation(api.workspaces.create, {
-        name: 'Test',
-        data: { id: 'ws_1', version: '1.0', name: 'Test', components: {} },
+      const workspaceId = await asUser.mutation(api.workspaces.create, {
+        name: "Test",
+        data: { id: "ws_1", version: "1.0", name: "Test", components: {} },
       });
 
       const after = Date.now();
-      const workspace = await t.query(api.workspaces.get, { id: workspaceId });
+      const workspace = await asUser.query(api.workspaces.get, {
+        id: workspaceId,
+      });
 
       expect(workspace?.createdAt).toBeGreaterThanOrEqual(before);
       expect(workspace?.createdAt).toBeLessThanOrEqual(after);
@@ -81,180 +126,36 @@ describe('workspaces mutations', () => {
     });
   });
 
-  describe('update', () => {
-    it('updates workspace and increments version', async () => {
+  describe("list", () => {
+    it("returns only workspaces owned by current user", async () => {
       const t = convexTest(schema, modules);
+      const asUser = t.withIdentity(testUser);
+      const asOther = t.withIdentity(otherUser);
 
-      const workspaceId = await t.mutation(api.workspaces.create, {
-        name: 'Test',
-        data: { id: 'ws_1', version: '1.0', name: 'Original', components: {} },
+      // User creates a workspace
+      await asUser.mutation(api.workspaces.create, {
+        name: "User Workspace",
+        data: { id: "ws_1", version: "1.0", name: "User", components: {} },
       });
 
-      await t.mutation(api.workspaces.update, {
-        id: workspaceId,
-        data: { id: 'ws_1', version: '1.0', name: 'Updated', components: {} },
-        expectedVersion: 1,
+      // Other user creates a workspace
+      await asOther.mutation(api.workspaces.create, {
+        name: "Other Workspace",
+        data: { id: "ws_2", version: "1.0", name: "Other", components: {} },
       });
 
-      const workspace = await t.query(api.workspaces.get, { id: workspaceId });
-      const data = workspace?.data as WorkspaceData;
-      expect(data.name).toBe('Updated');
-      expect(workspace?.version).toBe(2);
+      // User only sees their own workspace
+      const userWorkspaces = await asUser.query(api.workspaces.list, {});
+      expect(userWorkspaces).toHaveLength(1);
+      expect(userWorkspaces[0]?.name).toBe("User Workspace");
+
+      // Other user only sees their own workspace
+      const otherWorkspaces = await asOther.query(api.workspaces.list, {});
+      expect(otherWorkspaces).toHaveLength(1);
+      expect(otherWorkspaces[0]?.name).toBe("Other Workspace");
     });
 
-    it('increments eventVersion and maxEventVersion on update', async () => {
-      const t = convexTest(schema, modules);
-
-      const workspaceId = await t.mutation(api.workspaces.create, {
-        name: 'Test',
-        data: { name: 'Original' },
-      });
-
-      await t.mutation(api.workspaces.update, {
-        id: workspaceId,
-        data: { name: 'Updated' },
-        expectedVersion: 1,
-      });
-
-      const workspace = await t.query(api.workspaces.get, { id: workspaceId });
-      expect(workspace?.eventVersion).toBe(1);
-      expect(workspace?.maxEventVersion).toBe(1);
-    });
-
-    it('records event automatically on update', async () => {
-      const t = convexTest(schema, modules);
-
-      const workspaceId = await t.mutation(api.workspaces.create, {
-        name: 'Test',
-        data: { name: 'Original' },
-      });
-
-      await t.mutation(api.workspaces.update, {
-        id: workspaceId,
-        data: { name: 'Updated' },
-        expectedVersion: 1,
-      });
-
-      const history = await t.query(api.events.getHistory, { workspaceId });
-      expect(history).toHaveLength(1);
-      expect(history[0]?.version).toBe(1);
-      expect(history[0]?.patches.length).toBeGreaterThan(0);
-    });
-
-    it('skips update when no actual changes', async () => {
-      const t = convexTest(schema, modules);
-      const data = { name: 'Same' };
-
-      const workspaceId = await t.mutation(api.workspaces.create, {
-        name: 'Test',
-        data,
-      });
-
-      const result = await t.mutation(api.workspaces.update, {
-        id: workspaceId,
-        data, // Same data
-        expectedVersion: 1,
-      });
-
-      expect(result.noChanges).toBe(true);
-
-      const workspace = await t.query(api.workspaces.get, { id: workspaceId });
-      expect(workspace?.version).toBe(1); // Not incremented
-      expect(workspace?.eventVersion).toBe(0); // No event
-    });
-
-    it('rejects update with wrong expectedVersion', async () => {
-      const t = convexTest(schema, modules);
-
-      const workspaceId = await t.mutation(api.workspaces.create, {
-        name: 'Test',
-        data: { id: 'ws_1', version: '1.0', name: 'Test', components: {} },
-      });
-
-      await expect(
-        t.mutation(api.workspaces.update, {
-          id: workspaceId,
-          data: { id: 'ws_1', version: '1.0', name: 'Updated', components: {} },
-          expectedVersion: 999,
-        }),
-      ).rejects.toThrow('Version conflict');
-    });
-
-    it('throws if workspace not found', async () => {
-      const t = convexTest(schema, modules);
-
-      // Use a run to create a fake ID that passes validation
-      const fakeId = await t.run(async (ctx) => {
-        // Create and immediately delete to get a valid but non-existent ID format
-        const id = await ctx.db.insert('workspaces', {
-          name: 'temp',
-          data: {},
-          baseData: {},
-          eventVersion: 0,
-          maxEventVersion: 0,
-          version: 1,
-          createdAt: Date.now(),
-          updatedAt: Date.now(),
-        });
-        await ctx.db.delete(id);
-        return id;
-      });
-
-      await expect(
-        t.mutation(api.workspaces.update, {
-          id: fakeId,
-          data: { id: 'ws_1', version: '1.0', name: 'Test', components: {} },
-          expectedVersion: 1,
-        }),
-      ).rejects.toThrow('Workspace not found');
-    });
-
-    it('updates updatedAt timestamp', async () => {
-      const t = convexTest(schema, modules);
-
-      const workspaceId = await t.mutation(api.workspaces.create, {
-        name: 'Test',
-        data: { id: 'ws_1', version: '1.0', name: 'Test', components: {} },
-      });
-
-      const before = await t.query(api.workspaces.get, { id: workspaceId });
-
-      // Small delay to ensure different timestamp
-      await new Promise((r) => setTimeout(r, 10));
-
-      await t.mutation(api.workspaces.update, {
-        id: workspaceId,
-        data: { id: 'ws_1', version: '1.0', name: 'Updated', components: {} },
-        expectedVersion: 1,
-      });
-
-      const after = await t.query(api.workspaces.get, { id: workspaceId });
-      expect(after?.updatedAt).toBeGreaterThan(before?.updatedAt ?? 0);
-    });
-  });
-
-  describe('list', () => {
-    it('returns all workspaces', async () => {
-      const t = convexTest(schema, modules);
-
-      await t.mutation(api.workspaces.create, {
-        name: 'First',
-        data: { id: 'ws_1', version: '1.0', name: 'First', components: {} },
-      });
-
-      await t.mutation(api.workspaces.create, {
-        name: 'Second',
-        data: { id: 'ws_2', version: '1.0', name: 'Second', components: {} },
-      });
-
-      const workspaces = await t.query(api.workspaces.list, {});
-
-      expect(workspaces).toHaveLength(2);
-      expect(workspaces.map((w) => w.name)).toContain('First');
-      expect(workspaces.map((w) => w.name)).toContain('Second');
-    });
-
-    it('returns empty array when no workspaces', async () => {
+    it("returns empty array for unauthenticated users", async () => {
       const t = convexTest(schema, modules);
 
       const workspaces = await t.query(api.workspaces.list, {});
@@ -263,193 +164,446 @@ describe('workspaces mutations', () => {
     });
   });
 
-  describe('get', () => {
-    it('returns workspace by id', async () => {
+  describe("get", () => {
+    it("returns workspace by id for owner", async () => {
       const t = convexTest(schema, modules);
+      const asUser = t.withIdentity(testUser);
 
-      const workspaceId = await t.mutation(api.workspaces.create, {
-        name: 'Test',
-        data: { id: 'ws_1', version: '1.0', name: 'Test', components: {} },
+      const workspaceId = await asUser.mutation(api.workspaces.create, {
+        name: "Test",
+        data: { id: "ws_1", version: "1.0", name: "Test", components: {} },
       });
 
-      const workspace = await t.query(api.workspaces.get, { id: workspaceId });
+      const workspace = await asUser.query(api.workspaces.get, {
+        id: workspaceId,
+      });
 
-      expect(workspace?.name).toBe('Test');
+      expect(workspace?.name).toBe("Test");
     });
 
-    it('returns null for nonexistent id', async () => {
+    it("returns null for other user's workspace", async () => {
       const t = convexTest(schema, modules);
+      const asUser = t.withIdentity(testUser);
+      const asOther = t.withIdentity(otherUser);
 
-      // Create and delete to get a valid but nonexistent ID
-      const fakeId = await t.run(async (ctx) => {
-        const id = await ctx.db.insert('workspaces', {
-          name: 'temp',
-          data: {},
-          baseData: {},
-          eventVersion: 0,
-          maxEventVersion: 0,
-          version: 1,
-          createdAt: Date.now(),
-          updatedAt: Date.now(),
-        });
-        await ctx.db.delete(id);
-        return id;
+      const workspaceId = await asUser.mutation(api.workspaces.create, {
+        name: "User's Private Workspace",
+        data: { id: "ws_1", version: "1.0", name: "Private", components: {} },
       });
 
-      const workspace = await t.query(api.workspaces.get, { id: fakeId });
+      // Other user tries to get it
+      const workspace = await asOther.query(api.workspaces.get, {
+        id: workspaceId,
+      });
+
+      expect(workspace).toBeNull();
+    });
+
+    it("returns null for unauthenticated users", async () => {
+      const t = convexTest(schema, modules);
+      const asUser = t.withIdentity(testUser);
+
+      const workspaceId = await asUser.mutation(api.workspaces.create, {
+        name: "Test",
+        data: { id: "ws_1", version: "1.0", name: "Test", components: {} },
+      });
+
+      // Unauthenticated query
+      const workspace = await t.query(api.workspaces.get, { id: workspaceId });
 
       expect(workspace).toBeNull();
     });
   });
 
-  describe('undo', () => {
-    it('returns "Nothing to undo" when at base state', async () => {
+  describe("update", () => {
+    it("updates workspace for owner", async () => {
       const t = convexTest(schema, modules);
+      const asUser = t.withIdentity(testUser);
 
-      const workspaceId = await t.mutation(api.workspaces.create, {
-        name: 'Test',
-        data: { id: 'ws_1', version: '1.0', name: 'Test', components: {} },
+      const workspaceId = await asUser.mutation(api.workspaces.create, {
+        name: "Test",
+        data: { id: "ws_1", version: "1.0", name: "Original", components: {} },
       });
 
-      const result = await t.mutation(api.workspaces.undo, { id: workspaceId });
-
-      expect(result.success).toBe(false);
-      expect(result.message).toBe('Nothing to undo');
-    });
-
-    it('reverts to previous state after update', async () => {
-      const t = convexTest(schema, modules);
-
-      const workspaceId = await t.mutation(api.workspaces.create, {
-        name: 'Test',
-        data: { id: 'ws_1', version: '1.0', name: 'Original', components: {} },
-      });
-
-      await t.mutation(api.workspaces.update, {
+      await asUser.mutation(api.workspaces.update, {
         id: workspaceId,
-        data: { id: 'ws_1', version: '1.0', name: 'Updated', components: {} },
+        data: { id: "ws_1", version: "1.0", name: "Updated", components: {} },
         expectedVersion: 1,
       });
 
-      const result = await t.mutation(api.workspaces.undo, { id: workspaceId });
+      const workspace = await asUser.query(api.workspaces.get, {
+        id: workspaceId,
+      });
+      const data = workspace?.data as WorkspaceData;
+      expect(data.name).toBe("Updated");
+      expect(workspace?.version).toBe(2);
+    });
+
+    it("rejects update from non-owner", async () => {
+      const t = convexTest(schema, modules);
+      const asUser = t.withIdentity(testUser);
+      const asOther = t.withIdentity(otherUser);
+
+      const workspaceId = await asUser.mutation(api.workspaces.create, {
+        name: "Test",
+        data: { id: "ws_1", version: "1.0", name: "Original", components: {} },
+      });
+
+      await expect(
+        asOther.mutation(api.workspaces.update, {
+          id: workspaceId,
+          data: { id: "ws_1", version: "1.0", name: "Hacked", components: {} },
+          expectedVersion: 1,
+        }),
+      ).rejects.toThrow("Access denied");
+    });
+
+    it("rejects unauthenticated update", async () => {
+      const t = convexTest(schema, modules);
+      const asUser = t.withIdentity(testUser);
+
+      const workspaceId = await asUser.mutation(api.workspaces.create, {
+        name: "Test",
+        data: { id: "ws_1", version: "1.0", name: "Original", components: {} },
+      });
+
+      await expect(
+        t.mutation(api.workspaces.update, {
+          id: workspaceId,
+          data: { id: "ws_1", version: "1.0", name: "Hacked", components: {} },
+          expectedVersion: 1,
+        }),
+      ).rejects.toThrow("Unauthenticated");
+    });
+
+    it("increments eventVersion and maxEventVersion on update", async () => {
+      const t = convexTest(schema, modules);
+      const asUser = t.withIdentity(testUser);
+
+      const workspaceId = await asUser.mutation(api.workspaces.create, {
+        name: "Test",
+        data: { name: "Original" },
+      });
+
+      await asUser.mutation(api.workspaces.update, {
+        id: workspaceId,
+        data: { name: "Updated" },
+        expectedVersion: 1,
+      });
+
+      const workspace = await asUser.query(api.workspaces.get, {
+        id: workspaceId,
+      });
+      expect(workspace?.eventVersion).toBe(1);
+      expect(workspace?.maxEventVersion).toBe(1);
+    });
+
+    it("records event with userId", async () => {
+      const t = convexTest(schema, modules);
+      const asUser = t.withIdentity(testUser);
+
+      const workspaceId = await asUser.mutation(api.workspaces.create, {
+        name: "Test",
+        data: { name: "Original" },
+      });
+
+      await asUser.mutation(api.workspaces.update, {
+        id: workspaceId,
+        data: { name: "Updated" },
+        expectedVersion: 1,
+      });
+
+      const history = await asUser.query(api.events.getHistory, { workspaceId });
+      expect(history).toHaveLength(1);
+      expect(history[0]?.userId).toBe(testUser.subject);
+    });
+
+    it("skips update when no actual changes", async () => {
+      const t = convexTest(schema, modules);
+      const asUser = t.withIdentity(testUser);
+      const data = { name: "Same" };
+
+      const workspaceId = await asUser.mutation(api.workspaces.create, {
+        name: "Test",
+        data,
+      });
+
+      const result = await asUser.mutation(api.workspaces.update, {
+        id: workspaceId,
+        data, // Same data
+        expectedVersion: 1,
+      });
+
+      expect(result.noChanges).toBe(true);
+
+      const workspace = await asUser.query(api.workspaces.get, {
+        id: workspaceId,
+      });
+      expect(workspace?.version).toBe(1); // Not incremented
+      expect(workspace?.eventVersion).toBe(0); // No event
+    });
+
+    it("rejects update with wrong expectedVersion", async () => {
+      const t = convexTest(schema, modules);
+      const asUser = t.withIdentity(testUser);
+
+      const workspaceId = await asUser.mutation(api.workspaces.create, {
+        name: "Test",
+        data: { id: "ws_1", version: "1.0", name: "Test", components: {} },
+      });
+
+      await expect(
+        asUser.mutation(api.workspaces.update, {
+          id: workspaceId,
+          data: { id: "ws_1", version: "1.0", name: "Updated", components: {} },
+          expectedVersion: 999,
+        }),
+      ).rejects.toThrow("Version conflict");
+    });
+
+    it("updates updatedAt timestamp", async () => {
+      const t = convexTest(schema, modules);
+      const asUser = t.withIdentity(testUser);
+
+      const workspaceId = await asUser.mutation(api.workspaces.create, {
+        name: "Test",
+        data: { id: "ws_1", version: "1.0", name: "Test", components: {} },
+      });
+
+      const before = await asUser.query(api.workspaces.get, {
+        id: workspaceId,
+      });
+
+      // Small delay to ensure different timestamp
+      await new Promise((r) => setTimeout(r, 10));
+
+      await asUser.mutation(api.workspaces.update, {
+        id: workspaceId,
+        data: { id: "ws_1", version: "1.0", name: "Updated", components: {} },
+        expectedVersion: 1,
+      });
+
+      const after = await asUser.query(api.workspaces.get, {
+        id: workspaceId,
+      });
+      expect(after?.updatedAt).toBeGreaterThan(before?.updatedAt ?? 0);
+    });
+  });
+
+  describe("undo", () => {
+    it("returns 'Nothing to undo' when at base state", async () => {
+      const t = convexTest(schema, modules);
+      const asUser = t.withIdentity(testUser);
+
+      const workspaceId = await asUser.mutation(api.workspaces.create, {
+        name: "Test",
+        data: { id: "ws_1", version: "1.0", name: "Test", components: {} },
+      });
+
+      const result = await asUser.mutation(api.workspaces.undo, {
+        id: workspaceId,
+      });
+
+      expect(result.success).toBe(false);
+      expect(result.message).toBe("Nothing to undo");
+    });
+
+    it("reverts to previous state after update", async () => {
+      const t = convexTest(schema, modules);
+      const asUser = t.withIdentity(testUser);
+
+      const workspaceId = await asUser.mutation(api.workspaces.create, {
+        name: "Test",
+        data: { id: "ws_1", version: "1.0", name: "Original", components: {} },
+      });
+
+      await asUser.mutation(api.workspaces.update, {
+        id: workspaceId,
+        data: { id: "ws_1", version: "1.0", name: "Updated", components: {} },
+        expectedVersion: 1,
+      });
+
+      const result = await asUser.mutation(api.workspaces.undo, {
+        id: workspaceId,
+      });
 
       expect(result.success).toBe(true);
       const data = result.data as WorkspaceData;
-      expect(data.name).toBe('Original');
+      expect(data.name).toBe("Original");
       expect(result.previousVersion).toBe(1);
       expect(result.currentVersion).toBe(0);
     });
 
-    it('can undo multiple times', async () => {
+    it("rejects undo from non-owner", async () => {
       const t = convexTest(schema, modules);
+      const asUser = t.withIdentity(testUser);
+      const asOther = t.withIdentity(otherUser);
 
-      const workspaceId = await t.mutation(api.workspaces.create, {
-        name: 'Test',
-        data: { name: 'v0' },
+      const workspaceId = await asUser.mutation(api.workspaces.create, {
+        name: "Test",
+        data: { name: "Original" },
       });
 
-      await t.mutation(api.workspaces.update, {
+      await asUser.mutation(api.workspaces.update, {
         id: workspaceId,
-        data: { name: 'v1' },
+        data: { name: "Updated" },
         expectedVersion: 1,
       });
 
-      await t.mutation(api.workspaces.update, {
+      await expect(
+        asOther.mutation(api.workspaces.undo, { id: workspaceId }),
+      ).rejects.toThrow("Access denied");
+    });
+
+    it("can undo multiple times", async () => {
+      const t = convexTest(schema, modules);
+      const asUser = t.withIdentity(testUser);
+
+      const workspaceId = await asUser.mutation(api.workspaces.create, {
+        name: "Test",
+        data: { name: "v0" },
+      });
+
+      await asUser.mutation(api.workspaces.update, {
         id: workspaceId,
-        data: { name: 'v2' },
+        data: { name: "v1" },
+        expectedVersion: 1,
+      });
+
+      await asUser.mutation(api.workspaces.update, {
+        id: workspaceId,
+        data: { name: "v2" },
         expectedVersion: 2,
       });
 
       // Undo to v1
-      const result1 = await t.mutation(api.workspaces.undo, { id: workspaceId });
+      const result1 = await asUser.mutation(api.workspaces.undo, {
+        id: workspaceId,
+      });
       const data1 = result1.data as WorkspaceData;
-      expect(data1.name).toBe('v1');
+      expect(data1.name).toBe("v1");
 
       // Undo to v0
-      const result2 = await t.mutation(api.workspaces.undo, { id: workspaceId });
+      const result2 = await asUser.mutation(api.workspaces.undo, {
+        id: workspaceId,
+      });
       const data2 = result2.data as WorkspaceData;
-      expect(data2.name).toBe('v0');
+      expect(data2.name).toBe("v0");
 
       // Can't undo further
-      const result3 = await t.mutation(api.workspaces.undo, { id: workspaceId });
+      const result3 = await asUser.mutation(api.workspaces.undo, {
+        id: workspaceId,
+      });
       expect(result3.success).toBe(false);
     });
   });
 
-  describe('redo', () => {
-    it('returns "Nothing to redo" when at max version', async () => {
+  describe("redo", () => {
+    it("returns 'Nothing to redo' when at max version", async () => {
       const t = convexTest(schema, modules);
+      const asUser = t.withIdentity(testUser);
 
-      const workspaceId = await t.mutation(api.workspaces.create, {
-        name: 'Test',
-        data: { name: 'Test' },
+      const workspaceId = await asUser.mutation(api.workspaces.create, {
+        name: "Test",
+        data: { name: "Test" },
       });
 
-      const result = await t.mutation(api.workspaces.redo, { id: workspaceId });
+      const result = await asUser.mutation(api.workspaces.redo, {
+        id: workspaceId,
+      });
 
       expect(result.success).toBe(false);
-      expect(result.message).toBe('Nothing to redo');
+      expect(result.message).toBe("Nothing to redo");
     });
 
-    it('reapplies changes after undo', async () => {
+    it("reapplies changes after undo", async () => {
       const t = convexTest(schema, modules);
+      const asUser = t.withIdentity(testUser);
 
-      const workspaceId = await t.mutation(api.workspaces.create, {
-        name: 'Test',
-        data: { name: 'Original' },
+      const workspaceId = await asUser.mutation(api.workspaces.create, {
+        name: "Test",
+        data: { name: "Original" },
       });
 
-      await t.mutation(api.workspaces.update, {
+      await asUser.mutation(api.workspaces.update, {
         id: workspaceId,
-        data: { name: 'Updated' },
+        data: { name: "Updated" },
         expectedVersion: 1,
       });
 
-      await t.mutation(api.workspaces.undo, { id: workspaceId });
+      await asUser.mutation(api.workspaces.undo, { id: workspaceId });
 
-      const result = await t.mutation(api.workspaces.redo, { id: workspaceId });
+      const result = await asUser.mutation(api.workspaces.redo, {
+        id: workspaceId,
+      });
 
       expect(result.success).toBe(true);
       const data = result.data as WorkspaceData;
-      expect(data.name).toBe('Updated');
+      expect(data.name).toBe("Updated");
       expect(result.previousVersion).toBe(0);
       expect(result.currentVersion).toBe(1);
     });
 
-    it('discards future events when making new change after undo (branching)', async () => {
+    it("rejects redo from non-owner", async () => {
       const t = convexTest(schema, modules);
+      const asUser = t.withIdentity(testUser);
+      const asOther = t.withIdentity(otherUser);
 
-      const workspaceId = await t.mutation(api.workspaces.create, {
-        name: 'Test',
-        data: { name: 'v0' },
+      const workspaceId = await asUser.mutation(api.workspaces.create, {
+        name: "Test",
+        data: { name: "Original" },
       });
 
-      await t.mutation(api.workspaces.update, {
+      await asUser.mutation(api.workspaces.update, {
         id: workspaceId,
-        data: { name: 'v1' },
+        data: { name: "Updated" },
         expectedVersion: 1,
       });
 
-      await t.mutation(api.workspaces.update, {
+      await asUser.mutation(api.workspaces.undo, { id: workspaceId });
+
+      await expect(
+        asOther.mutation(api.workspaces.redo, { id: workspaceId }),
+      ).rejects.toThrow("Access denied");
+    });
+
+    it("discards future events when making new change after undo (branching)", async () => {
+      const t = convexTest(schema, modules);
+      const asUser = t.withIdentity(testUser);
+
+      const workspaceId = await asUser.mutation(api.workspaces.create, {
+        name: "Test",
+        data: { name: "v0" },
+      });
+
+      await asUser.mutation(api.workspaces.update, {
         id: workspaceId,
-        data: { name: 'v2' },
+        data: { name: "v1" },
+        expectedVersion: 1,
+      });
+
+      await asUser.mutation(api.workspaces.update, {
+        id: workspaceId,
+        data: { name: "v2" },
         expectedVersion: 2,
       });
 
       // Undo to v1
-      await t.mutation(api.workspaces.undo, { id: workspaceId });
+      await asUser.mutation(api.workspaces.undo, { id: workspaceId });
 
       // Make a new change (branching)
-      await t.mutation(api.workspaces.update, {
+      await asUser.mutation(api.workspaces.update, {
         id: workspaceId,
-        data: { name: 'v1-alt' },
+        data: { name: "v1-alt" },
         expectedVersion: 4, // version incremented by undo
       });
 
       // Redo should say nothing to redo (v2 was discarded)
-      const result = await t.mutation(api.workspaces.redo, { id: workspaceId });
+      const result = await asUser.mutation(api.workspaces.redo, {
+        id: workspaceId,
+      });
       expect(result.success).toBe(false);
-      expect(result.message).toBe('Nothing to redo');
+      expect(result.message).toBe("Nothing to redo");
     });
   });
 });

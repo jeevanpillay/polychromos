@@ -3,6 +3,7 @@ import chokidar from "chokidar";
 import { ConvexHttpClient } from "convex/browser";
 
 import { loadConfig } from "../lib/config.js";
+import { getValidToken } from "../lib/credentials.js";
 
 let pendingMutation: Promise<void> | null = null;
 let pendingData: unknown = null;
@@ -11,20 +12,30 @@ export async function devCommand(): Promise<void> {
   const config = await loadConfig();
 
   console.log("Polychromos CLI v1.0.0");
-  if (config) {
-    console.log(`Convex URL: ${config.convexUrl}`);
-    console.log(`Workspace ID: ${config.workspaceId}`);
-  } else {
+  if (!config) {
     console.log("No Convex configuration found.");
-    console.log(
-      'Run "polychromos init <name>" first to set up syncing.',
-    );
+    console.log('Run "polychromos init <name>" first to set up syncing.');
     process.exit(1);
   }
+
+  // Require authentication
+  let token: string;
+  try {
+    token = await getValidToken();
+  } catch (error) {
+    console.error(error instanceof Error ? error.message : "Authentication required");
+    process.exit(1);
+  }
+
+  console.log(`Convex URL: ${config.convexUrl}`);
+  console.log(`Workspace ID: ${config.workspaceId}`);
+  console.log("✓ Authenticated");
   console.log("");
 
-  // Create Convex client
+  // Create authenticated Convex client
   const convexClient = new ConvexHttpClient(config.convexUrl);
+  convexClient.setAuth(token);
+
   let currentVersion = 1;
   let eventVersion = 0;
 
@@ -36,6 +47,8 @@ export async function devCommand(): Promise<void> {
     if (workspace) {
       currentVersion = workspace.version;
       eventVersion = workspace.eventVersion;
+    } else {
+      console.warn("⚠ Workspace not found or access denied");
     }
   } catch (error) {
     console.warn(
@@ -43,6 +56,18 @@ export async function devCommand(): Promise<void> {
       error instanceof Error ? error.message : error,
     );
   }
+
+  // Refresh token periodically for long sessions
+  const tokenRefreshInterval = setInterval(() => {
+    void (async () => {
+      try {
+        const newToken = await getValidToken();
+        convexClient.setAuth(newToken);
+      } catch {
+        console.warn("⚠ Token refresh failed. You may need to re-login.");
+      }
+    })();
+  }, 45 * 60 * 1000); // Every 45 minutes
 
   const syncWithSingleFlight = async (data: unknown): Promise<void> => {
     pendingData = data;
@@ -82,6 +107,16 @@ export async function devCommand(): Promise<void> {
               console.error(
                 "✗ Conflict detected - please reload to get latest version",
               );
+            } else if (
+              convexError instanceof Error &&
+              convexError.message.includes("Unauthenticated")
+            ) {
+              console.error("✗ Authentication expired. Run `polychromos login`");
+            } else if (
+              convexError instanceof Error &&
+              convexError.message.includes("Access denied")
+            ) {
+              console.error("✗ Access denied to this workspace");
             } else {
               console.error(
                 "✗ Sync failed:",
@@ -95,16 +130,7 @@ export async function devCommand(): Promise<void> {
 
         await pendingMutation;
       } catch (error) {
-        if (
-          error instanceof Error &&
-          error.message.includes("Version conflict")
-        ) {
-          console.error(
-            "✗ Conflict detected - please reload to get latest version",
-          );
-        } else {
-          console.error("✗ Sync failed:", error);
-        }
+        console.error("✗ Sync failed:", error);
       } finally {
         pendingMutation = null;
       }
@@ -145,4 +171,9 @@ export async function devCommand(): Promise<void> {
   console.log("Watching design.json for changes...");
   console.log("Press Ctrl+C to stop");
   console.log("");
+
+  process.on("SIGINT", () => {
+    clearInterval(tokenRefreshInterval);
+    process.exit(0);
+  });
 }

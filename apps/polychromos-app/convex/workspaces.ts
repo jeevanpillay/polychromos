@@ -4,18 +4,37 @@ import { v } from "convex/values";
 import { createPatch, applyPatch } from "rfc6902";
 
 import { mutation, query } from "./_generated/server";
+import { requireAuth, requireWorkspaceAccess } from "./lib/auth";
 
 export const get = query({
   args: { id: v.id("workspaces") },
   handler: async (ctx, args) => {
-    return await ctx.db.get(args.id);
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      return null; // Return null for unauthenticated, don't throw
+    }
+
+    const workspace = await ctx.db.get(args.id);
+    if (!workspace?.ownerId || workspace.ownerId !== identity.subject) {
+      return null; // Don't reveal existence of other users' workspaces
+    }
+
+    return workspace;
   },
 });
 
 export const list = query({
   args: {},
   handler: async (ctx) => {
-    return await ctx.db.query("workspaces").collect();
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      return []; // Return empty for unauthenticated
+    }
+
+    return await ctx.db
+      .query("workspaces")
+      .withIndex("by_owner", (q) => q.eq("ownerId", identity.subject))
+      .collect();
   },
 });
 
@@ -25,6 +44,8 @@ export const create = mutation({
     data: v.any(), // PolychromosWorkspace
   },
   handler: async (ctx, args) => {
+    const identity = await requireAuth(ctx);
+
     const now = Date.now();
     const id = await ctx.db.insert("workspaces", {
       name: args.name,
@@ -33,6 +54,7 @@ export const create = mutation({
       eventVersion: 0, // No events yet
       maxEventVersion: 0, // No events yet
       version: 1,
+      ownerId: identity.subject, // Set owner
       createdAt: now,
       updatedAt: now,
     });
@@ -47,8 +69,11 @@ export const update = mutation({
     expectedVersion: v.number(),
   },
   handler: async (ctx, args) => {
-    const existing = await ctx.db.get(args.id);
-    if (!existing) throw new Error("Workspace not found");
+    const { identity, workspace: existing } = await requireWorkspaceAccess(
+      ctx,
+      args.id,
+    );
+
     if (existing.version !== args.expectedVersion) {
       throw new Error("Version conflict");
     }
@@ -81,6 +106,7 @@ export const update = mutation({
       workspaceId: args.id,
       version: newEventVersion,
       timestamp: Date.now(),
+      userId: identity.subject, // Track who made change
       patches,
     });
 
@@ -100,8 +126,7 @@ export const update = mutation({
 export const undo = mutation({
   args: { id: v.id("workspaces") },
   handler: async (ctx, args) => {
-    const workspace = await ctx.db.get(args.id);
-    if (!workspace) throw new Error("Workspace not found");
+    const { workspace } = await requireWorkspaceAccess(ctx, args.id);
 
     if (workspace.eventVersion <= 0) {
       return { success: false, message: "Nothing to undo" };
@@ -142,8 +167,7 @@ export const undo = mutation({
 export const redo = mutation({
   args: { id: v.id("workspaces") },
   handler: async (ctx, args) => {
-    const workspace = await ctx.db.get(args.id);
-    if (!workspace) throw new Error("Workspace not found");
+    const { workspace } = await requireWorkspaceAccess(ctx, args.id);
 
     if (workspace.eventVersion >= workspace.maxEventVersion) {
       return { success: false, message: "Nothing to redo" };

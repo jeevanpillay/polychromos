@@ -1,4 +1,6 @@
 import type { PolychromosWorkspace } from "@polychromos/types";
+import { SignInButton, UserButton } from "@clerk/clerk-react";
+import { Authenticated, AuthLoading, Unauthenticated } from "convex/react";
 import { Suspense } from "react";
 import {
   createFileRoute,
@@ -24,6 +26,36 @@ interface SearchParams {
 }
 
 function HomePage() {
+  return (
+    <div className="bg-background min-h-screen">
+      <AuthLoading>
+        <div className="flex min-h-screen items-center justify-center">
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </AuthLoading>
+
+      <Unauthenticated>
+        <div className="flex min-h-screen flex-col items-center justify-center gap-4">
+          <h1 className="text-5xl font-bold tracking-tight">Polychromos</h1>
+          <p className="text-muted-foreground text-lg">
+            Code-driven design platform
+          </p>
+          <SignInButton mode="modal">
+            <button className="bg-primary text-primary-foreground hover:bg-primary/90 mt-4 rounded-md px-6 py-3 font-semibold">
+              Sign In
+            </button>
+          </SignInButton>
+        </div>
+      </Unauthenticated>
+
+      <Authenticated>
+        <AuthenticatedContent />
+      </Authenticated>
+    </div>
+  );
+}
+
+function AuthenticatedContent() {
   const navigate = useNavigate();
   const search = useSearch({ strict: false });
   const createWorkspaceMutation = useMutation(api.workspaces.create);
@@ -78,32 +110,33 @@ function HomePage() {
   };
 
   return (
-    <div className="bg-background min-h-screen">
-      <div className="flex flex-col items-center justify-center gap-8 px-4 py-12">
-        <div className="text-center">
+    <div className="flex flex-col items-center justify-center gap-8 px-4 py-12">
+      <div className="flex w-full max-w-4xl items-center justify-between">
+        <div>
           <h1 className="text-5xl font-bold tracking-tight">Polychromos</h1>
           <p className="text-muted-foreground mt-2 text-lg">
             Code-driven design platform
           </p>
         </div>
-
-        <button
-          onClick={handleCreateNewDesign}
-          className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-md px-6 py-3 font-semibold"
-        >
-          Create New Design
-        </button>
-
-        {search.workspace && (
-          <Suspense
-            fallback={
-              <div className="text-muted-foreground">Loading workspace...</div>
-            }
-          >
-            <WorkspacePreview workspaceId={search.workspace} />
-          </Suspense>
-        )}
+        <UserButton afterSignOutUrl="/" />
       </div>
+
+      <button
+        onClick={handleCreateNewDesign}
+        className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-md px-6 py-3 font-semibold"
+      >
+        Create New Design
+      </button>
+
+      {search.workspace && (
+        <Suspense
+          fallback={
+            <div className="text-muted-foreground">Loading workspace...</div>
+          }
+        >
+          <WorkspacePreview workspaceId={search.workspace} />
+        </Suspense>
+      )}
     </div>
   );
 }
@@ -137,7 +170,7 @@ function WorkspacePreview({ workspaceId }: { workspaceId: string }) {
   }
 
   return (
-    <div className="mt-8 space-y-4">
+    <div className="mt-8 w-full max-w-4xl space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold">
           {workspace.data.name || "Untitled Design"}

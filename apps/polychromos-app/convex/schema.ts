@@ -10,15 +10,17 @@ export default defineSchema({
     eventVersion: v.number(), // Current event position (0 = base)
     maxEventVersion: v.number(), // Highest event version (for redo limit)
     version: v.number(), // For conflict detection (OCC)
+    ownerId: v.string(), // Clerk user subject
     createdAt: v.number(),
     updatedAt: v.number(),
-  }),
+  }).index("by_owner", ["ownerId"]),
 
   // Event log for version history
   events: defineTable({
     workspaceId: v.id("workspaces"),
     version: v.number(),
     timestamp: v.number(),
+    userId: v.string(), // Who made this change
     patches: v.array(
       v.object({
         op: v.string(),
