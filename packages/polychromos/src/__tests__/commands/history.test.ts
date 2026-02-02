@@ -3,10 +3,17 @@ import { vol } from 'memfs';
 
 // Mock ConvexHttpClient at module level
 const mockQuery = vi.fn();
+const mockSetAuth = vi.fn();
 vi.mock('convex/browser', () => ({
   ConvexHttpClient: vi.fn().mockImplementation(() => ({
     query: mockQuery,
+    setAuth: mockSetAuth,
   })),
+}));
+
+// Mock credentials
+vi.mock('../../lib/credentials.js', () => ({
+  getValidToken: vi.fn().mockResolvedValue('mock-token'),
 }));
 
 describe('history command', () => {
@@ -19,7 +26,12 @@ describe('history command', () => {
     vi.doMock('convex/browser', () => ({
       ConvexHttpClient: vi.fn().mockImplementation(() => ({
         query: mockQuery,
+        setAuth: mockSetAuth,
       })),
+    }));
+    // Re-setup credentials mock
+    vi.doMock('../../lib/credentials.js', () => ({
+      getValidToken: vi.fn().mockResolvedValue('mock-token'),
     }));
     // Create root directory
     vol.mkdirSync(process.cwd(), { recursive: true });

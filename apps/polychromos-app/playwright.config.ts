@@ -44,6 +44,17 @@ export default defineConfig({
       },
       dependencies: ["setup"],
     },
+    // Cross-platform tests (CLI + Web App)
+    {
+      name: "cross-platform",
+      testDir: "./e2e/cross-platform",
+      testMatch: /\.spec\.ts/,
+      use: {
+        ...devices["Desktop Chrome"],
+        storageState: "playwright/.clerk/user.json",
+      },
+      dependencies: ["setup"],
+    },
   ],
 
   webServer: process.env.CI

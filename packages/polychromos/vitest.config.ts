@@ -5,6 +5,7 @@ export default defineConfig({
     globals: true,
     environment: 'node',
     include: ['src/**/*.test.ts', 'test/**/*.test.ts'],
+    exclude: ['test/e2e/**'], // Exclude E2E from unit test runs
     passWithNoTests: true,
     setupFiles: ['./test/setup.ts'],
     typecheck: {

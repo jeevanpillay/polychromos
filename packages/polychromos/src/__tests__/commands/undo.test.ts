@@ -7,10 +7,17 @@ interface DesignData {
 
 // Mock ConvexHttpClient at module level
 const mockMutation = vi.fn();
+const mockSetAuth = vi.fn();
 vi.mock('convex/browser', () => ({
   ConvexHttpClient: vi.fn().mockImplementation(() => ({
     mutation: mockMutation,
+    setAuth: mockSetAuth,
   })),
+}));
+
+// Mock credentials
+vi.mock('../../lib/credentials.js', () => ({
+  getValidToken: vi.fn().mockResolvedValue('mock-token'),
 }));
 
 describe('undo command', () => {
@@ -23,7 +30,12 @@ describe('undo command', () => {
     vi.doMock('convex/browser', () => ({
       ConvexHttpClient: vi.fn().mockImplementation(() => ({
         mutation: mockMutation,
+        setAuth: mockSetAuth,
       })),
+    }));
+    // Re-setup credentials mock
+    vi.doMock('../../lib/credentials.js', () => ({
+      getValidToken: vi.fn().mockResolvedValue('mock-token'),
     }));
     // Create root directory
     vol.mkdirSync(process.cwd(), { recursive: true });

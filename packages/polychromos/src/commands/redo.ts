@@ -2,6 +2,7 @@ import { writeFile } from "fs/promises";
 import { ConvexHttpClient } from "convex/browser";
 
 import { loadConfig } from "../lib/config.js";
+import { getValidToken } from "../lib/credentials.js";
 
 interface RedoResult {
   success: boolean;
@@ -20,7 +21,9 @@ export async function redoCommand(): Promise<void> {
     process.exit(1);
   }
 
+  const token = await getValidToken();
   const client = new ConvexHttpClient(config.convexUrl);
+  client.setAuth(token);
 
   try {
     const result = (await client.mutation("workspaces:redo" as never, {

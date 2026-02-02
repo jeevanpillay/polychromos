@@ -1,6 +1,7 @@
 import { ConvexHttpClient } from "convex/browser";
 
 import { loadConfig } from "../lib/config.js";
+import { getValidToken } from "../lib/credentials.js";
 
 interface EventEntry {
   version: number;
@@ -22,7 +23,9 @@ export async function historyCommand(): Promise<void> {
     process.exit(1);
   }
 
+  const token = await getValidToken();
   const client = new ConvexHttpClient(config.convexUrl);
+  client.setAuth(token);
 
   try {
     const [workspace, history] = await Promise.all([

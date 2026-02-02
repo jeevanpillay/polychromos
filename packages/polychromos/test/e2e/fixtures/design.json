@@ -1,0 +1,12 @@
+{
+  "id": "test-workspace",
+  "version": "1.0",
+  "name": "E2E Test Design",
+  "components": {
+    "comp1": {
+      "id": "comp1",
+      "name": "Test Component",
+      "elements": []
+    }
+  }
+}
