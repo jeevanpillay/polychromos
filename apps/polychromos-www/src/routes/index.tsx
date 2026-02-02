@@ -68,9 +68,9 @@ function HomePage() {
         </div>
 
         {/* Right: CTA */}
-        <Button size="default" className="rounded-none">
+        {/* <Button size="default" className="rounded-none">
           <span className="mr-1">↗</span> GET EARLY ACCESS
-        </Button>
+        </Button> */}
       </header>
 
       {/* Main Content */}
