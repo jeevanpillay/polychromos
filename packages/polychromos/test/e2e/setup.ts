@@ -15,7 +15,7 @@
  * 1. Copy .env.test.example to .env.test in apps/polychromos-app
  * 2. Fill in E2E_CLERK_USER_EMAIL and E2E_CLERK_USER_PASSWORD
  * 3. Run: pnpm --filter polychromos-app exec playwright test --project=setup
- * 4. Then run: pnpm --filter @polychromos/cli test:e2e
+ * 4. Then run: pnpm --filter polychromos test:e2e
  */
 
 import { chromium, type Browser } from 'playwright';

@@ -1,105 +1,173 @@
 const http = require('http');
-const { spawn, execSync } = require('child_process');
 const path = require('path');
+const { spawn } = require('child_process');
 
-const BACKEND_URL = new URL('http://127.0.0.1:3210');
+const BACKEND_URL = 'http://127.0.0.1:3210';
+const WEB_APP_URL = 'http://localhost:3001';
 const CWD = path.dirname(__dirname);
+
+let backendProcess = null;
+let webAppProcess = null;
+let ownedBackend = false;
+let ownedWebApp = false;
 
 async function isBackendRunning() {
   return new Promise((resolve) => {
-    http
-      .request(
-        {
-          hostname: BACKEND_URL.hostname,
-          port: BACKEND_URL.port,
-          path: '/version',
-          method: 'GET',
-        },
-        (res) => resolve(res.statusCode === 200)
-      )
-      .on('error', () => resolve(false))
-      .end();
+    const req = http.request(`${BACKEND_URL}/version`, { method: 'GET', timeout: 2000 }, (res) => {
+      resolve(res.statusCode === 200);
+    });
+    req.on('error', () => resolve(false));
+    req.on('timeout', () => { req.destroy(); resolve(false); });
+    req.end();
   });
 }
 
-async function waitForBackend(maxAttempts = 60) {
-  let running = await isBackendRunning();
-  let attempts = 0;
-  while (!running && attempts < maxAttempts) {
-    if (attempts % 10 === 0) console.log('Waiting for backend...');
-    await new Promise((r) => setTimeout(r, 500));
-    running = await isBackendRunning();
-    attempts++;
-  }
-  if (!running) throw new Error('Backend failed to start');
+async function isWebAppRunning() {
+  return new Promise((resolve) => {
+    const req = http.request(WEB_APP_URL, { method: 'GET', timeout: 2000 }, (res) => {
+      resolve(res.statusCode === 200 || res.statusCode === 302);
+    });
+    req.on('error', () => resolve(false));
+    req.on('timeout', () => { req.destroy(); resolve(false); });
+    req.end();
+  });
 }
 
-let backendProcess = null;
-
-function cleanup() {
-  if (backendProcess) {
-    console.log('Cleaning up backend');
-    backendProcess.kill('SIGTERM');
-    try {
-      execSync('./scripts/local-backend.sh reset', { cwd: CWD, stdio: 'ignore' });
-    } catch {
-      // Ignore cleanup errors
+async function waitFor(checkFn, name, maxAttempts = 60) {
+  for (let i = 0; i < maxAttempts; i++) {
+    if (await checkFn()) {
+      console.log(`[E2E] ${name} is ready`);
+      return;
     }
+    if (i % 10 === 0 && i > 0) {
+      console.log(`[E2E] Waiting for ${name}... (${i}/${maxAttempts})`);
+    }
+    await new Promise(r => setTimeout(r, 500));
   }
+  throw new Error(`${name} did not start within ${maxAttempts * 0.5}s`);
 }
 
-async function runWithLocalBackend(command) {
+async function startBackend() {
   if (await isBackendRunning()) {
-    console.error('Backend already running. Stop it first.');
-    process.exit(1);
+    console.log('[E2E] Backend already running, reusing existing instance');
+    ownedBackend = false;
+    return;
   }
 
+  console.log('[E2E] Starting local Convex backend...');
+
+  // Reset data for clean state
+  const { execSync } = require('child_process');
   try {
-    execSync('./scripts/local-backend.sh reset', { cwd: CWD, stdio: 'ignore' });
-  } catch {
-    // Ignore if no data to reset
+    execSync('./scripts/local-backend.sh reset', { cwd: CWD, stdio: 'pipe' });
+  } catch (e) {
+    // Ignore reset errors (may not exist yet)
   }
 
   backendProcess = spawn('./scripts/local-backend.sh', ['run'], {
     cwd: CWD,
-    stdio: 'pipe',
-    env: { ...process.env, CONVEX_TRACE_FILE: '1' },
+    stdio: ['pipe', 'pipe', 'pipe'],
+    env: { ...process.env, CONVEX_TRACE_FILE: '1' }
   });
 
-  await waitForBackend();
-  console.log('Backend running! Starting tests...');
+  backendProcess.stdout.on('data', (data) => {
+    if (process.env.DEBUG) console.log(`[backend] ${data}`);
+  });
+  backendProcess.stderr.on('data', (data) => {
+    if (process.env.DEBUG) console.error(`[backend] ${data}`);
+  });
 
-  const testProcess = spawn(command, {
-    shell: true,
-    stdio: 'inherit',
+  ownedBackend = true;
+  await waitFor(isBackendRunning, 'Backend');
+}
+
+async function startWebApp() {
+  if (await isWebAppRunning()) {
+    console.log('[E2E] Web app already running, reusing existing instance');
+    ownedWebApp = false;
+    return;
+  }
+
+  console.log('[E2E] Starting web app...');
+
+  webAppProcess = spawn('pnpm', ['dev:web'], {
     cwd: CWD,
-    env: { ...process.env, FORCE_COLOR: 'true' },
+    stdio: ['pipe', 'pipe', 'pipe'],
+    env: { ...process.env, VITE_CONVEX_URL: BACKEND_URL },
+    shell: true
   });
 
-  return new Promise((resolve) => {
-    testProcess.on('exit', (code) => {
-      console.log(`Tests exited with code ${code}`);
-      resolve(code);
-    });
+  webAppProcess.stdout.on('data', (data) => {
+    if (process.env.DEBUG) console.log(`[web] ${data}`);
+  });
+  webAppProcess.stderr.on('data', (data) => {
+    if (process.env.DEBUG) console.error(`[web] ${data}`);
+  });
+
+  ownedWebApp = true;
+  await waitFor(isWebAppRunning, 'Web app', 120);
+}
+
+async function deployConvexSchema() {
+  console.log('[E2E] Deploying Convex schema...');
+  const { execSync } = require('child_process');
+  execSync('./scripts/local-backend.sh convex deploy', {
+    cwd: CWD,
+    stdio: 'inherit',
+    env: { ...process.env, IS_TEST: 'true' }
   });
 }
 
-// Main
-runWithLocalBackend(process.argv[2])
-  .then((code) => {
-    cleanup();
-    process.exit(code);
-  })
-  .catch(() => {
-    cleanup();
-    process.exit(1);
-  });
+function cleanup() {
+  if (ownedWebApp && webAppProcess) {
+    console.log('[E2E] Stopping web app...');
+    webAppProcess.kill('SIGTERM');
+    webAppProcess = null;
+  }
+  if (ownedBackend && backendProcess) {
+    console.log('[E2E] Stopping backend...');
+    backendProcess.kill('SIGTERM');
+    backendProcess = null;
+  }
+}
 
-process.on('SIGINT', () => {
-  cleanup();
-  process.exit(1);
-});
-process.on('SIGTERM', () => {
-  cleanup();
-  process.exit(1);
-});
+async function runE2ETests(command) {
+  try {
+    await startBackend();
+    await deployConvexSchema();
+    await startWebApp();
+
+    console.log(`[E2E] Running: ${command}`);
+    const { execSync } = require('child_process');
+    execSync(command, {
+      cwd: CWD,
+      stdio: 'inherit',
+      env: { ...process.env, FORCE_COLOR: 'true', VITE_CONVEX_URL: BACKEND_URL }
+    });
+
+    return 0;
+  } catch (error) {
+    if (error.status) return error.status;
+    console.error('[E2E] Error:', error.message);
+    return 1;
+  } finally {
+    cleanup();
+  }
+}
+
+// Handle signals
+process.on('SIGINT', () => { cleanup(); process.exit(130); });
+process.on('SIGTERM', () => { cleanup(); process.exit(143); });
+
+// Main - only run if this file is executed directly
+if (require.main === module) {
+  const command = process.argv[2];
+  if (!command) {
+    console.error('Usage: node backendHarness.cjs <command>');
+    process.exit(1);
+  }
+
+  runE2ETests(command).then(code => process.exit(code));
+}
+
+module.exports = { startBackend, startWebApp, cleanup, isBackendRunning, isWebAppRunning, deployConvexSchema };

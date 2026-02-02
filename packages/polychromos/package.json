@@ -1,6 +1,7 @@
 {
-  "name": "@polychromos/cli",
+  "name": "polychromos",
   "version": "1.0.0",
+  "description": "CLI tool for Polychromos design system",
   "type": "module",
   "bin": {
     "polychromos": "./dist/index.js"
@@ -10,8 +11,30 @@
     "./lib": "./dist/lib/index.js"
   },
   "files": [
-    "dist"
+    "dist",
+    "!dist/**/__tests__",
+    "!dist/**/*.test.*"
   ],
+  "keywords": [
+    "polychromos",
+    "design",
+    "cli",
+    "design-system"
+  ],
+  "author": "Jeevan Pillay Studios",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jeevanpillaystudios/x.git",
+    "directory": "packages/polychromos"
+  },
+  "bugs": {
+    "url": "https://github.com/jeevanpillaystudios/x/issues"
+  },
+  "homepage": "https://github.com/jeevanpillaystudios/x/tree/main/packages/polychromos#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
@@ -20,7 +43,7 @@
     "test": "vitest",
     "test:watch": "vitest --watch",
     "test:coverage": "vitest run --coverage",
-    "test:e2e": "vitest run --config vitest.e2e.config.ts",
+    "test:e2e": "pnpm exec dotenv -e ../../apps/polychromos-app/.vercel/.env.development.local -v VITE_CONVEX_URL=http://127.0.0.1:3210 -- vitest run --config vitest.e2e.config.ts",
     "test:e2e:watch": "vitest --config vitest.e2e.config.ts",
     "typecheck": "tsc --noEmit"
   },
@@ -38,6 +61,7 @@
     "@repo/typescript-config": "workspace:*",
     "@types/node": "catalog:",
     "@vitest/coverage-v8": "^3.0.0",
+    "dotenv-cli": "^11.0.0",
     "eslint": "catalog:",
     "memfs": "^4.17.0",
     "playwright": "^1.50.0",

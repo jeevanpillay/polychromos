@@ -34,6 +34,7 @@ convex-local-backend
 convex-local-backend.exe
 convex_local_storage/
 convex_local_backend.sqlite3
+convex-local-backend.log
 *.zip
 
 # Playwright

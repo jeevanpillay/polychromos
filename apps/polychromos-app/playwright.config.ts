@@ -17,23 +17,17 @@ export default defineConfig({
   },
 
   projects: [
-    // Setup project for authentication
     {
       name: "setup",
       testDir: "./e2e",
       testMatch: /global\.setup\.ts/,
     },
-    // Tests that require unauthenticated state (no stored auth)
     {
       name: "unauthenticated",
       testDir: "./e2e/browser",
       testMatch: /\.unauth\.spec\.ts/,
-      use: {
-        ...devices["Desktop Chrome"],
-        // No storageState - fresh browser context
-      },
+      use: { ...devices["Desktop Chrome"] },
     },
-    // Main test project (authenticated)
     {
       name: "chromium",
       testDir: "./e2e/browser",
@@ -44,7 +38,6 @@ export default defineConfig({
       },
       dependencies: ["setup"],
     },
-    // Cross-platform tests (CLI + Web App)
     {
       name: "cross-platform",
       testDir: "./e2e/cross-platform",
@@ -57,12 +50,6 @@ export default defineConfig({
     },
   ],
 
-  webServer: process.env.CI
-    ? {
-        command: "pnpm dev",
-        url: baseURL,
-        reuseExistingServer: false,
-        timeout: 120 * 1000,
-      }
-    : undefined, // Don't start server locally - assume it's already running
+  // webServer is now managed by e2eRunner.cjs
+  // This allows consistent behavior between CI and local
 });

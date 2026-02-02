@@ -20,11 +20,16 @@
     "test:coverage": "vitest run --coverage",
     "test:convex": "vitest run convex/**/*.test.ts",
     "test:e2e": "pnpm exec dotenv -e .vercel/.env.development.local -- node test/backendHarness.cjs 'pnpm run test:e2e:run'",
-    "test:e2e:run": "./scripts/local-backend.sh convex env set IS_TEST true && ./scripts/local-backend.sh convex env set CLERK_JWT_ISSUER_DOMAIN \"$CLERK_JWT_ISSUER_DOMAIN\" && ./scripts/local-backend.sh convex deploy && vitest run e2e/",
+    "test:e2e:run": "./scripts/local-backend.sh convex env set IS_TEST true && ./scripts/local-backend.sh convex env set CLERK_JWT_ISSUER_DOMAIN \"$CLERK_JWT_ISSUER_DOMAIN\" && ./scripts/local-backend.sh convex deploy && playwright test --project=cross-platform",
+    "test:e2e:all": "pnpm exec dotenv -e .vercel/.env.development.local -v VITE_CONVEX_URL=http://127.0.0.1:3210 -- node test/e2eRunner.cjs --all",
+    "test:e2e:browser": "pnpm exec dotenv -e .vercel/.env.development.local -v VITE_CONVEX_URL=http://127.0.0.1:3210 -- node test/e2eRunner.cjs --browser",
+    "test:e2e:cli": "pnpm exec dotenv -e .vercel/.env.development.local -v VITE_CONVEX_URL=http://127.0.0.1:3210 -- node test/e2eRunner.cjs --cli",
+    "test:e2e:cross-platform": "pnpm exec dotenv -e .vercel/.env.development.local -v VITE_CONVEX_URL=http://127.0.0.1:3210 -- node test/e2eRunner.cjs --cross-platform",
     "test:e2e:playwright": "playwright test",
     "test:e2e:playwright:ui": "playwright test --ui",
     "test:e2e:playwright:debug": "playwright test --debug",
-    "test:e2e:cross-platform": "playwright test --project=cross-platform",
+    "test:e2e:playwright:direct": "playwright test --project=cross-platform",
+    "test:e2e:setup": "pnpm exec dotenv -e .vercel/.env.development.local -v VITE_CONVEX_URL=http://127.0.0.1:3210 -- playwright test --project=setup",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
