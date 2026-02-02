@@ -4,10 +4,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "npx convex dev --once && concurrently -r npm:dev:web npm:dev:convex",
-    "dev:web": "vite dev",
+    "dev": "pnpm run dev:setup && concurrently -r npm:dev:web npm:dev:convex",
+    "dev:web": "pnpm exec dotenv -e .vercel/.env.development.local -- vite dev",
     "dev:ts": "tsc -b -w",
-    "dev:convex": "npx convex dev",
+    "dev:convex": "pnpm exec dotenv -e .vercel/.env.development.local -- npx convex dev",
+    "dev:setup": "pnpm exec dotenv -e .vercel/.env.development.local -- node scripts/setup-convex.js",
+    "dev:sync-env": "node scripts/sync-env.js",
     "build": "vite build",
     "clean": "git clean -xdf .cache .output dist node_modules",
     "format": "prettier --check . --ignore-path .prettierignore --ignore-path ../../../.gitignore",
@@ -22,6 +24,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@clerk/clerk-react": "^5.60.0",
     "@convex-dev/react-query": "^0.1.0",
     "@fontsource/geist-mono": "^5.1.1",
     "@fontsource/geist-sans": "^5.1.1",

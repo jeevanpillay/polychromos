@@ -14,17 +14,22 @@ export const env = createEnv({
     NODE_ENV: z
       .enum(["development", "production", "test"])
       .default("development"),
-    CONVEX_URL: z.string().url(),
   },
-  server: {},
+  server: {
+    CLERK_JWT_ISSUER_DOMAIN: z.string().url().optional(),
+  },
   client: {
     VITE_APP_URL: z.string().url(),
+    VITE_CONVEX_URL: z.string().url(),
+    VITE_CLERK_PUBLISHABLE_KEY: z.string().startsWith("pk_").optional(),
   },
   runtimeEnv: {
     ...process.env,
     VITE_APP_URL: appUrl,
-    CONVEX_URL: process.env.CONVEX_URL,
+    VITE_CONVEX_URL: process.env.VITE_CONVEX_URL,
     NODE_ENV: process.env.NODE_ENV,
+    CLERK_JWT_ISSUER_DOMAIN: process.env.CLERK_JWT_ISSUER_DOMAIN,
+    VITE_CLERK_PUBLISHABLE_KEY: process.env.VITE_CLERK_PUBLISHABLE_KEY,
   },
   skipValidation:
     !!process.env.CI ||
