@@ -3,8 +3,8 @@ import { vercel } from "@t3-oss/env-core/presets-zod";
 import { z } from "zod";
 
 const appUrl =
-  process.env.VITE_APP_URL ||
-  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined) ||
+  process.env.VITE_APP_URL ??
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined) ??
   "http://localhost:3001";
 
 export const env = createEnv({

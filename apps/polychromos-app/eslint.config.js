@@ -4,7 +4,13 @@ import tanstackConfig from "@repo/eslint-config/tanstack";
 
 export default [
   {
-    ignores: [".output/**", ".nitro/**", ".vinxi/**", "convex/_generated/**"],
+    ignores: [
+      ".output/**",
+      ".nitro/**",
+      ".vinxi/**",
+      "convex/_generated/**",
+      "test/**",
+    ],
   },
   ...baseConfig,
   ...reactConfig,

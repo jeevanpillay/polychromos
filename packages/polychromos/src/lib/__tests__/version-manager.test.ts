@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { vol } from 'memfs';
+import type { VersionEntry } from '../version-manager';
 import { VersionManager } from '../version-manager';
 
 describe('VersionManager', () => {
@@ -64,8 +65,8 @@ describe('VersionManager', () => {
 
       expect(lines).toHaveLength(2);
 
-      const entry1 = JSON.parse(lines[0]);
-      const entry2 = JSON.parse(lines[1]);
+      const entry1 = JSON.parse(lines[0] ?? '') as VersionEntry;
+      const entry2 = JSON.parse(lines[1] ?? '') as VersionEntry;
 
       expect(entry1.v).toBe(1);
       expect(entry2.v).toBe(2);
@@ -81,7 +82,7 @@ describe('VersionManager', () => {
       await vm.recordChange({ name: 'test' });
 
       const content = vol.readFileSync('.polychromos/events.jsonl', 'utf-8') as string;
-      const entry = JSON.parse(content.trim());
+      const entry = JSON.parse(content.trim()) as VersionEntry;
 
       expect(entry.ts).toBe(now);
     });
@@ -93,7 +94,7 @@ describe('VersionManager', () => {
       const data = { name: 'test', value: 42 };
       await vm.recordChange(data);
 
-      const base = JSON.parse(vol.readFileSync('.polychromos/base.json', 'utf-8') as string);
+      const base = JSON.parse(vol.readFileSync('.polychromos/base.json', 'utf-8') as string) as typeof data;
       expect(base).toEqual(data);
     });
 
@@ -156,7 +157,7 @@ describe('VersionManager', () => {
       await vm.recordChange({ value: 'second' });
       await vm.undo();
 
-      const snapshot = JSON.parse(vol.readFileSync('.polychromos/snapshot.json', 'utf-8') as string);
+      const snapshot = JSON.parse(vol.readFileSync('.polychromos/snapshot.json', 'utf-8') as string) as { value: string };
       expect(snapshot).toEqual({ value: 'first' });
     });
   });
@@ -235,8 +236,8 @@ describe('VersionManager', () => {
       const history = vm.list();
 
       expect(history).toHaveLength(2);
-      expect(history[0].v).toBe(1);
-      expect(history[1].v).toBe(2);
+      expect(history[0]?.v).toBe(1);
+      expect(history[1]?.v).toBe(2);
     });
   });
 
