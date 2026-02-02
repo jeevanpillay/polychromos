@@ -1,0 +1,17 @@
+{
+  "name": "@polychromos/types",
+  "version": "1.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./src/schema.ts",
+    "./validators": "./src/validators.ts"
+  },
+  "dependencies": {
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "typescript": "catalog:"
+  }
+}
