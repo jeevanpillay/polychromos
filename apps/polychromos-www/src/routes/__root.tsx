@@ -47,8 +47,8 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
       <head>
         <HeadContent />
       </head>
-      <body className="bg-background min-h-screen font-sans antialiased">
-        <div className="flex min-h-screen flex-col">{children}</div>
+      <body className="bg-background font-sans antialiased">
+        {children}
         <Scripts />
       </body>
     </html>
