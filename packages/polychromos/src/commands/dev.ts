@@ -2,34 +2,47 @@ import { readFile } from "fs/promises";
 import chokidar from "chokidar";
 import { ConvexHttpClient } from "convex/browser";
 
-import { VersionManager } from "../lib/version-manager.js";
 import { loadConfig } from "../lib/config.js";
 
 let pendingMutation: Promise<void> | null = null;
 let pendingData: unknown = null;
 
 export async function devCommand(): Promise<void> {
-  const versionManager = new VersionManager(".polychromos");
   const config = await loadConfig();
-
-  // Initialize version manager
-  await versionManager.init();
 
   console.log("Polychromos CLI v1.0.0");
   if (config) {
     console.log(`Convex URL: ${config.convexUrl}`);
     console.log(`Workspace ID: ${config.workspaceId}`);
   } else {
-    console.log("No Convex configuration found - syncing locally only");
+    console.log("No Convex configuration found.");
     console.log(
-      'Run "polychromos init <name>" first, or create .polychromos/config.json',
+      'Run "polychromos init <name>" first to set up syncing.',
     );
+    process.exit(1);
   }
   console.log("");
 
-  // Create Convex client if configured
-  const convexClient = config ? new ConvexHttpClient(config.convexUrl) : null;
+  // Create Convex client
+  const convexClient = new ConvexHttpClient(config.convexUrl);
   let currentVersion = 1;
+  let eventVersion = 0;
+
+  // Fetch current workspace state to get version
+  try {
+    const workspace = (await convexClient.query("workspaces:get" as never, {
+      id: config.workspaceId,
+    } as never)) as { version: number; eventVersion: number } | null;
+    if (workspace) {
+      currentVersion = workspace.version;
+      eventVersion = workspace.eventVersion;
+    }
+  } catch (error) {
+    console.warn(
+      "⚠ Could not fetch workspace state:",
+      error instanceof Error ? error.message : error,
+    );
+  }
 
   const syncWithSingleFlight = async (data: unknown): Promise<void> => {
     pendingData = data;
@@ -44,41 +57,39 @@ export async function devCommand(): Promise<void> {
           const time = new Date().toLocaleTimeString();
           console.log(`[${time}] Syncing design...`);
 
-          // Record locally first
-          await versionManager.recordChange(toSync);
-
-          // Sync to Convex if configured
-          if (convexClient && config) {
-            try {
-              await convexClient.mutation("workspaces:update" as never, {
+          try {
+            const result = (await convexClient.mutation(
+              "workspaces:update" as never,
+              {
                 id: config.workspaceId,
                 data: toSync,
                 expectedVersion: currentVersion,
-              } as never);
+              } as never,
+            )) as { success: boolean; noChanges?: boolean };
+
+            if (result.noChanges) {
+              console.log(`✓ No changes detected`);
+            } else {
               currentVersion++;
-              console.log(
-                `✓ Synced to Convex (v${versionManager.getVersion()})`,
-              );
-            } catch (convexError) {
-              if (
-                convexError instanceof Error &&
-                convexError.message.includes("Version conflict")
-              ) {
-                console.error(
-                  "✗ Conflict detected - please reload to get latest version",
-                );
-              } else {
-                // Log Convex error but continue with local sync
-                console.warn(
-                  "⚠ Convex sync failed (local changes saved):",
-                  convexError instanceof Error
-                    ? convexError.message
-                    : convexError,
-                );
-              }
+              eventVersion++;
+              console.log(`✓ Synced to Convex (event v${eventVersion})`);
             }
-          } else {
-            console.log(`✓ Synced locally (v${versionManager.getVersion()})`);
+          } catch (convexError) {
+            if (
+              convexError instanceof Error &&
+              convexError.message.includes("Version conflict")
+            ) {
+              console.error(
+                "✗ Conflict detected - please reload to get latest version",
+              );
+            } else {
+              console.error(
+                "✗ Sync failed:",
+                convexError instanceof Error
+                  ? convexError.message
+                  : convexError,
+              );
+            }
           }
         })();
 
