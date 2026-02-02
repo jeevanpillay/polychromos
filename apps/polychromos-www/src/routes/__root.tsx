@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { lazy, Suspense } from "react";
 import {
   createRootRoute,
   HeadContent,
@@ -14,19 +15,27 @@ import "~/styles/fonts.css";
 import { CustomErrorComponent } from "~/components/error-component";
 import { LoadingComponent } from "~/components/loading-component";
 import { CustomNotFoundComponent } from "~/components/not-found-component";
+import { generateSEO } from "~/lib/seo";
 
 import "../styles/app.css";
 
+// Lazy load analytics - not critical for initial render
+const Analytics = lazy(() =>
+  import("@vercel/analytics/react").then((m) => ({ default: m.Analytics })),
+);
+const SpeedInsights = lazy(() =>
+  import("@vercel/speed-insights/react").then((m) => ({
+    default: m.SpeedInsights,
+  })),
+);
+
 export const Route = createRootRoute({
-  head: () => ({
-    meta: [
-      { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Polychromos" },
-      { name: "description", content: "Code-driven design platform" },
-    ],
-    links: [{ rel: "icon", href: "/favicon.svg" }],
-  }),
+  head: () =>
+    generateSEO({
+      title: "Polychromos | Code-Driven Design Platform",
+      description:
+        "Bridge the gap between Figma and React. Direct manipulation of the DOM with a designer-friendly interface. Code-first. Real-time. No more handoff friction.",
+    }),
   errorComponent: (props) => <CustomErrorComponent {...props} />,
   notFoundComponent: () => <CustomNotFoundComponent />,
   pendingComponent: () => <LoadingComponent />,
@@ -49,6 +58,10 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
       </head>
       <body className="bg-background font-sans antialiased">
         {children}
+        <Suspense fallback={null}>
+          <Analytics />
+          <SpeedInsights />
+        </Suspense>
         <Scripts />
       </body>
     </html>

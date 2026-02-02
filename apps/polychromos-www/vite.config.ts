@@ -16,7 +16,22 @@ export default defineConfig({
     }),
     tailwindcss(),
     tanstackStart(),
-    nitro(),
+    nitro({
+      config: {
+        preset: "vercel",
+        externals: {
+          traceInclude: [
+            "node_modules/@takumi-rs/core",
+            "node_modules/@takumi-rs/image-response",
+            "node_modules/@takumi-rs/helpers",
+            "node_modules/@takumi-rs/core-linux-x64-gnu",
+            "node_modules/@takumi-rs/core-linux-arm64-gnu",
+            "node_modules/@takumi-rs/core-darwin-arm64",
+            "node_modules/@takumi-rs/core-darwin-x64",
+          ],
+        },
+      },
+    }),
     viteReact(),
     ViteImageOptimizer({
       png: { quality: 80 },
