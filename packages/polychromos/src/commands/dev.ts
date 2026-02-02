@@ -3,7 +3,14 @@ import chokidar from "chokidar";
 import { ConvexHttpClient } from "convex/browser";
 
 import { loadConfig } from "../lib/config.js";
+import {
+  checkConnectivity,
+  getConnectivityState,
+  shouldRecheck,
+} from "../lib/connectivity.js";
 import { getValidToken } from "../lib/credentials.js";
+import { withRetry } from "../lib/retry.js";
+import { getVersion } from "../lib/version.js";
 
 let pendingMutation: Promise<void> | null = null;
 let pendingData: unknown = null;
@@ -11,7 +18,7 @@ let pendingData: unknown = null;
 export async function devCommand(): Promise<void> {
   const config = await loadConfig();
 
-  console.log("Polychromos CLI v1.0.0");
+  console.log(`Polychromos CLI v${getVersion()}`);
   if (!config) {
     console.log("No Convex configuration found.");
     console.log('Run "polychromos init <name>" first to set up syncing.');
@@ -30,6 +37,21 @@ export async function devCommand(): Promise<void> {
   console.log(`Convex URL: ${config.convexUrl}`);
   console.log(`Workspace ID: ${config.workspaceId}`);
   console.log("✓ Authenticated");
+
+  // Check initial connectivity
+  const initialConnectivity = await checkConnectivity(config.convexUrl);
+  if (initialConnectivity === "offline") {
+    console.warn("");
+    console.warn(
+      "╔══════════════════════════════════════════════════════════╗",
+    );
+    console.warn(
+      "║  ⚠ OFFLINE - Changes will NOT sync until reconnected    ║",
+    );
+    console.warn(
+      "╚══════════════════════════════════════════════════════════╝",
+    );
+  }
   console.log("");
 
   // Create authenticated Convex client
@@ -79,17 +101,31 @@ export async function devCommand(): Promise<void> {
 
       try {
         pendingMutation = (async () => {
+          // Check connectivity before attempting sync
+          const previousState = getConnectivityState();
+          if (previousState === "offline" && shouldRecheck()) {
+            const state = await checkConnectivity(config.convexUrl);
+            if (state === "online") {
+              console.log("✓ Back online - resuming sync");
+            }
+          }
+
+          // Skip sync attempt if still offline
+          if (getConnectivityState() === "offline") {
+            console.warn("⚠ Offline - sync skipped. Changes queued locally.");
+            return;
+          }
+
           const time = new Date().toLocaleTimeString();
           console.log(`[${time}] Syncing design...`);
 
           try {
-            const result = (await convexClient.mutation(
-              "workspaces:update" as never,
-              {
+            const result = (await withRetry(() =>
+              convexClient.mutation("workspaces:update" as never, {
                 id: config.workspaceId,
                 data: toSync,
                 expectedVersion: currentVersion,
-              } as never,
+              } as never),
             )) as { success: boolean; noChanges?: boolean };
 
             if (result.noChanges) {
@@ -119,7 +155,7 @@ export async function devCommand(): Promise<void> {
               console.error("✗ Access denied to this workspace");
             } else {
               console.error(
-                "✗ Sync failed:",
+                "✗ Sync failed after retries:",
                 convexError instanceof Error
                   ? convexError.message
                   : convexError,

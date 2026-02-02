@@ -1,6 +1,10 @@
+import { exec } from "child_process";
 import { readFile, writeFile, mkdir, unlink, chmod } from "fs/promises";
 import { join } from "path";
 import { homedir } from "os";
+import { promisify } from "util";
+
+const execAsync = promisify(exec);
 
 const CREDENTIALS_DIR = join(homedir(), ".polychromos");
 const CREDENTIALS_FILE = join(CREDENTIALS_DIR, "credentials.json");
@@ -19,8 +23,23 @@ export async function saveCredentials(tokens: TokenData): Promise<void> {
     // Write credentials file
     await writeFile(CREDENTIALS_FILE, JSON.stringify(tokens, null, 2), "utf-8");
 
-    // Set restrictive permissions (owner read/write only)
-    await chmod(CREDENTIALS_FILE, 0o600);
+    // Set restrictive permissions
+    if (process.platform === "win32") {
+      // Windows: Use icacls to set owner-only permissions
+      try {
+        // Remove inherited permissions and set owner-only
+        await execAsync(
+          `icacls "${CREDENTIALS_FILE}" /inheritance:r /grant:r "%USERNAME%:F"`,
+        );
+      } catch {
+        console.warn(
+          "⚠ Could not set Windows file permissions. Credentials may be readable by other users.",
+        );
+      }
+    } else {
+      // Unix: Use chmod (owner read/write only)
+      await chmod(CREDENTIALS_FILE, 0o600);
+    }
   } catch (error) {
     console.warn("Could not save credentials:", error);
     throw error;

@@ -11,13 +11,14 @@ import { logoutCommand } from "./commands/logout.js";
 import { redoCommand } from "./commands/redo.js";
 import { undoCommand } from "./commands/undo.js";
 import { whoamiCommand } from "./commands/whoami.js";
+import { getVersion } from "./lib/version.js";
 
 const program = new Command();
 
 program
   .name("polychromos")
   .description("Code-driven design platform CLI")
-  .version("1.0.0");
+  .version(getVersion());
 
 // Auth commands
 program
