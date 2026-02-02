@@ -4,6 +4,28 @@
   --font-pp-neue-montreal: "PP Neue Montreal", sans-serif;
   --font-pp-letter-spacing: -0.03em;
   --font-pp-line-height: 1.1;
+  --font-hw-animo-semi-expanded: "HW Animo Semi Expanded", sans-serif;
+  --font-hw-animo-semi-condensed-outline: "HW Animo Semi Condensed Outline", sans-serif;
+}
+
+/* HW Animo Semi Expanded */
+@font-face {
+  font-family: "HW Animo Semi Expanded";
+  src: url("/fonts/hw-animo/hw-animo-semi-expanded-regular.woff2") format("woff2"),
+       url("/fonts/hw-animo/hw-animo-semi-expanded-regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* HW Animo Semi Condensed Outline */
+@font-face {
+  font-family: "HW Animo Semi Condensed Outline";
+  src: url("/fonts/hw-animo/hw-animo-semicondensed-regular-outline.woff2") format("woff2"),
+       url("/fonts/hw-animo/hw-animo-semicondensed-regular-outline.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
