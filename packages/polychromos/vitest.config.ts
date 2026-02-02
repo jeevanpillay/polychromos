@@ -6,6 +6,7 @@ export default defineConfig({
     environment: 'node',
     include: ['src/**/*.test.ts', 'test/**/*.test.ts'],
     passWithNoTests: true,
+    setupFiles: ['./test/setup.ts'],
     typecheck: {
       tsconfig: './tsconfig.test.json',
     },
