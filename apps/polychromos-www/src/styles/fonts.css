@@ -8,27 +8,25 @@
   --font-hw-animo-semi-condensed-outline: "HW Animo Semi Condensed Outline", sans-serif;
 }
 
-/* HW Animo Semi Expanded - Critical display font for hero typography
-   Using font-display: block to prevent layout shift (shows invisible text for ~100ms
-   instead of fallback font with different metrics that causes 339px vertical shift) */
+/* HW Animo Semi Expanded - Display font for hero typography
+   Using font-display: optional - shows custom font only if cached, preventing CLS */
 @font-face {
   font-family: "HW Animo Semi Expanded";
   src: url("/fonts/hw-animo/hw-animo-semi-expanded-regular.woff2") format("woff2"),
        url("/fonts/hw-animo/hw-animo-semi-expanded-regular.woff") format("woff");
   font-weight: 400;
   font-style: normal;
-  font-display: block;
+  font-display: optional;
 }
 
-/* HW Animo Semi Condensed Outline - Critical display font for "EXECUTABLE LOGIC"
-   Using font-display: block for same reason as above */
+/* HW Animo Semi Condensed Outline - Display font for "EXECUTABLE LOGIC" */
 @font-face {
   font-family: "HW Animo Semi Condensed Outline";
   src: url("/fonts/hw-animo/hw-animo-semicondensed-regular-outline.woff2") format("woff2"),
        url("/fonts/hw-animo/hw-animo-semicondensed-regular-outline.woff") format("woff");
   font-weight: 400;
   font-style: normal;
-  font-display: block;
+  font-display: optional;
 }
 
 @font-face {
@@ -36,7 +34,7 @@
   src: url("/fonts/pp-neue-montreal/PPNeueMontreal-Thin.woff2") format("woff2");
   font-weight: 100;
   font-style: normal;
-  font-display: swap;
+  font-display: optional;
 }
 
 @font-face {
@@ -44,7 +42,7 @@
   src: url("/fonts/pp-neue-montreal/PPNeueMontreal-Book.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
-  font-display: swap;
+  font-display: optional;
 }
 
 @font-face {
@@ -53,7 +51,7 @@
     format("woff2");
   font-weight: 500;
   font-style: normal;
-  font-display: swap;
+  font-display: optional;
 }
 
 @font-face {
@@ -61,7 +59,7 @@
   src: url("/fonts/pp-neue-montreal/PPNeueMontreal-Bold.woff2") format("woff2");
   font-weight: 700;
   font-style: normal;
-  font-display: swap;
+  font-display: optional;
 }
 
 @font-face {
@@ -70,7 +68,7 @@
     format("woff2");
   font-weight: 400;
   font-style: italic;
-  font-display: swap;
+  font-display: optional;
 }
 
 @font-face {
@@ -79,7 +77,7 @@
     format("woff2");
   font-weight: 600;
   font-style: italic;
-  font-display: swap;
+  font-display: optional;
 }
 
 /* Utility classes for PP Neue Montreal */

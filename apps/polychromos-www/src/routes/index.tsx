@@ -164,45 +164,43 @@ function HomePage() {
           </div>
         </div>
 
-        {/* Spacer */}
-        <div className="flex-1" />
-
-        {/* Bottom Large Typography */}
-        <div className="mb-8 lg:mb-12">
-          <div className="text-primary overflow-hidden">
-            <h1 className="text-[10vw] leading-[0.95] tracking-tight lg:text-5xl">
-              <span
-                style={{ fontFamily: "var(--font-hw-animo-semi-expanded)" }}
-              >
-                DESIGN IS NO LONGER
-              </span>
-              <span
-                style={{
-                  fontFamily: "var(--font-hw-animo-semi-expanded)",
-                }}
-              >
-                {" "}
-                STATIC PIXELS.
-              </span>
-            </h1>
-            <h1 className="text-[10vw] leading-[0.95] tracking-tight lg:text-10xl">
-              <span
-                style={{ fontFamily: "var(--font-hw-animo-semi-expanded)" }}
-              >
-                IT IS
-              </span>
-              <span
-                style={{
-                  fontFamily: "var(--font-hw-animo-semi-condensed-outline)",
-                }}
-              >
-                {" "}
-                EXECUTABLE LOGIC.
-              </span>
-            </h1>
-          </div>
-        </div>
       </main>
+
+      {/* Bottom Large Typography - absolutely positioned to isolate from main content flow */}
+      <div className="absolute bottom-0 left-0 right-0 px-6 pb-8 lg:px-12 lg:pb-12 pointer-events-none">
+        <div className="text-primary overflow-hidden">
+          <h1 className="text-[10vw] leading-[0.95] tracking-tight lg:text-5xl">
+            <span
+              style={{ fontFamily: "var(--font-hw-animo-semi-expanded)" }}
+            >
+              DESIGN IS NO LONGER
+            </span>
+            <span
+              style={{
+                fontFamily: "var(--font-hw-animo-semi-expanded)",
+              }}
+            >
+              {" "}
+              STATIC PIXELS.
+            </span>
+          </h1>
+          <h1 className="text-[10vw] leading-[0.95] tracking-tight lg:text-10xl">
+            <span
+              style={{ fontFamily: "var(--font-hw-animo-semi-expanded)" }}
+            >
+              IT IS
+            </span>
+            <span
+              style={{
+                fontFamily: "var(--font-hw-animo-semi-condensed-outline)",
+              }}
+            >
+              {" "}
+              EXECUTABLE LOGIC.
+            </span>
+          </h1>
+        </div>
+      </div>
     </div>
   );
 }
