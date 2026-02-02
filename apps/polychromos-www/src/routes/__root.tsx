@@ -52,8 +52,14 @@ function RootComponent() {
 
 function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className="dark" style={{ colorScheme: "dark" }}>
       <head>
+        {/* Critical CSS to prevent flash of wrong background color */}
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `html.dark{--background:oklch(0.145 0 0);background:oklch(0.145 0 0)}`,
+          }}
+        />
         <HeadContent />
       </head>
       <body className="bg-background font-sans antialiased">

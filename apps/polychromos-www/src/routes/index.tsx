@@ -76,7 +76,7 @@ function HomePage() {
       {/* Main Content */}
       <main className="flex flex-1 flex-col px-6 lg:px-12">
         {/* Hero Section */}
-        <div className="mt-16 flex-1 lg:mt-24">
+        <div className="mt-16 lg:mt-24">
           {/* Value Proposition */}
           <div className="flex max-w-xl flex-col">
             <div className="font-pp-neue text-xl leading-relaxed font-medium lg:text-2xl space-y-4">
@@ -87,7 +87,8 @@ function HomePage() {
               <p>Code-first. Real-time. No more handoff friction.</p>
             </div>
 
-            <div className="mt-8 space-y-3">
+            {/* Form Section - min-height prevents layout shift when states change */}
+            <div className="mt-8 min-h-[100px] space-y-3">
               <p className="text-muted-foreground text-sm">
                 Be the first to experience code-driven design. Join the
                 waitlist.
