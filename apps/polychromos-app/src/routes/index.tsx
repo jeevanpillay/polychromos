@@ -49,7 +49,9 @@ function HomePage() {
       </Unauthenticated>
 
       <Authenticated>
-        <AuthenticatedContent />
+        <div data-testid="authenticated">
+          <AuthenticatedContent />
+        </div>
       </Authenticated>
     </div>
   );

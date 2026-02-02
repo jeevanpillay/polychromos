@@ -12,6 +12,6 @@
     "types": ["vite/client"],
     "checkJs": false
   },
-  "include": ["src", "vite.config.ts", "convex/**/*.ts"],
+  "include": ["src", "vite.config.ts", "convex/**/*.ts", "e2e/**/*.ts", "playwright.config.ts"],
   "exclude": ["node_modules", "dist", ".output", "convex/_generated"]
 }

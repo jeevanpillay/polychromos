@@ -16,7 +16,7 @@ export function generateSEO(config: SEOConfig) {
     title,
     description,
     canonicalUrl = env.VITE_APP_URL,
-    ogImage = `${env.VITE_APP_URL}/api/og`,
+    ogImage = `${env.VITE_APP_URL}/og.png`,
   } = config;
 
   return {

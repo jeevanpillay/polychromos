@@ -21,6 +21,9 @@
     "test:convex": "vitest run convex/**/*.test.ts",
     "test:e2e": "node test/backendHarness.js 'pnpm run test:e2e:run'",
     "test:e2e:run": "just convex env set IS_TEST true && just convex deploy && vitest run e2e/",
+    "test:e2e:playwright": "playwright test",
+    "test:e2e:playwright:ui": "playwright test --ui",
+    "test:e2e:playwright:debug": "playwright test --debug",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -44,7 +47,9 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@clerk/testing": "^1.13.33",
     "@edge-runtime/vm": "^4.0.4",
+    "@playwright/test": "^1.58.1",
     "@repo/eslint-config": "workspace:*",
     "@repo/prettier-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
