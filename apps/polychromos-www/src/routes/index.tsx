@@ -1,6 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-
-import { Button } from "@repo/ui/components/ui/button";
+import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
   component: HomePage,
@@ -8,50 +6,40 @@ export const Route = createFileRoute("/")({
 
 function HomePage() {
   return (
-    <div className="flex min-h-screen flex-col">
-      {/* Header */}
-      <header className="flex items-center justify-between p-6 md:p-12">
-        <Link to="/">
-          <h1
-            className="text-lg"
-            style={{ fontFamily: "Joyride, sans-serif" }}
-          >
-            POLYCHROMOS
-          </h1>
-        </Link>
-        <Button size="pill" variant="outline">
-          Get Started
-        </Button>
-      </header>
+    <div className="bg-background flex h-screen w-full overflow-hidden">
+      {/* Left Sidebar */}
+      <aside className="bg-background text-foreground flex flex-col justify-between px-8 py-6">
+        <div>
+          <div className="flex items-center gap-3">
+            {/* Logo */}
+            <div className="bg-foreground h-4 w-4" />
+          </div>
 
-      {/* Main Content */}
-      <main className="flex flex-1 flex-col items-center justify-center px-6 md:px-12">
-        <div className="max-w-3xl text-center">
-          <h2
-            className="text-primary mb-6 text-5xl font-semibold leading-tight md:text-7xl"
-            style={{ fontFamily: "Joyride, sans-serif" }}
-          >
-            Code-Driven Design
+          {/* Hero Text */}
+          <h2 className="text-foreground mt-8 text-7xl font-normal leading-[1.1] tracking-tight">
+            Design is no longer
+            <span className="text-primary"> static pixels.</span>
+            <br />
+            <span className="text-muted-foreground">
+              It is executable logic.
+            </span>
           </h2>
-          <p className="text-muted-foreground mb-8 text-lg md:text-xl">
-            A platform for building design systems with code. Create, iterate,
-            and ship beautiful interfaces with the precision of code.
-          </p>
-          <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-            <Button size="lg">
-              Start Building
-            </Button>
-            <Button size="lg" variant="outline">
-              Learn More
-            </Button>
+        </div>
+
+        {/* Bottom Content */}
+        <div>
+          <div className="text-muted-foreground space-y-3 text-sm leading-relaxed">
+            <p>
+              Bridge the gap between Figma and React. Direct manipulation of the
+              DOM with a designer-friendly interface.
+            </p>
+            <p>Code-first. Real-time. No more handoff friction.</p>
           </div>
         </div>
-      </main>
+      </aside>
 
-      {/* Footer */}
-      <footer className="text-muted-foreground p-6 text-center text-sm md:p-12">
-        <p>&copy; {new Date().getFullYear()} Polychromos. All rights reserved.</p>
-      </footer>
+      {/* Main Content */}
+      <main className="bg-background relative flex-1 overflow-hidden"></main>
     </div>
   );
 }
