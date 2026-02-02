@@ -41,7 +41,7 @@ function cleanup() {
     console.log('Cleaning up backend');
     backendProcess.kill('SIGTERM');
     try {
-      execSync('just reset-local-backend', { cwd: CWD, stdio: 'ignore' });
+      execSync('./scripts/local-backend.sh reset', { cwd: CWD, stdio: 'ignore' });
     } catch {
       // Ignore cleanup errors
     }
@@ -55,12 +55,12 @@ async function runWithLocalBackend(command) {
   }
 
   try {
-    execSync('just reset-local-backend', { cwd: CWD, stdio: 'ignore' });
+    execSync('./scripts/local-backend.sh reset', { cwd: CWD, stdio: 'ignore' });
   } catch {
     // Ignore if no data to reset
   }
 
-  backendProcess = spawn('just', ['run-local-backend'], {
+  backendProcess = spawn('./scripts/local-backend.sh', ['run'], {
     cwd: CWD,
     stdio: 'pipe',
     env: { ...process.env, CONVEX_TRACE_FILE: '1' },
