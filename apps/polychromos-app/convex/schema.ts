@@ -1,0 +1,29 @@
+import { defineSchema, defineTable } from "convex/server";
+import { v } from "convex/values";
+
+export default defineSchema({
+  workspaces: defineTable({
+    name: v.string(),
+    description: v.optional(v.string()),
+    data: v.any(), // Full PolychromosWorkspace JSON
+    version: v.number(), // For conflict detection
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  }),
+
+  // Event log for version history
+  events: defineTable({
+    workspaceId: v.id("workspaces"),
+    version: v.number(),
+    timestamp: v.number(),
+    patches: v.array(
+      v.object({
+        op: v.string(),
+        path: v.string(),
+        value: v.optional(v.any()),
+      }),
+    ),
+  })
+    .index("by_workspace", ["workspaceId"])
+    .index("by_workspace_version", ["workspaceId", "version"]),
+});

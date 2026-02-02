@@ -1,0 +1,10 @@
+# Build outputs
+.output
+.nitro
+.vinxi
+.cache
+dist
+
+# Auto-generated files
+routeTree.gen.ts
+*.gen.ts

@@ -1,0 +1,8 @@
+.output
+.nitro
+.vinxi
+.cache
+dist
+routeTree.gen.ts
+*.gen.ts
+convex/_generated

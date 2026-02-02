@@ -1,0 +1,47 @@
+{
+  "name": "@repo/polychromos-www",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "clean": "git clean -xdf .cache .output dist node_modules",
+    "dev": "vite dev",
+    "format": "prettier --check . --ignore-path .prettierignore --ignore-path ../../../.gitignore",
+    "lint": "eslint",
+    "start": "node .output/server/index.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@fontsource/geist-mono": "^5.1.1",
+    "@fontsource/geist-sans": "^5.1.1",
+    "@repo/ui": "workspace:*",
+    "@t3-oss/env-core": "^0.13.10",
+    "@tanstack/react-router": "catalog:",
+    "@tanstack/react-start": "catalog:",
+    "lucide-react": "catalog:",
+    "nitro": "3.0.1-alpha.0",
+    "react": "catalog:react19",
+    "react-dom": "catalog:react19",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/prettier-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@tailwindcss/vite": "catalog:",
+    "@tanstack/router-devtools": "catalog:",
+    "@tanstack/router-plugin": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:react19",
+    "@types/react-dom": "catalog:react19",
+    "@vitejs/plugin-react": "catalog:",
+    "eslint": "catalog:",
+    "tailwindcss": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vite-plugin-image-optimizer": "^2.0.3",
+    "vite-tsconfig-paths": "^6.0.5"
+  },
+  "prettier": "@repo/prettier-config"
+}
