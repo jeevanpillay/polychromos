@@ -15,7 +15,9 @@ export const env = createEnv({
       .enum(["development", "production", "test"])
       .default("development"),
   },
-  server: {},
+  server: {
+    CLERK_SECRET_KEY: z.string().min(1, "CLERK_SECRET_KEY is required"),
+  },
   client: {
     VITE_APP_URL: z.string().url(),
   },
@@ -23,6 +25,7 @@ export const env = createEnv({
     ...process.env,
     VITE_APP_URL: appUrl,
     NODE_ENV: process.env.NODE_ENV,
+    CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
   },
   skipValidation:
     !!process.env.CI ||

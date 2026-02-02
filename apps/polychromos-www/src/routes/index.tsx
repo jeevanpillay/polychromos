@@ -1,13 +1,54 @@
+import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { Loader2 } from "lucide-react";
+import type { z } from "zod";
 
 import { Button } from "@repo/ui/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+  useForm,
+} from "@repo/ui/components/ui/form";
 import { Input } from "@repo/ui/components/ui/input";
+
+import { joinWaitlist, waitlistSchema } from "~/functions/waitlist";
 
 export const Route = createFileRoute("/")({
   component: HomePage,
 });
 
 function HomePage() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<
+    "idle" | "success" | "error"
+  >("idle");
+
+  const form = useForm({
+    schema: waitlistSchema,
+    defaultValues: {
+      email: "",
+    },
+  });
+
+  async function onSubmit(values: z.infer<typeof waitlistSchema>) {
+    setIsSubmitting(true);
+    setSubmitStatus("idle");
+
+    try {
+      await joinWaitlist({ data: values });
+      setSubmitStatus("success");
+      form.reset();
+    } catch (error) {
+      console.error("Waitlist form error:", error);
+      setSubmitStatus("error");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
   return (
     <div className="bg-background text-foreground relative flex min-h-screen flex-col">
       {/* Header */}
@@ -51,16 +92,73 @@ function HomePage() {
                 Be the first to experience code-driven design. Join the
                 waitlist.
               </p>
-              <div className="flex gap-2">
-                <Input
-                  type="email"
-                  placeholder="Enter your email"
-                  className="max-w-xs rounded-none"
-                />
-                <Button size="default" className="rounded-none">
-                  <span className="mr-1">↗</span> Join
-                </Button>
-              </div>
+
+              {/* Success Message */}
+              {submitStatus === "success" && (
+                <div className="border-border bg-muted text-foreground max-w-sm p-3">
+                  <p className="text-sm font-medium">
+                    You're on the list!
+                  </p>
+                  <p className="text-muted-foreground text-xs mt-1">
+                    We'll notify you when early access is available.
+                  </p>
+                </div>
+              )}
+
+              {/* Error Message */}
+              {submitStatus === "error" && (
+                <div className="border-destructive bg-destructive/10 text-destructive max-w-sm border p-3">
+                  <p className="text-sm font-medium">
+                    Something went wrong
+                  </p>
+                  <p className="text-xs mt-1">
+                    Please try again.
+                  </p>
+                </div>
+              )}
+
+              {/* Form */}
+              {submitStatus !== "success" && (
+                <Form {...form}>
+                  <form
+                    onSubmit={form.handleSubmit(onSubmit)}
+                    className="flex gap-2"
+                  >
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem className="flex-1 max-w-xs space-y-1">
+                          <FormControl>
+                            <Input
+                              type="email"
+                              placeholder="Enter your email"
+                              disabled={isSubmitting}
+                              className="rounded-none"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <Button
+                      type="submit"
+                      size="default"
+                      className="rounded-none"
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <>
+                          <span className="mr-1">↗</span> Join
+                        </>
+                      )}
+                    </Button>
+                  </form>
+                </Form>
+              )}
             </div>
           </div>
         </div>
