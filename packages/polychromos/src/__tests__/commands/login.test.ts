@@ -1,151 +1,140 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { vol } from "memfs";
 import { homedir } from "os";
-import type { TokenData } from "../../lib/credentials.js";
 
-// Mock readline
-const mockQuestion = vi.fn();
-const mockClose = vi.fn();
-vi.mock("readline", () => ({
-  createInterface: vi.fn(() => ({
-    question: mockQuestion,
-    close: mockClose,
+// Mock all external dependencies
+vi.mock("open", () => ({ default: vi.fn().mockResolvedValue(undefined) }));
+vi.mock("convex/browser", () => ({
+  ConvexHttpClient: vi.fn().mockImplementation(() => ({
+    mutation: vi.fn(),
+    query: vi.fn(),
   })),
 }));
 
-describe("login command", () => {
+describe("loginCommand", () => {
+  const originalEnv = process.env;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let mockExit: any;
+
   beforeEach(() => {
-    vol.reset();
-    vol.mkdirSync(homedir(), { recursive: true });
     vi.clearAllMocks();
     vi.resetModules();
+    vol.reset();
+    vol.mkdirSync(homedir(), { recursive: true });
+    process.env = { ...originalEnv };
+    mockExit = vi.spyOn(process, "exit").mockImplementation((code) => {
+      throw new Error(`process.exit(${code ?? 0})`);
+    });
   });
 
   afterEach(() => {
+    process.env = originalEnv;
     vi.restoreAllMocks();
   });
 
-  it("saves credentials when valid token provided", async () => {
-    const consoleSpy = vi
-      .spyOn(console, "log")
-      .mockImplementation(() => undefined);
-
-    // Simulate user entering a token
-    mockQuestion.mockImplementation(
-      (prompt: string, callback: (answer: string) => void) => {
-        callback("test_token_123");
-      },
-    );
-
+  it("should open browser with auth URL", async () => {
+    const open = (await import("open")).default;
+    const { ConvexHttpClient } = await import("convex/browser");
     const { loginCommand } = await import("../../commands/login.js");
+
+    const mockClient = {
+      mutation: vi.fn().mockResolvedValue(undefined),
+      query: vi.fn().mockResolvedValue({
+        status: "completed",
+        token: "test-token",
+        expiresAt: Date.now() + 30 * 24 * 60 * 60 * 1000,
+      }),
+    };
+    vi.mocked(ConvexHttpClient).mockImplementation(() => mockClient as never);
+
+    await loginCommand();
+
+    expect(open).toHaveBeenCalledWith(expect.stringContaining("/cli-auth?code=pol_"));
+  });
+
+  it("should save credentials on successful auth", async () => {
+    const { ConvexHttpClient } = await import("convex/browser");
+    const { loginCommand } = await import("../../commands/login.js");
+
+    const testToken = "test-token-123";
+    const testExpiry = Date.now() + 30 * 24 * 60 * 60 * 1000;
+
+    const mockClient = {
+      mutation: vi.fn().mockResolvedValue(undefined),
+      query: vi.fn().mockResolvedValue({
+        status: "completed",
+        token: testToken,
+        expiresAt: testExpiry,
+      }),
+    };
+    vi.mocked(ConvexHttpClient).mockImplementation(() => mockClient as never);
+
     await loginCommand();
 
     // Verify credentials were saved
     const credsPath = `${homedir()}/.polychromos/credentials.json`;
     expect(vol.existsSync(credsPath)).toBe(true);
 
-    const creds = JSON.parse(
-      vol.readFileSync(credsPath, "utf-8") as string,
-    ) as TokenData;
-    expect(creds.accessToken).toBe("test_token_123");
-
-    expect(consoleSpy).toHaveBeenCalledWith("✓ Login successful!");
-    consoleSpy.mockRestore();
+    const credsContent = vol.readFileSync(credsPath, "utf-8") as string;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const creds = JSON.parse(credsContent);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    expect(creds.accessToken).toBe(testToken);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    expect(creds.expiresAt).toBe(testExpiry);
   });
 
-  it("exits with error when empty token provided", async () => {
-    const consoleSpy = vi
-      .spyOn(console, "error")
-      .mockImplementation(() => undefined);
-    const exitSpy = vi.spyOn(process, "exit").mockImplementation((code) => {
-      throw new Error(`process.exit(${code})`);
-    });
-
-    mockQuestion.mockImplementation(
-      (prompt: string, callback: (answer: string) => void) => {
-        callback("");
-      },
-    );
-
+  it("should exit on session expiry", async () => {
+    const { ConvexHttpClient } = await import("convex/browser");
     const { loginCommand } = await import("../../commands/login.js");
-    await expect(loginCommand()).rejects.toThrow("process.exit(1)");
 
-    expect(consoleSpy).toHaveBeenCalledWith(
-      "No token provided. Login cancelled.",
-    );
-    expect(exitSpy).toHaveBeenCalledWith(1);
+    const mockClient = {
+      mutation: vi.fn().mockResolvedValue(undefined),
+      query: vi.fn().mockResolvedValue({ status: "expired" }),
+    };
+    vi.mocked(ConvexHttpClient).mockImplementation(() => mockClient as never);
 
-    consoleSpy.mockRestore();
-    exitSpy.mockRestore();
+    await expect(loginCommand()).rejects.toThrow("process.exit");
+    expect(mockExit).toHaveBeenCalledWith(1);
   });
 
-  it("exits with error when whitespace-only token provided", async () => {
-    const consoleSpy = vi
-      .spyOn(console, "error")
-      .mockImplementation(() => undefined);
-    const exitSpy = vi.spyOn(process, "exit").mockImplementation((code) => {
-      throw new Error(`process.exit(${code})`);
-    });
-
-    mockQuestion.mockImplementation(
-      (prompt: string, callback: (answer: string) => void) => {
-        callback("   \n\t  ");
-      },
-    );
-
+  it("should exit on session not found", async () => {
+    const { ConvexHttpClient } = await import("convex/browser");
     const { loginCommand } = await import("../../commands/login.js");
-    await expect(loginCommand()).rejects.toThrow("process.exit(1)");
 
-    expect(consoleSpy).toHaveBeenCalledWith(
-      "No token provided. Login cancelled.",
-    );
+    const mockClient = {
+      mutation: vi.fn().mockResolvedValue(undefined),
+      query: vi.fn().mockResolvedValue({ status: "not_found" }),
+    };
+    vi.mocked(ConvexHttpClient).mockImplementation(() => mockClient as never);
 
-    consoleSpy.mockRestore();
-    exitSpy.mockRestore();
+    await expect(loginCommand()).rejects.toThrow("process.exit");
+    expect(mockExit).toHaveBeenCalledWith(1);
   });
 
-  it("trims whitespace from token", async () => {
-    const consoleSpy = vi
-      .spyOn(console, "log")
-      .mockImplementation(() => undefined);
-
-    mockQuestion.mockImplementation(
-      (prompt: string, callback: (answer: string) => void) => {
-        callback("  token_with_spaces  \n");
-      },
-    );
-
+  it("should poll until completion", async () => {
+    const { ConvexHttpClient } = await import("convex/browser");
     const { loginCommand } = await import("../../commands/login.js");
+
+    let pollCount = 0;
+    const mockClient = {
+      mutation: vi.fn().mockResolvedValue(undefined),
+      query: vi.fn().mockImplementation(() => {
+        pollCount++;
+        if (pollCount < 3) {
+          return Promise.resolve({ status: "pending" });
+        }
+        return Promise.resolve({
+          status: "completed",
+          token: "test-token",
+          expiresAt: Date.now() + 30 * 24 * 60 * 60 * 1000,
+        });
+      }),
+    };
+    vi.mocked(ConvexHttpClient).mockImplementation(() => mockClient as never);
+
     await loginCommand();
 
-    const credsPath = `${homedir()}/.polychromos/credentials.json`;
-    const creds = JSON.parse(
-      vol.readFileSync(credsPath, "utf-8") as string,
-    ) as TokenData;
-    expect(creds.accessToken).toBe("token_with_spaces");
-
-    consoleSpy.mockRestore();
-  });
-
-  it("displays instructions before prompting", async () => {
-    const consoleSpy = vi
-      .spyOn(console, "log")
-      .mockImplementation(() => undefined);
-
-    mockQuestion.mockImplementation(
-      (prompt: string, callback: (answer: string) => void) => {
-        callback("token");
-      },
-    );
-
-    const { loginCommand } = await import("../../commands/login.js");
-    await loginCommand();
-
-    expect(consoleSpy).toHaveBeenCalledWith("Polychromos CLI Login");
-    expect(consoleSpy).toHaveBeenCalledWith(
-      expect.stringContaining("__session"),
-    );
-
-    consoleSpy.mockRestore();
+    expect(pollCount).toBeGreaterThanOrEqual(3);
   });
 });

@@ -10,4 +10,6 @@ export async function logoutCommand(): Promise<void> {
 
   await clearCredentials();
   console.log("✓ Logged out successfully.");
+  console.log("");
+  console.log("Run `polychromos login` to authenticate again.");
 }

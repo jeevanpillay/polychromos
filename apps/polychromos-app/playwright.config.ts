@@ -1,6 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
 
-const baseURL = process.env.PLAYWRIGHT_BASE_URL || "http://localhost:3001";
+const webAppPort = process.env.WEB_APP_PORT || "3001";
+const baseURL = process.env.PLAYWRIGHT_BASE_URL || `http://localhost:${webAppPort}`;
 
 export default defineConfig({
   testDir: "./e2e/browser",
@@ -34,9 +35,7 @@ export default defineConfig({
       testIgnore: /\.unauth\.spec\.ts/,
       use: {
         ...devices["Desktop Chrome"],
-        storageState: "playwright/.clerk/user.json",
       },
-      dependencies: ["setup"],
     },
     {
       name: "cross-platform",
@@ -44,9 +43,7 @@ export default defineConfig({
       testMatch: /\.spec\.ts/,
       use: {
         ...devices["Desktop Chrome"],
-        storageState: "playwright/.clerk/user.json",
       },
-      dependencies: ["setup"],
     },
   ],
 

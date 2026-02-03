@@ -8,7 +8,7 @@ import viteTsConfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
   server: {
-    port: 3001,
+    port: process.env.PORT ? parseInt(process.env.PORT, 10) : 3001,
   },
   plugins: [
     viteTsConfigPaths({

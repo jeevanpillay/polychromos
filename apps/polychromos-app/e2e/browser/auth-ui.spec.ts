@@ -1,9 +1,7 @@
-import { test, expect } from "@playwright/test";
-import { setupClerkTestingToken } from "@clerk/testing/playwright";
+import { test, expect } from "../fixtures/auth";
 
 test.describe("Authentication UI - Authenticated", () => {
-  test("shows user button when authenticated", async ({ page }) => {
-    await setupClerkTestingToken({ page });
+  test("shows user button when authenticated", async ({ authenticatedPage: page }) => {
     await page.goto("/");
 
     // Should show user button (Clerk's UserButton component)
@@ -12,8 +10,7 @@ test.describe("Authentication UI - Authenticated", () => {
     });
   });
 
-  test("can sign out", async ({ page }) => {
-    await setupClerkTestingToken({ page });
+  test("can sign out", async ({ authenticatedPage: page }) => {
     await page.goto("/");
 
     // Click user button to open menu
@@ -22,9 +19,9 @@ test.describe("Authentication UI - Authenticated", () => {
     // Click sign out
     await page.getByRole("menuitem", { name: /sign out/i }).click();
 
-    // Should redirect to sign-in state
+    // Should redirect to unauthenticated state with sign-in link
     await expect(
-      page.getByRole("button", { name: /sign in/i }),
+      page.getByTestId("sign-in-link"),
     ).toBeVisible({
       timeout: 10000,
     });

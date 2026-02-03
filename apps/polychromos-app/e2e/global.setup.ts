@@ -1,51 +1,57 @@
-import { clerkSetup } from "@clerk/testing/playwright";
-import { test as setup, expect } from "@playwright/test";
-import * as path from "path";
+import { test as setup } from "@playwright/test";
+import { mkdir } from "fs/promises";
+import path from "path";
 import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const authFile = path.join(__dirname, "../playwright/.clerk/user.json");
 
-setup("global setup", async () => {
-  await clerkSetup();
-});
-
 setup("authenticate", async ({ page }) => {
-  // Navigate to the app
-  await page.goto("/");
+  // Create auth directory
+  await mkdir(path.dirname(authFile), { recursive: true });
 
-  // Wait for Clerk to load
+  // Navigate to sign-in page
+  await page.goto("/sign-in");
   await page.waitForLoadState("networkidle");
 
-  // Click the Sign In button to open modal
-  await page.getByRole("button", { name: /sign in/i }).click();
-
-  // Wait for Clerk modal
-  await page.waitForSelector(".cl-modalContent", { timeout: 10000 });
-
   const email = process.env.E2E_CLERK_USER_EMAIL;
-  if (!email) throw new Error("E2E_CLERK_USER_EMAIL not set");
   const password = process.env.E2E_CLERK_USER_PASSWORD;
+
+  if (!email) throw new Error("E2E_CLERK_USER_EMAIL not set");
   if (!password) throw new Error("E2E_CLERK_USER_PASSWORD not set");
 
-  // Clerk two-step email/password flow
-  // Step 1: Enter email and click Continue
-  const emailInput = page.getByRole("textbox", { name: /email/i });
-  await emailInput.fill(email);
-  await page.getByRole("button", { name: "Continue", exact: true }).click();
+  // Fill email step
+  await page.fill('input[type="email"]', email);
+  await page.click('button[type="submit"]');
 
-  // Step 2: Enter password and click Continue
-  await page.waitForSelector('input[name="password"]', { timeout: 10000 });
-  const passwordInput = page.getByRole("textbox", { name: /password/i });
-  await passwordInput.fill(password);
-  await page.getByRole("button", { name: "Continue" }).click();
+  // Fill password step
+  await page.waitForSelector('input[type="password"]', { timeout: 10000 });
+  await page.fill('input[type="password"]', password);
+  await page.click('button[type="submit"]');
 
-  // Wait for authentication to complete (redirect back to app)
-  await expect(page.locator("[data-testid='authenticated']")).toBeVisible({
-    timeout: 30000,
-  });
+  // Wait for authentication
+  await page.waitForSelector('[data-testid="authenticated"]', { timeout: 30000 });
 
-  // Save authentication state
+  // CRITICAL: Wait for Clerk session to be fully established
+  // The authenticated element appears when Convex confirms auth, but Clerk's
+  // client needs additional time to fully initialize the session with all tokens
+  await page.waitForFunction(
+    () => {
+      const clerk = (window as any).Clerk;
+      return (
+        clerk?.loaded &&
+        clerk?.session?.id &&
+        clerk?.user?.id &&
+        clerk?.session?.lastActiveAt
+      );
+    },
+    { timeout: 10000 }
+  );
+
+  // Give Clerk an extra moment to finalize any async session setup
+  await page.waitForTimeout(2000);
+
+  // Save storage state
   await page.context().storageState({ path: authFile });
 });

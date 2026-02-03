@@ -4,7 +4,10 @@ const { spawn, execSync } = require('child_process');
 const path = require('path');
 
 const CWD = path.dirname(__dirname);
-const BACKEND_URL = 'http://127.0.0.1:3210';
+const BACKEND_PORT = process.env.CONVEX_BACKEND_PORT || 3210;
+const WEB_APP_PORT = process.env.WEB_APP_PORT || 3001;
+const BACKEND_URL = process.env.CONVEX_BACKEND_URL || `http://127.0.0.1:${BACKEND_PORT}`;
+const WEB_APP_URL = process.env.WEB_APP_URL || `http://localhost:${WEB_APP_PORT}`;
 
 // Import backend management from refactored harness
 const { startBackend, startWebApp, cleanup, deployConvexSchema } = require('./backendHarness.cjs');
@@ -18,7 +21,15 @@ async function runCommand(name, command, args = [], options = {}) {
     const proc = spawn(command, args, {
       cwd: CWD,
       stdio: 'inherit',
-      env: { ...process.env, VITE_CONVEX_URL: BACKEND_URL },
+      env: {
+        ...process.env,
+        VITE_CONVEX_URL: BACKEND_URL,
+        CONVEX_BACKEND_URL: BACKEND_URL,
+        CONVEX_BACKEND_PORT: String(BACKEND_PORT),
+        WEB_APP_URL: WEB_APP_URL,
+        WEB_APP_PORT: String(WEB_APP_PORT),
+        PLAYWRIGHT_BASE_URL: WEB_APP_URL,
+      },
       shell: true,
       ...options
     });
@@ -56,6 +67,9 @@ async function main() {
         cwd: CWD,
         stdio: 'inherit'
       });
+    } else {
+      console.warn('\n[E2E] WARNING: CLERK_JWT_ISSUER_DOMAIN not set - Clerk auth may fail!');
+      console.warn('[E2E] Make sure this env var is set in your .vercel/.env.development.local or CI environment\n');
     }
     execSync('./scripts/local-backend.sh convex deploy', {
       cwd: CWD,
@@ -64,15 +78,6 @@ async function main() {
     });
 
     await startWebApp();
-
-    // Run Playwright auth setup (unless skipped)
-    if (!skipSetup) {
-      await runCommand(
-        'Playwright Auth Setup',
-        'pnpm',
-        ['exec', 'playwright', 'test', '--project=setup']
-      );
-    }
 
     // Run browser tests
     if (runBrowser) {
@@ -85,6 +90,14 @@ async function main() {
 
     // Run CLI E2E tests
     if (runCli) {
+      // CLI tests need Playwright auth state - create it if it doesn't exist
+      console.log('\n[E2E] Setting up authentication for CLI tests...');
+      execSync('pnpm exec playwright test --project=setup', {
+        cwd: CWD,
+        stdio: 'inherit',
+        env: process.env
+      });
+
       await runCommand(
         'CLI E2E Tests',
         'pnpm',

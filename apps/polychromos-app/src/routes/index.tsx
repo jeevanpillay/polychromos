@@ -1,6 +1,7 @@
 import type { PolychromosWorkspace } from "@polychromos/types";
-import { SignInButton, UserButton } from "@clerk/clerk-react";
+import { UserButton } from "@clerk/clerk-react";
 import { Authenticated, AuthLoading, Unauthenticated } from "convex/react";
+import { Button } from "@repo/ui/components/ui/button";
 import { Suspense } from "react";
 import {
   createFileRoute,
@@ -35,16 +36,19 @@ function HomePage() {
       </AuthLoading>
 
       <Unauthenticated>
-        <div className="flex min-h-screen flex-col items-center justify-center gap-4">
+        <div data-testid="unauthenticated" className="flex min-h-screen flex-col items-center justify-center gap-4">
           <h1 className="text-5xl font-bold tracking-tight">Polychromos</h1>
           <p className="text-muted-foreground text-lg">
             Code-driven design platform
           </p>
-          <SignInButton mode="modal">
-            <button className="bg-primary text-primary-foreground hover:bg-primary/90 mt-4 rounded-md px-6 py-3 font-semibold">
-              Sign In
-            </button>
-          </SignInButton>
+          <div className="flex gap-2 mt-4">
+            <Button asChild variant="outline">
+              <a href="/sign-in" data-testid="sign-in-link">Sign in</a>
+            </Button>
+            <Button asChild>
+              <a href="/sign-up" data-testid="sign-up-link">Sign up</a>
+            </Button>
+          </div>
         </div>
       </Unauthenticated>
 
@@ -120,7 +124,9 @@ function AuthenticatedContent() {
             Code-driven design platform
           </p>
         </div>
-        <UserButton afterSignOutUrl="/" />
+        <div data-testid="user-menu">
+          <UserButton afterSignOutUrl="/" />
+        </div>
       </div>
 
       <button

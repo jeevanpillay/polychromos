@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "vite build",
-    "clean": "git clean -xdf .cache .output dist node_modules",
+    "clean": "git clean -xdf .cache .output .tanstack .turbo dist node_modules coverage *.tsbuildinfo",
     "dev": "dotenv -e .vercel/.env.development.local -- vite dev",
     "format": "prettier --check . --ignore-path .prettierignore --ignore-path ../../../.gitignore",
     "lint": "eslint",

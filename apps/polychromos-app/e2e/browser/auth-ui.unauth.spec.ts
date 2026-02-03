@@ -8,9 +8,9 @@ test.describe("Authentication UI - Unauthenticated", () => {
     // Wait for Clerk to load
     await page.waitForLoadState("networkidle");
 
-    // Should show sign-in button
+    // Should show sign-in link (styled as button)
     await expect(
-      page.getByRole("button", { name: /sign in/i }),
+      page.getByTestId("sign-in-link"),
     ).toBeVisible({ timeout: 10000 });
 
     // Should NOT show authenticated content

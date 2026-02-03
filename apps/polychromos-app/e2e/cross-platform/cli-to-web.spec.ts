@@ -10,6 +10,9 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+const CONVEX_URL = process.env.CONVEX_BACKEND_URL || 'http://127.0.0.1:3210';
+const WEB_APP_URL = process.env.WEB_APP_URL || 'http://localhost:3001';
+
 const TEST_DIR = join(tmpdir(), 'polychromos-cross-platform-e2e');
 const CLI_PATH = join(__dirname, '../../../../packages/polychromos/dist/index.js');
 
@@ -20,7 +23,7 @@ test.describe('CLI to Web App Sync', () => {
   let token: string;
 
   test.beforeAll(async ({ browser }) => {
-    convexClient = new ConvexHttpClient('http://127.0.0.1:3210');
+    convexClient = new ConvexHttpClient(CONVEX_URL);
 
     // Extract token from browser context
     const page = await browser.newPage({
@@ -66,7 +69,7 @@ test.describe('CLI to Web App Sync', () => {
     await writeFile(
       join(testWorkspaceDir, '.polychromos', 'config.json'),
       JSON.stringify({
-        convexUrl: 'http://127.0.0.1:3210',
+        convexUrl: CONVEX_URL,
         workspaceId,
       })
     );

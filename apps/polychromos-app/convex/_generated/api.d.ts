@@ -8,6 +8,7 @@
  * @module
  */
 
+import type * as cliAuth from "../cliAuth.js";
 import type * as events from "../events.js";
 import type * as lib_auth from "../lib/auth.js";
 import type * as workspaces from "../workspaces.js";
@@ -19,6 +20,7 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  cliAuth: typeof cliAuth;
   events: typeof events;
   "lib/auth": typeof lib_auth;
   workspaces: typeof workspaces;

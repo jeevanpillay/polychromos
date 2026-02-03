@@ -2,8 +2,10 @@ const http = require('http');
 const path = require('path');
 const { spawn } = require('child_process');
 
-const BACKEND_URL = 'http://127.0.0.1:3210';
-const WEB_APP_URL = 'http://localhost:3001';
+const BACKEND_PORT = process.env.CONVEX_BACKEND_PORT || 3210;
+const WEB_APP_PORT = process.env.WEB_APP_PORT || 3001;
+const BACKEND_URL = process.env.CONVEX_BACKEND_URL || `http://127.0.0.1:${BACKEND_PORT}`;
+const WEB_APP_URL = process.env.WEB_APP_URL || `http://localhost:${WEB_APP_PORT}`;
 const CWD = path.dirname(__dirname);
 
 let backendProcess = null;
@@ -64,18 +66,23 @@ async function startBackend() {
     // Ignore reset errors (may not exist yet)
   }
 
+  const isCI = process.env.CI === 'true';
+
   backendProcess = spawn('./scripts/local-backend.sh', ['run'], {
     cwd: CWD,
-    stdio: ['pipe', 'pipe', 'pipe'],
+    // In CI, use 'pipe' but in local dev keep pipes for DEBUG mode
+    stdio: isCI ? 'pipe' : ['pipe', 'pipe', 'pipe'],
     env: { ...process.env, CONVEX_TRACE_FILE: '1' }
   });
 
-  backendProcess.stdout.on('data', (data) => {
-    if (process.env.DEBUG) console.log(`[backend] ${data}`);
-  });
-  backendProcess.stderr.on('data', (data) => {
-    if (process.env.DEBUG) console.error(`[backend] ${data}`);
-  });
+  if (!isCI || process.env.DEBUG) {
+    backendProcess.stdout?.on('data', (data) => {
+      if (process.env.DEBUG) console.log(`[backend] ${data}`);
+    });
+    backendProcess.stderr?.on('data', (data) => {
+      if (process.env.DEBUG) console.error(`[backend] ${data}`);
+    });
+  }
 
   ownedBackend = true;
   await waitFor(isBackendRunning, 'Backend');
@@ -99,7 +106,11 @@ async function startWebApp() {
   webAppProcess = spawn(command, args, {
     cwd: CWD,
     stdio: ['pipe', 'pipe', 'pipe'],
-    env: { ...process.env, VITE_CONVEX_URL: BACKEND_URL },
+    env: {
+      ...process.env,
+      VITE_CONVEX_URL: BACKEND_URL,
+      PORT: String(WEB_APP_PORT),
+    },
     shell: true
   });
 
@@ -110,6 +121,12 @@ async function startWebApp() {
   });
   webAppProcess.stderr.on('data', (data) => {
     if (shouldLog) console.error(`[web] ${data}`);
+  });
+  webAppProcess.on('exit', (code, signal) => {
+    console.error(`[E2E] Web app process exited! code=${code}, signal=${signal}`);
+  });
+  webAppProcess.on('error', (err) => {
+    console.error(`[E2E] Web app process error:`, err.message);
   });
 
   ownedWebApp = true;
@@ -127,14 +144,60 @@ async function deployConvexSchema() {
 }
 
 function cleanup() {
+  const isCI = process.env.CI === 'true';
+
   if (ownedWebApp && webAppProcess) {
     console.log('[E2E] Stopping web app...');
-    webAppProcess.kill('SIGTERM');
+    try {
+      if (isCI) {
+        // In CI, force kill immediately and destroy stdio streams
+        webAppProcess.kill('SIGKILL');
+        console.log(`[E2E] Killed web app process ${webAppProcess.pid}`);
+
+        // Explicitly destroy stdio streams to prevent hanging
+        webAppProcess.stdin?.destroy();
+        webAppProcess.stdout?.destroy();
+        webAppProcess.stderr?.destroy();
+      } else {
+        // Local dev: try graceful then force
+        webAppProcess.kill('SIGTERM');
+        setTimeout(() => {
+          if (webAppProcess && !webAppProcess.killed) {
+            webAppProcess.kill('SIGKILL');
+          }
+        }, 2000);
+      }
+    } catch (e) {
+      console.log('[E2E] Error stopping web app:', e.message);
+    }
     webAppProcess = null;
   }
+
   if (ownedBackend && backendProcess) {
     console.log('[E2E] Stopping backend...');
-    backendProcess.kill('SIGTERM');
+    try {
+      if (isCI) {
+        // In CI, force kill immediately and destroy stdio streams
+        // With 'exec' in the shell script, the PID is the actual backend process
+        backendProcess.kill('SIGKILL');
+        console.log(`[E2E] Killed backend process ${backendProcess.pid}`);
+
+        // Explicitly destroy stdio streams to prevent hanging
+        backendProcess.stdin?.destroy();
+        backendProcess.stdout?.destroy();
+        backendProcess.stderr?.destroy();
+      } else {
+        // Local dev: try graceful then force
+        backendProcess.kill('SIGTERM');
+        setTimeout(() => {
+          if (backendProcess && !backendProcess.killed) {
+            backendProcess.kill('SIGKILL');
+          }
+        }, 2000);
+      }
+    } catch (e) {
+      console.log('[E2E] Error stopping backend:', e.message);
+    }
     backendProcess = null;
   }
 }
