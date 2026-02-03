@@ -269,7 +269,7 @@ async function extractClerkToken(browser: Browser): Promise<string> {
       }
 
       // @ts-expect-error Clerk is globally available
-      return await window.Clerk.session.getToken({ template: 'convex' });
+      return await window.Clerk.session.getToken({ template: 'polychromos-cli' });
     });
 
     if (!token) {

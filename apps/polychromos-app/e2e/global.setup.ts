@@ -1,67 +1,40 @@
+import { test as setup } from "@playwright/test";
 import { clerkSetup } from "@clerk/testing/playwright";
-import { test as setup, expect } from "@playwright/test";
-import * as path from "path";
-import * as fs from "fs";
-import { fileURLToPath } from "url";
+import { mkdir } from "fs/promises";
+import path from "path";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 const authFile = path.join(__dirname, "../playwright/.clerk/user.json");
 
-setup("global setup", async () => {
+setup("clerk setup", async () => {
   await clerkSetup();
 });
 
 setup("authenticate", async ({ page }) => {
-  // Ensure auth directory exists before saving storage state
-  const authDir = path.dirname(authFile);
-  if (!fs.existsSync(authDir)) {
-    fs.mkdirSync(authDir, { recursive: true });
-  }
+  // Create auth directory
+  await mkdir(path.dirname(authFile), { recursive: true });
 
-  // Navigate to the app
-  await page.goto("/");
-
-  // Wait for Clerk to load
+  // Navigate to sign-in page
+  await page.goto("/sign-in");
   await page.waitForLoadState("networkidle");
-
-  // Click the Sign In button to open modal
-  const signInButton = page.getByRole("button", { name: /sign in/i });
-  await expect(signInButton).toBeVisible({ timeout: 10000 });
-  await signInButton.click();
-
-  // Wait for Clerk modal
-  await page.waitForSelector(".cl-modalContent", { timeout: 10000 });
 
   const email = process.env.E2E_CLERK_USER_EMAIL;
-  if (!email) throw new Error("E2E_CLERK_USER_EMAIL not set");
   const password = process.env.E2E_CLERK_USER_PASSWORD;
+
+  if (!email) throw new Error("E2E_CLERK_USER_EMAIL not set");
   if (!password) throw new Error("E2E_CLERK_USER_PASSWORD not set");
 
-  // Clerk two-step email/password flow
-  // Step 1: Enter email and click Continue
-  const emailInput = page.getByRole("textbox", { name: /email/i });
-  await emailInput.fill(email);
-  await page.getByRole("button", { name: "Continue", exact: true }).click();
+  // Fill email step
+  await page.fill('input[type="email"]', email);
+  await page.click('button[type="submit"]');
 
-  // Step 2: Enter password and click Continue
-  await page.waitForSelector('input[name="password"]', { timeout: 10000 });
-  const passwordInput = page.getByRole("textbox", { name: /password/i });
-  await passwordInput.fill(password);
-  await page.getByRole("button", { name: "Continue" }).click();
+  // Fill password step
+  await page.waitForSelector('input[type="password"]', { timeout: 10000 });
+  await page.fill('input[type="password"]', password);
+  await page.click('button[type="submit"]');
 
-  // Wait for modal to close and navigation to complete
-  await page.waitForSelector(".cl-modalContent", {
-    state: "hidden",
-    timeout: 15000,
-  });
-  await page.waitForLoadState("networkidle");
+  // Wait for authentication
+  await page.waitForSelector('[data-testid="authenticated"]', { timeout: 30000 });
 
-  // Wait for authentication to complete (redirect back to app)
-  await expect(page.locator("[data-testid='authenticated']")).toBeVisible({
-    timeout: 30000,
-  });
-
-  // Save authentication state
+  // Save storage state
   await page.context().storageState({ path: authFile });
 });

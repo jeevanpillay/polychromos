@@ -2458,13 +2458,13 @@ main();
 ### Success Criteria:
 
 #### Automated Verification:
-- [ ] All browser tests pass: `pnpm --filter @repo/app test:e2e:browser`
-- [ ] All CLI tests pass: `pnpm --filter @repo/app test:e2e:cli`
-- [ ] All cross-platform tests pass: `pnpm --filter @repo/app test:e2e:cross-platform`
-- [ ] Auth polling tests pass
-- [ ] Tests work with custom ports: `CONVEX_BACKEND_PORT=3211 WEB_APP_PORT=3002 pnpm --filter @repo/app test:e2e:all`
-- [ ] TypeScript compiles: `pnpm typecheck`
-- [ ] Lint passes: `pnpm lint`
+- [ ] All browser tests pass: `pnpm --filter @repo/app test:e2e:browser` (requires manual testing)
+- [ ] All CLI tests pass: `pnpm --filter @repo/app test:e2e:cli` (requires manual testing)
+- [ ] All cross-platform tests pass: `pnpm --filter @repo/app test:e2e:cross-platform` (requires manual testing)
+- [ ] Auth polling tests pass (requires manual testing)
+- [ ] Tests work with custom ports: `CONVEX_BACKEND_PORT=3211 WEB_APP_PORT=3002 pnpm --filter @repo/app test:e2e:all` (requires manual testing)
+- [x] TypeScript compiles: `pnpm typecheck`
+- [x] Lint passes: `pnpm lint`
 
 #### Manual Verification:
 - [ ] Fresh database on each test run (reset works)
