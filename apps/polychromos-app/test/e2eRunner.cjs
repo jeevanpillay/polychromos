@@ -79,15 +79,6 @@ async function main() {
 
     await startWebApp();
 
-    // Run Playwright auth setup (unless skipped)
-    if (!skipSetup) {
-      await runCommand(
-        'Playwright Auth Setup',
-        'pnpm',
-        ['exec', 'playwright', 'test', '--project=setup']
-      );
-    }
-
     // Run browser tests
     if (runBrowser) {
       await runCommand(

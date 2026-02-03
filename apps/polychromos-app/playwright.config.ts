@@ -19,11 +19,6 @@ export default defineConfig({
 
   projects: [
     {
-      name: "setup",
-      testDir: "./e2e",
-      testMatch: /global\.setup\.ts/,
-    },
-    {
       name: "unauthenticated",
       testDir: "./e2e/browser",
       testMatch: /\.unauth\.spec\.ts/,
@@ -35,9 +30,7 @@ export default defineConfig({
       testIgnore: /\.unauth\.spec\.ts/,
       use: {
         ...devices["Desktop Chrome"],
-        storageState: "playwright/.clerk/user.json",
       },
-      dependencies: ["setup"],
     },
     {
       name: "cross-platform",
@@ -45,9 +38,7 @@ export default defineConfig({
       testMatch: /\.spec\.ts/,
       use: {
         ...devices["Desktop Chrome"],
-        storageState: "playwright/.clerk/user.json",
       },
-      dependencies: ["setup"],
     },
   ],
 

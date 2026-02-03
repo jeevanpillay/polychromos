@@ -1,9 +1,7 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "../fixtures/auth";
 
 test.describe("Authentication UI - Authenticated", () => {
-  // Authentication handled by global.setup.ts and storageState
-
-  test("shows user button when authenticated", async ({ page }) => {
+  test("shows user button when authenticated", async ({ authenticatedPage: page }) => {
     await page.goto("/");
 
     // Should show user button (Clerk's UserButton component)
@@ -12,7 +10,7 @@ test.describe("Authentication UI - Authenticated", () => {
     });
   });
 
-  test("can sign out", async ({ page }) => {
+  test("can sign out", async ({ authenticatedPage: page }) => {
     await page.goto("/");
 
     // Click user button to open menu
