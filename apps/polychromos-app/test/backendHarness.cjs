@@ -93,8 +93,8 @@ async function startWebApp() {
   // In CI, run vite directly since env vars are passed via CI environment
   // Locally, use dev:web which loads from .vercel/.env.development.local
   const isCI = process.env.CI === 'true';
-  const command = isCI ? 'npx' : 'pnpm';
-  const args = isCI ? ['vite', 'dev'] : ['dev:web'];
+  const command = 'pnpm';
+  const args = isCI ? ['exec', 'vite', 'dev'] : ['dev:web'];
 
   webAppProcess = spawn(command, args, {
     cwd: CWD,
@@ -103,11 +103,13 @@ async function startWebApp() {
     shell: true
   });
 
+  // Always log output in CI to debug issues
+  const shouldLog = isCI || process.env.DEBUG;
   webAppProcess.stdout.on('data', (data) => {
-    if (process.env.DEBUG) console.log(`[web] ${data}`);
+    if (shouldLog) console.log(`[web] ${data}`);
   });
   webAppProcess.stderr.on('data', (data) => {
-    if (process.env.DEBUG) console.error(`[web] ${data}`);
+    if (shouldLog) console.error(`[web] ${data}`);
   });
 
   ownedWebApp = true;
