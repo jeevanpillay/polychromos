@@ -34,6 +34,7 @@ export const env = createEnv({
   skipValidation:
     !!process.env.CI ||
     process.env.npm_lifecycle_event === "lint" ||
+    process.env.npm_lifecycle_event === "typecheck" ||
     process.env.npm_lifecycle_event === "build",
   emptyStringAsUndefined: true,
 });
