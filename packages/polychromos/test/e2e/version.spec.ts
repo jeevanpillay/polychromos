@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach, afterEach } from 'vitest';
 import { ConvexHttpClient } from 'convex/browser';
-import { writeFile } from 'fs/promises';
-import { join } from 'path';
+import { writeFile, mkdir } from 'fs/promises';
+import { join, dirname } from 'path';
 import {
   createTestWorkspace,
   createDesignFile,
@@ -63,8 +63,12 @@ describe('Version Control E2E', () => {
       // This prevents race conditions where the file is read during overwrite
       await wait(200);
 
+      // Ensure workspace directory exists (prevents ENOENT errors)
+      const filePath = join(workspace.dir, 'design.json');
+      await mkdir(dirname(filePath), { recursive: true });
+
       await writeFile(
-        join(workspace.dir, 'design.json'),
+        filePath,
         JSON.stringify(
           {
             id: 'test',
