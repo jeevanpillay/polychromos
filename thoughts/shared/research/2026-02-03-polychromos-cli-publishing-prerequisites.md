@@ -108,7 +108,7 @@ The CLI provides 10 commands organized into three categories:
 
 ```json
 {
-  "extends": "@repo/typescript-config/base.json",
+  "extends": "@polychromos/typescript-config/base.json",
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": "src",

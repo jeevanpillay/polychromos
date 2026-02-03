@@ -25,7 +25,7 @@ This plan addresses the build issues identified in the research document. There 
 ### ESLint Issue
 - **Root Cause**: Version mismatch between ESLint 9.39.1 and typescript-eslint 8.9.0
 - **Error**: `TypeError: Error while loading rule '@typescript-eslint/no-unused-expressions': Cannot read properties of undefined (reading 'allowShortCircuit')`
-- **Impact**: ESLint completely fails to run in both `@repo/www` and `@repo/ui` packages
+- **Impact**: ESLint completely fails to run in both `@polychromos/www` and `@polychromos/ui` packages
 - **Source**: This is a known issue introduced in ESLint 9.15+ with older typescript-eslint versions
 
 ### TypeScript Issue

@@ -180,7 +180,7 @@ The `toaster` component wraps toast functionality. After migrating to sonner, yo
 
 ### High Priority
 - **Customization Loss**: All custom modifications will be overwritten - backup critical customizations first
-- **Breaking Import Paths**: Verify `@repo/ui/components/ui/*` exports still work after update
+- **Breaking Import Paths**: Verify `@polychromos/ui/components/ui/*` exports still work after update
 
 ### Medium Priority
 - **Style Deprecation**: `default` style is deprecated; consider migrating to `new-york`

@@ -52,5 +52,8 @@ dist/
 # turbo
 .turbo
 
-# playwright mcp screenshots
+# playwright mcp
 .playwright-mcp/
+
+# auth state
+.auth/

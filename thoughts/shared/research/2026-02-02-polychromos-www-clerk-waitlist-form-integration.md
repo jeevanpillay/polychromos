@@ -21,7 +21,7 @@ last_updated_by: Claude
 
 ## Research Question
 
-How to upgrade `apps/polychromos-www/src/routes/index.tsx` to use Clerk waitlist when saving with the full `@repo/ui/components/ui/form.tsx` pattern, using the server function approach.
+How to upgrade `apps/polychromos-www/src/routes/index.tsx` to use Clerk waitlist when saving with the full `@polychromos/ui/components/ui/form.tsx` pattern, using the server function approach.
 
 ## Summary
 
@@ -52,7 +52,7 @@ Key observations:
 - No form validation
 - No submission handler
 - No server function connection
-- Uses `@repo/ui` Input and Button components
+- Uses `@polychromos/ui` Input and Button components
 
 ### Pattern 1: Server Function Definition
 
@@ -107,7 +107,7 @@ import {
   FormLabel,
   FormMessage,
   useForm,
-} from "@repo/ui/components/ui/form";
+} from "@polychromos/ui/components/ui/form";
 
 // Local schema (can also import from server function file)
 const contactSchema = z.object({
@@ -144,7 +144,7 @@ async function onSubmit(values: z.infer<typeof contactSchema>) {
 ```
 
 Key aspects:
-- Custom `useForm` hook from `@repo/ui` automatically configures zodResolver
+- Custom `useForm` hook from `@polychromos/ui` automatically configures zodResolver
 - Manual state management for `isSubmitting` and `submitStatus`
 - Server function called with `{ data: values }` object structure
 - Uses `z.infer<typeof schema>` for type safety

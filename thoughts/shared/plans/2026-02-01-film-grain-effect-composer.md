@@ -71,7 +71,7 @@ Add the `postprocessing` library to the www app.
 
 Run command:
 ```bash
-pnpm add postprocessing --filter @repo/www
+pnpm add postprocessing --filter @polychromos/www
 ```
 
 This adds:

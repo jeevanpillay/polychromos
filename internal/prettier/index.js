@@ -24,7 +24,7 @@ const config = {
     "<TYPES>^@repo",
     "<TYPES>^@vendor",
     "^@dahlia/(.*)$",
-    "^@repo/(.*)$",
+    "^@polychromos/(.*)$",
     "^@vendor/(.*)$",
     "",
     "<TYPES>^[.|..|~]",

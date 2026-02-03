@@ -244,7 +244,7 @@ VITE_APP_URL=https://yourdomain.com
 
 ```bash
 pnpm build        # Build all packages
-pnpm build:www    # Build www app only (turbo run build -F @repo/www)
+pnpm build:www    # Build www app only (turbo run build -F @polychromos/www)
 pnpm dev          # Development mode
 pnpm dev:www      # www dev with watch mode
 pnpm typecheck    # TypeScript checking

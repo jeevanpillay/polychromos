@@ -242,7 +242,7 @@ __root.tsx imports:
 ├── ~/styles/fonts.css (custom fonts)
 └── ../styles/app.css
     ├── tailwindcss
-    └── @repo/ui/globals.css
+    └── @polychromos/ui/globals.css
         ├── tailwindcss
         └── tw-animate-css
 ```

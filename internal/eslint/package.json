@@ -27,6 +27,7 @@
     "@polychromos/prettier-config": "workspace:*",
     "@polychromos/typescript-config": "workspace:*",
     "@types/eslint__js": "8.42.3",
+    "@types/node": "catalog:",
     "eslint": "catalog:",
     "prettier": "catalog:",
     "typescript": "catalog:"

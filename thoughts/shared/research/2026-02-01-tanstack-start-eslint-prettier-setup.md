@@ -17,7 +17,7 @@ sources_count: 18
 
 ## Research Question
 
-How to correctly configure the @repo/eslint-config and @repo/prettier-config internal packages for TanStack Start, specifically:
+How to correctly configure the @polychromos/eslint-config and @polychromos/prettier-config internal packages for TanStack Start, specifically:
 1. Stop linting auto-generated files (routeTree.gen.ts)
 2. Remove Next.js-specific configuration
 3. Add TanStack Router ESLint plugin
@@ -52,9 +52,9 @@ internal/
 ### Current `apps/www/eslint.config.js`
 
 ```javascript
-import baseConfig, { restrictEnvAccess } from "@repo/eslint-config/base";
-import nextjsConfig from "@repo/eslint-config/nextjs";  // ❌ Remove
-import reactConfig from "@repo/eslint-config/react";
+import baseConfig, { restrictEnvAccess } from "@polychromos/eslint-config/base";
+import nextjsConfig from "@polychromos/eslint-config/nextjs";  // ❌ Remove
+import reactConfig from "@polychromos/eslint-config/react";
 
 export default [
   {
@@ -125,7 +125,7 @@ Remove Next.js plugin, add TanStack Router plugin:
 
 ```json
 {
-  "name": "@repo/eslint-config",
+  "name": "@polychromos/eslint-config",
   "exports": {
     "./base": "./base.js",
     "./react": "./react.js",
@@ -183,9 +183,9 @@ export default tseslint.config(
 ### 5. Update `apps/www/eslint.config.js`
 
 ```javascript
-import baseConfig, { restrictEnvAccess } from "@repo/eslint-config/base";
-import reactConfig from "@repo/eslint-config/react";
-import tanstackConfig from "@repo/eslint-config/tanstack";
+import baseConfig, { restrictEnvAccess } from "@polychromos/eslint-config/base";
+import reactConfig from "@polychromos/eslint-config/react";
+import tanstackConfig from "@polychromos/eslint-config/tanstack";
 
 /** @type {import('typescript-eslint').Config} */
 export default [

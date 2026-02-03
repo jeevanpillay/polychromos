@@ -58,7 +58,7 @@ Install `@t3-oss/env-core` and `zod` packages in the www app.
 #### 1. Install packages
 **Command**: Run in project root
 ```bash
-pnpm --filter @repo/www add @t3-oss/env-core zod
+pnpm --filter @polychromos/www add @t3-oss/env-core zod
 ```
 
 ### Success Criteria:

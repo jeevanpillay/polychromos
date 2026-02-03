@@ -42,7 +42,7 @@ After implementation:
 
 ### Verification
 - Run `pnpm --filter @polychromos/cli test` - all CLI integration tests pass
-- Run `pnpm --filter @repo/polychromos-app test:convex` - all Convex tests pass
+- Run `pnpm --filter @polychromos/polychromos-app test:convex` - all Convex tests pass
 - Run `pnpm test` - all tests pass across monorepo
 
 ## What We're NOT Doing
@@ -1417,8 +1417,8 @@ describe('events mutations', () => {
 ### Success Criteria
 
 #### Automated Verification:
-- [x] All Convex tests pass: `pnpm --filter @repo/polychromos-app test:convex`
-- [x] TypeScript compiles: `pnpm --filter @repo/polychromos-app typecheck`
+- [x] All Convex tests pass: `pnpm --filter @polychromos/polychromos-app test:convex`
+- [x] TypeScript compiles: `pnpm --filter @polychromos/polychromos-app typecheck`
 - [x] Linting passes: `pnpm lint`
 
 #### Manual Verification:

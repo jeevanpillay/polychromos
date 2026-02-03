@@ -529,7 +529,7 @@ jobs:
           curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to /usr/local/bin
       - run: pnpm install
       - name: E2E Tests
-        run: pnpm --filter @repo/polychromos test:e2e
+        run: pnpm --filter @polychromos/polychromos test:e2e
         timeout-minutes: 10
 ```
 
@@ -540,7 +540,7 @@ jobs:
 - [ ] `pnpm test` runs from root and discovers all test files
 - [ ] `pnpm --filter @polychromos/cli test` runs CLI tests
 - [ ] `pnpm --filter @polychromos/types test` runs types tests
-- [ ] `pnpm --filter @repo/polychromos test` runs app tests
+- [ ] `pnpm --filter @polychromos/polychromos test` runs app tests
 - [ ] `just run-local-backend` starts Convex locally
 - [ ] `just reset-local-backend` clears all data
 - [ ] Backend harness starts/stops cleanly

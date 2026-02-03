@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 
-import { Button } from "@repo/ui/components/ui/button";
+import { Button } from "@polychromos/ui/components/ui/button";
 
 export function CustomNotFoundComponent() {
   return (

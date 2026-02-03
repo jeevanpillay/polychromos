@@ -29,12 +29,14 @@ test.describe('CLI to Web App Sync', () => {
     await page.goto('/');
     await page.waitForSelector('[data-testid="authenticated"]', { timeout: 30000 });
 
-    token = await page.evaluate(async () => {
+    const fetchedToken = await page.evaluate(async () => {
       // Wait for Clerk to initialize
       await new Promise((r) => setTimeout(r, 1000));
       // @ts-expect-error Clerk is globally available
       return await window.Clerk.session.getToken({ template: 'convex' });
     });
+    if (!fetchedToken) throw new Error('Failed to get Clerk token');
+    token = fetchedToken;
 
     await page.close();
     convexClient.setAuth(token);

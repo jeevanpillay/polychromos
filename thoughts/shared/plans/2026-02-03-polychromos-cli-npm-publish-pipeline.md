@@ -117,8 +117,8 @@ Rename the CLI package from `@polychromos/cli` to `polychromos` and add required
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@repo/eslint-config": "workspace:*",
-    "@repo/typescript-config": "workspace:*",
+    "@polychromos/eslint-config": "workspace:*",
+    "@polychromos/typescript-config": "workspace:*",
     "@types/node": "catalog:",
     "@vitest/coverage-v8": "^3.0.0",
     "eslint": "catalog:",
@@ -127,7 +127,7 @@ Rename the CLI package from `@polychromos/cli` to `polychromos` and add required
     "typescript": "catalog:",
     "vitest": "^3.0.0"
   },
-  "prettier": "@repo/prettier-config"
+  "prettier": "@polychromos/prettier-config"
 }
 ```
 
@@ -140,7 +140,7 @@ Run: `grep -r "@polychromos/cli" packages/`
 **File**: `package.json`
 **Changes**: Update any filters that reference `@polychromos/cli` to use `polychromos`
 
-Check current filters and update if needed (currently uses `@repo/polychromos-app` which is different).
+Check current filters and update if needed (currently uses `@polychromos/polychromos-app` which is different).
 
 ### Success Criteria:
 
@@ -189,13 +189,13 @@ pnpm add -Dw @changesets/cli @changesets/changelog-github
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
   "ignore": [
-    "@repo/www",
-    "@repo/polychromos-app",
-    "@repo/polychromos-www",
-    "@repo/ui",
-    "@repo/eslint-config",
-    "@repo/prettier-config",
-    "@repo/typescript-config"
+    "@polychromos/www",
+    "@polychromos/polychromos-app",
+    "@polychromos/polychromos-www",
+    "@polychromos/ui",
+    "@polychromos/eslint-config",
+    "@polychromos/prettier-config",
+    "@polychromos/typescript-config"
   ]
 }
 ```

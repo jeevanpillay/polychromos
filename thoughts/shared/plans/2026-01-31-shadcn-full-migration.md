@@ -172,11 +172,11 @@ Fix components.json configuration to match actual Tailwind v4 setup and update v
     "prefix": ""
   },
   "aliases": {
-    "components": "@repo/ui/components",
-    "ui": "@repo/ui/components/ui",
-    "utils": "@repo/ui/lib/utils",
-    "lib": "@repo/ui/lib",
-    "hooks": "@repo/ui/hooks"
+    "components": "@polychromos/ui/components",
+    "ui": "@polychromos/ui/components/ui",
+    "utils": "@polychromos/ui/lib/utils",
+    "lib": "@polychromos/ui/lib",
+    "hooks": "@polychromos/ui/hooks"
   }
 }
 ```

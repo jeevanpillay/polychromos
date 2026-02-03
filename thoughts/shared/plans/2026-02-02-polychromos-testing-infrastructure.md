@@ -10,12 +10,12 @@ Set up comprehensive testing infrastructure for the Polychromos packages using V
 - **Three packages need testing:**
   - `packages/polychromos` (@polychromos/cli) - CLI with 7 commands, version-manager, config
   - `packages/polychromos-types` (@polychromos/types) - Zod validators, schema, types
-  - `apps/polychromos-app` (@repo/polychromos-app) - Convex backend with workspaces/events
+  - `apps/polychromos-app` (@polychromos/polychromos-app) - Convex backend with workspaces/events
 - **Monorepo setup:** pnpm + Turborepo, Node 22+
 - **Convex backend:** Already configured in `apps/polychromos-app/convex/`
 
 ### Key Discoveries:
-- Package naming: `@polychromos/cli`, `@polychromos/types`, `@repo/polychromos-app`
+- Package naming: `@polychromos/cli`, `@polychromos/types`, `@polychromos/polychromos-app`
 - CLI uses `commander`, `rfc6902` for JSON patches, `chokidar` for file watching
 - Types package uses Zod v4 for validation
 - VersionManager uses file system operations that need mocking with memfs
@@ -26,7 +26,7 @@ After this plan is complete:
 1. `pnpm test` runs all tests across the monorepo via Vitest workspace
 2. `pnpm test --filter @polychromos/cli` runs CLI package tests with memfs mocking
 3. `pnpm test --filter @polychromos/types` runs validator tests
-4. `pnpm test --filter @repo/polychromos-app` runs Convex function tests with convex-test
+4. `pnpm test --filter @polychromos/polychromos-app` runs Convex function tests with convex-test
 5. CI/CD pipeline runs tests on every PR and push to main
 6. Local backend can be started for E2E testing via Justfile
 
@@ -299,7 +299,7 @@ export default defineConfig({
 
 ```json
 {
-  "extends": "@repo/typescript-config/base.json",
+  "extends": "@polychromos/typescript-config/base.json",
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": "src",
@@ -620,9 +620,9 @@ convex_local_backend.sqlite3
 ### Success Criteria:
 
 #### Automated Verification:
-- [x] `pnpm --filter @repo/polychromos-app install` completes
-- [x] `pnpm --filter @repo/polychromos-app test` runs (passes with no tests found)
-- [x] `pnpm --filter @repo/polychromos-app typecheck` passes
+- [x] `pnpm --filter @polychromos/polychromos-app install` completes
+- [x] `pnpm --filter @polychromos/polychromos-app test` runs (passes with no tests found)
+- [x] `pnpm --filter @polychromos/polychromos-app typecheck` passes
 - [x] `just --version` returns version (Just 1.46.0 installed via Homebrew)
 
 #### Manual Verification:
@@ -714,7 +714,7 @@ jobs:
         run: pnpm build
 
       - name: Run E2E Tests
-        run: pnpm --filter @repo/polychromos-app test:e2e
+        run: pnpm --filter @polychromos/polychromos-app test:e2e
         timeout-minutes: 10
 ```
 

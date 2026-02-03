@@ -23,7 +23,7 @@ Upgrade the waitlist form in `apps/polychromos-www/src/routes/index.tsx` to use 
 - Basic email input with no validation
 - No form submission handler
 - No server function connection
-- Uses `@repo/ui` Input and Button components
+- Uses `@polychromos/ui` Input and Button components
 
 **Reference Implementation** (`apps/www`):
 - `apps/www/src/functions/contact.ts` - Server function pattern with Zod validation
@@ -197,7 +197,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { z } from "zod";
 
-import { Button } from "@repo/ui/components/ui/button";
+import { Button } from "@polychromos/ui/components/ui/button";
 import {
   Form,
   FormControl,
@@ -205,8 +205,8 @@ import {
   FormItem,
   FormMessage,
   useForm,
-} from "@repo/ui/components/ui/form";
-import { Input } from "@repo/ui/components/ui/input";
+} from "@polychromos/ui/components/ui/form";
+import { Input } from "@polychromos/ui/components/ui/input";
 
 import { joinWaitlist, waitlistSchema } from "~/functions/waitlist";
 

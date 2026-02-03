@@ -25,7 +25,7 @@ How to extract all Polychromos-related code from the current monorepo into a new
 
 ## Summary
 
-The extraction requires using `git-filter-repo` to extract 4 directories (2 apps + 2 packages) while preserving commit history. The polychromos branch has 29 commits ahead of main that contain all polychromos work. However, there are **shared dependencies** (`@repo/ui`, internal configs) that need decisions: either copy them or replace with npm alternatives.
+The extraction requires using `git-filter-repo` to extract 4 directories (2 apps + 2 packages) while preserving commit history. The polychromos branch has 29 commits ahead of main that contain all polychromos work. However, there are **shared dependencies** (`@polychromos/ui`, internal configs) that need decisions: either copy them or replace with npm alternatives.
 
 ## Current Repository Structure
 
@@ -33,8 +33,8 @@ The extraction requires using `git-filter-repo` to extract 4 directories (2 apps
 
 | Path | Package Name | Type | Publishable |
 |------|--------------|------|-------------|
-| `apps/polychromos-app/` | `@repo/polychromos-app` | TanStack Start + Convex + Clerk app | No (private) |
-| `apps/polychromos-www/` | `@repo/polychromos-www` | Marketing website | No (private) |
+| `apps/polychromos-app/` | `@polychromos/polychromos-app` | TanStack Start + Convex + Clerk app | No (private) |
+| `apps/polychromos-www/` | `@polychromos/polychromos-www` | Marketing website | No (private) |
 | `packages/polychromos/` | `polychromos` | CLI tool | Yes (npm) |
 | `packages/polychromos-types/` | `@polychromos/types` | Shared types | Yes (npm) |
 
@@ -42,17 +42,17 @@ The extraction requires using `git-filter-repo` to extract 4 directories (2 apps
 
 | Path | Package Name | Description |
 |------|--------------|-------------|
-| `apps/www/` | `@repo/www` | Jeevan Pillay's personal portfolio |
-| `packages/tools/canvas-kit/` | `@repo/canvas-kit` | Personal canvas utilities |
+| `apps/www/` | `@polychromos/www` | Jeevan Pillay's personal portfolio |
+| `packages/tools/canvas-kit/` | `@polychromos/canvas-kit` | Personal canvas utilities |
 
 ### Shared Infrastructure (Decision Required)
 
 | Path | Package Name | Used By |
 |------|--------------|---------|
-| `packages/ui/` | `@repo/ui` | All apps (www, polychromos-app, polychromos-www) |
-| `internal/eslint/` | `@repo/eslint-config` | All packages |
-| `internal/prettier/` | `@repo/prettier-config` | All packages |
-| `internal/typescript/` | `@repo/typescript-config` | All packages |
+| `packages/ui/` | `@polychromos/ui` | All apps (www, polychromos-app, polychromos-www) |
+| `internal/eslint/` | `@polychromos/eslint-config` | All packages |
+| `internal/prettier/` | `@polychromos/prettier-config` | All packages |
+| `internal/typescript/` | `@polychromos/typescript-config` | All packages |
 
 ## Git History Analysis
 
@@ -111,10 +111,10 @@ git filter-repo \
 - Empty commits are automatically removed
 
 **Post-extraction work required:**
-1. Replace `@repo/ui` dependency with copied UI components or shadcn/ui directly
-2. Replace `@repo/eslint-config` with standalone ESLint config
-3. Replace `@repo/prettier-config` with standalone Prettier config
-4. Replace `@repo/typescript-config` with standalone tsconfig files
+1. Replace `@polychromos/ui` dependency with copied UI components or shadcn/ui directly
+2. Replace `@polychromos/eslint-config` with standalone ESLint config
+3. Replace `@polychromos/prettier-config` with standalone Prettier config
+4. Replace `@polychromos/typescript-config` with standalone tsconfig files
 5. Update `pnpm-workspace.yaml` to new structure
 6. Update root `package.json`
 7. Update `.changeset/config.json` (change repo reference)
@@ -147,7 +147,7 @@ git filter-repo \
 **Result:**
 - More complete extraction
 - Less post-extraction work
-- But includes `@repo/ui` which has many components not needed by polychromos
+- But includes `@polychromos/ui` which has many components not needed by polychromos
 
 **Post-extraction work required:**
 1. Remove unused UI components
@@ -191,16 +191,16 @@ These are npm packages, no action required:
 
 | Dependency | Used In | Options |
 |------------|---------|---------|
-| `@repo/ui` | polychromos-app, polychromos-www | Copy needed components OR publish to npm OR use shadcn directly |
-| `@repo/eslint-config` | All packages | Copy OR create new config |
-| `@repo/prettier-config` | All packages | Copy OR create new config |
-| `@repo/typescript-config` | All packages | Copy OR create new config |
+| `@polychromos/ui` | polychromos-app, polychromos-www | Copy needed components OR publish to npm OR use shadcn directly |
+| `@polychromos/eslint-config` | All packages | Copy OR create new config |
+| `@polychromos/prettier-config` | All packages | Copy OR create new config |
+| `@polychromos/typescript-config` | All packages | Copy OR create new config |
 | `@polychromos/types` | polychromos, polychromos-app | Already included in extraction |
 
 ### UI Components Used by Polychromos
 
 From `apps/polychromos-app/`:
-- Basic components from `@repo/ui` (minimal usage based on codebase)
+- Basic components from `@polychromos/ui` (minimal usage based on codebase)
 
 From `apps/polychromos-www/`:
 - Minimal UI usage (mostly custom components)
@@ -224,7 +224,7 @@ Current `.changeset/config.json`:
 {
   "changelog": ["@changesets/changelog-github", { "repo": "jeevanpillaystudios/x" }],
   "fixed": [["polychromos", "@polychromos/types"]],
-  "ignore": ["@repo/www", "@repo/polychromos-app", "@repo/polychromos-www", ...]
+  "ignore": ["@polychromos/www", "@polychromos/polychromos-app", "@polychromos/polychromos-www", ...]
 }
 ```
 
@@ -287,7 +287,7 @@ git log --oneline | head -20
 
 3. **Update `.changeset/config.json`:**
    - Change repo to new repository name
-   - Remove @repo/www, @repo/canvas-kit, @repo/tools from ignore
+   - Remove @polychromos/www, @polychromos/canvas-kit, @polychromos/tools from ignore
 
 4. **Update `turbo.json`:**
    - Remove www-related environment variables if any
@@ -354,7 +354,7 @@ git commit -m "Initial commit: Extract polychromos from monorepo"
 
 1. **New repository name?** Options: `polychromos`, `polychromos-studio`, `polychromos-design`
 2. **Organization?** `jeevanpillaystudios` or new org like `polychromos-dev`?
-3. **What to do with `@repo/ui`?**
+3. **What to do with `@polychromos/ui`?**
    - Keep it (requires cleanup)
    - Replace with direct shadcn/ui
    - Publish to npm as `@polychromos/ui`
@@ -365,7 +365,7 @@ git commit -m "Initial commit: Extract polychromos from monorepo"
 - `pnpm-workspace.yaml:1-5` - Workspace packages configuration
 - `package.json:9-35` - Scripts including polychromos and www
 - `.changeset/config.json:1-21` - Changesets configuration with repo reference
-- `apps/polychromos-app/package.json` - App dependencies including `@repo/ui`
+- `apps/polychromos-app/package.json` - App dependencies including `@polychromos/ui`
 - `packages/polychromos/package.json` - CLI dependencies
 
 ## Related Research

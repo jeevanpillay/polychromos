@@ -313,7 +313,7 @@ pendingComponent: () => <LoadingComponent />,
 **App CSS** (`styles/app.css`):
 ```css
 @import "tailwindcss";
-@import "@repo/ui/globals.css";
+@import "@polychromos/ui/globals.css";
 
 .dark { /* Color variable overrides */ }
 ```

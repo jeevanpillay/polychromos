@@ -54,7 +54,7 @@ on:
 
 **Jobs:**
 1. `unit-tests` - Runs `pnpm test:ci` (vitest)
-2. `e2e-tests` - Runs `pnpm --filter @repo/polychromos-app test:e2e`
+2. `e2e-tests` - Runs `pnpm --filter @polychromos/polychromos-app test:e2e`
 
 **Issues:**
 - E2E tests run on EVERY PR, even if no changes to polychromos-app
@@ -225,7 +225,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
       - uses: ./.github/actions/playwright-setup
-      - run: pnpm --filter @repo/polychromos-app test:e2e:playwright
+      - run: pnpm --filter @polychromos/polychromos-app test:e2e:playwright
 
   e2e-cli:
     runs-on: ubuntu-latest
@@ -422,10 +422,10 @@ PR/Push to main
 │   ├── unit-tests
 │   │   └── pnpm test:ci (vitest workspace)
 │   └── e2e-tests
-│       └── pnpm --filter @repo/polychromos-app test:e2e
+│       └── pnpm --filter @polychromos/polychromos-app test:e2e
 ├── e2e.yml (path-filtered)
 │   └── e2e
-│       └── pnpm --filter @repo/polychromos-app test:e2e:playwright
+│       └── pnpm --filter @polychromos/polychromos-app test:e2e:playwright
 └── e2e-cli.yml (path-filtered)
     └── cli-e2e
         ├── Start Convex backend

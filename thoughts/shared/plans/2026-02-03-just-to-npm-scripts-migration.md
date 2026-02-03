@@ -47,7 +47,7 @@ After this plan is complete:
 5. `pnpm test:e2e` works exactly as before
 
 ### Verification
-- Run `pnpm --filter @repo/polychromos-app test:e2e` locally
+- Run `pnpm --filter @polychromos/polychromos-app test:e2e` locally
 - CI E2E tests pass without `just` installation step
 - No references to `just` remain in codebase
 
@@ -194,7 +194,7 @@ backendProcess = spawn('./scripts/local-backend.sh', ['run'], {
 
 #### Automated Verification:
 - [ ] No references to `just` in backendHarness.js: `grep -c "just" apps/polychromos-app/test/backendHarness.js` returns 0
-- [ ] TypeScript/lint passes: `pnpm --filter @repo/polychromos-app lint`
+- [ ] TypeScript/lint passes: `pnpm --filter @polychromos/polychromos-app lint`
 
 #### Manual Verification:
 - [ ] Backend harness starts correctly when running tests manually
@@ -229,7 +229,7 @@ Update `package.json` to use the shell script instead of `just` for the test:e2e
 - [ ] Package.json is valid JSON: `node -e "require('./apps/polychromos-app/package.json')"`
 
 #### Manual Verification:
-- [ ] E2E tests run successfully: `pnpm --filter @repo/polychromos-app test:e2e`
+- [ ] E2E tests run successfully: `pnpm --filter @polychromos/polychromos-app test:e2e`
 
 **Implementation Note**: This is the critical phase. After completing automated verification, run the full E2E test suite locally to confirm everything works.
 
@@ -288,7 +288,7 @@ Delete this file entirely.
 - [ ] Lint passes: `pnpm lint`
 
 #### Manual Verification:
-- [ ] Local E2E tests still work: `pnpm --filter @repo/polychromos-app test:e2e`
+- [ ] Local E2E tests still work: `pnpm --filter @polychromos/polychromos-app test:e2e`
 - [ ] CI passes on the final PR
 
 **Implementation Note**: This is the final cleanup phase. After all verification passes, the migration is complete.
@@ -309,7 +309,7 @@ No new unit tests needed - existing E2E tests validate the backend management.
 2. In another terminal, run `./scripts/local-backend.sh convex --help`
 3. Stop backend with Ctrl+C
 4. Run `./scripts/local-backend.sh reset` to clean up
-5. Run `pnpm --filter @repo/polychromos-app test:e2e` for full E2E test
+5. Run `pnpm --filter @polychromos/polychromos-app test:e2e` for full E2E test
 
 ## Performance Considerations
 

@@ -746,14 +746,14 @@ jobs:
         run: pnpm install
 
       - name: Install Playwright
-        run: pnpm --filter @repo/polychromos exec playwright install --with-deps chromium
+        run: pnpm --filter @polychromos/polychromos exec playwright install --with-deps chromium
 
       - name: E2E Tests (Local Backend)
-        run: pnpm --filter @repo/polychromos test:e2e
+        run: pnpm --filter @polychromos/polychromos test:e2e
         timeout-minutes: 10
 
       - name: E2E Tests (Browser)
-        run: pnpm --filter @repo/polychromos test:e2e:browser
+        run: pnpm --filter @polychromos/polychromos test:e2e:browser
         timeout-minutes: 10
 
       - name: Upload Playwright Report
@@ -769,8 +769,8 @@ jobs:
 
 ## Verification Checklist
 
-- [ ] `pnpm --filter @repo/polychromos test:e2e` passes (local backend tests)
-- [ ] `pnpm --filter @repo/polychromos test:e2e:browser` passes (Playwright)
+- [ ] `pnpm --filter @polychromos/polychromos test:e2e` passes (local backend tests)
+- [ ] `pnpm --filter @polychromos/polychromos test:e2e:browser` passes (Playwright)
 - [ ] CLI init creates valid design.json
 - [ ] CLI dev syncs to Convex correctly
 - [ ] Version conflicts are detected and reported

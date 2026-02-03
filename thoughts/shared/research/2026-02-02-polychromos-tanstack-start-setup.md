@@ -127,7 +127,7 @@ export default defineConfig({
 
 ```json
 {
-  "extends": "@repo/typescript-config/base.json",
+  "extends": "@polychromos/typescript-config/base.json",
   "compilerOptions": {
     "lib": ["ES2022", "dom", "dom.iterable"],
     "jsx": "react-jsx",
@@ -159,7 +159,7 @@ export default defineConfig({
   "dependencies": {
     "@tanstack/react-router": "catalog:",
     "@tanstack/react-start": "catalog:",
-    "@repo/ui": "workspace:*",
+    "@polychromos/ui": "workspace:*",
     "@t3-oss/env-core": "^0.13.10",
     "nitro": "catalog:",
     "react": "catalog:react19",
@@ -195,9 +195,9 @@ export default defineConfig({
 ```json
 {
   "devDependencies": {
-    "@repo/eslint-config": "workspace:*",
-    "@repo/prettier-config": "workspace:*",
-    "@repo/typescript-config": "workspace:*",
+    "@polychromos/eslint-config": "workspace:*",
+    "@polychromos/prettier-config": "workspace:*",
+    "@polychromos/typescript-config": "workspace:*",
     "@tailwindcss/vite": "catalog:",
     "@tanstack/router-devtools": "catalog:",
     "@tanstack/router-plugin": "catalog:",
@@ -440,7 +440,7 @@ function RootDocument({ children }: Readonly<{ children: React.ReactNode }>) {
 
 ```typescript
 import { Link } from "@tanstack/react-router";
-import { Button } from "@repo/ui/components/ui/button";
+import { Button } from "@polychromos/ui/components/ui/button";
 
 export function CustomNotFoundComponent() {
   return (
@@ -493,7 +493,7 @@ The `$.tsx` filename creates a catch-all route that matches any unmatched path.
 
 ```typescript
 import { ErrorComponentProps, useRouter } from "@tanstack/react-router";
-import { Button } from "@repo/ui/components/ui/button";
+import { Button } from "@polychromos/ui/components/ui/button";
 import { env } from "~/env";
 
 export function CustomErrorComponent({ error }: ErrorComponentProps) {
@@ -756,12 +756,12 @@ export function DesignList() {
 #### Main Stylesheet (`src/styles/app.css`)
 ```css
 @import "tailwindcss";
-@import "@repo/ui/globals.css";
+@import "@polychromos/ui/globals.css";
 
 /* Polychromos-specific overrides if needed */
 ```
 
-The `@repo/ui/globals.css` provides:
+The `@polychromos/ui/globals.css` provides:
 - Tailwind v4 configuration
 - Design tokens (colors, radii, fonts)
 - Dark mode support
@@ -880,4 +880,4 @@ The prior research validates the Convex approach with:
 
 ### Codebase References
 - Existing `apps/www/` implementation
-- `@repo/ui` package exports and structure
+- `@polychromos/ui` package exports and structure

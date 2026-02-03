@@ -122,7 +122,7 @@ Add environment loading to CLI E2E tests:
 ### Success Criteria
 
 #### Automated Verification:
-- [x] `pnpm --filter @repo/polychromos-app test:e2e:setup` loads env correctly
+- [x] `pnpm --filter @polychromos/polychromos-app test:e2e:setup` loads env correctly
 - [x] Environment variable `VITE_CONVEX_URL` is `http://127.0.0.1:3210` during tests
 - [x] `E2E_CLERK_USER_EMAIL` and `E2E_CLERK_USER_PASSWORD` are available
 
@@ -471,9 +471,9 @@ Add new unified test commands:
 ### Success Criteria
 
 #### Automated Verification:
-- [x] `pnpm --filter @repo/polychromos-app test:e2e:all` runs all tests successfully
-- [x] `pnpm --filter @repo/polychromos-app test:e2e:browser` runs only browser tests
-- [x] `pnpm --filter @repo/polychromos-app test:e2e:cli` runs only CLI tests
+- [x] `pnpm --filter @polychromos/polychromos-app test:e2e:all` runs all tests successfully
+- [x] `pnpm --filter @polychromos/polychromos-app test:e2e:browser` runs only browser tests
+- [x] `pnpm --filter @polychromos/polychromos-app test:e2e:cli` runs only CLI tests
 - [x] Tests exit with code 0 on success, non-zero on failure
 
 #### Manual Verification:
@@ -685,7 +685,7 @@ export default defineConfig({
 ### Success Criteria
 
 #### Automated Verification:
-- [x] `pnpm --filter @repo/polychromos-app test:e2e:all` works locally
+- [x] `pnpm --filter @polychromos/polychromos-app test:e2e:all` works locally
 - [x] CI workflow still passes
 
 #### Manual Verification:
@@ -725,16 +725,16 @@ vercel env pull .vercel/.env.development.local
 
 ```bash
 # Run all E2E tests (browser + CLI + cross-platform)
-pnpm --filter @repo/polychromos-app test:e2e:all
+pnpm --filter @polychromos/polychromos-app test:e2e:all
 
 # Run only browser tests
-pnpm --filter @repo/polychromos-app test:e2e:browser
+pnpm --filter @polychromos/polychromos-app test:e2e:browser
 
 # Run only CLI tests
-pnpm --filter @repo/polychromos-app test:e2e:cli
+pnpm --filter @polychromos/polychromos-app test:e2e:cli
 
 # Run only cross-platform tests
-pnpm --filter @repo/polychromos-app test:e2e:cross-platform
+pnpm --filter @polychromos/polychromos-app test:e2e:cross-platform
 ```
 
 ### Development Mode
@@ -742,7 +742,7 @@ pnpm --filter @repo/polychromos-app test:e2e:cross-platform
 If you're actively developing and have `pnpm dev` running:
 ```bash
 # Skip server startup (reuses existing servers)
-pnpm --filter @repo/polychromos-app test:e2e:all
+pnpm --filter @polychromos/polychromos-app test:e2e:all
 ```
 
 The test runner automatically detects and reuses running servers.
@@ -771,12 +771,12 @@ The test runner automatically detects and reuses running servers.
 
 1. **Local fresh start**:
    - Stop any running dev servers
-   - Run `pnpm --filter @repo/polychromos-app test:e2e:all`
+   - Run `pnpm --filter @polychromos/polychromos-app test:e2e:all`
    - Verify all tests pass
 
 2. **Local with existing servers**:
    - Start `pnpm dev` in one terminal
-   - Run `pnpm --filter @repo/polychromos-app test:e2e:all` in another
+   - Run `pnpm --filter @polychromos/polychromos-app test:e2e:all` in another
    - Verify tests reuse existing servers
 
 3. **CI verification**:

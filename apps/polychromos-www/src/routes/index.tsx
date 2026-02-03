@@ -3,7 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
 import type { z } from "zod";
 
-import { Button } from "@repo/ui/components/ui/button";
+import { Button } from "@polychromos/ui/components/ui/button";
 import {
   Form,
   FormControl,
@@ -11,8 +11,8 @@ import {
   FormItem,
   FormMessage,
   useForm,
-} from "@repo/ui/components/ui/form";
-import { Input } from "@repo/ui/components/ui/input";
+} from "@polychromos/ui/components/ui/form";
+import { Input } from "@polychromos/ui/components/ui/input";
 
 import { joinWaitlist, waitlistSchema } from "~/functions/waitlist";
 

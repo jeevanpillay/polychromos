@@ -2,7 +2,7 @@
 
 ## Overview
 
-Create a code-first image generation toolkit (`@repo/canvas-kit`) that allows developers to define canvas dimensions programmatically, render React/HTML/CSS content inside, and export to WebP or SVG formats. The first use case is a Twitter banner generator featuring the layered "I" effect from the homepage.
+Create a code-first image generation toolkit (`@polychromos/canvas-kit`) that allows developers to define canvas dimensions programmatically, render React/HTML/CSS content inside, and export to WebP or SVG formats. The first use case is a Twitter banner generator featuring the layered "I" effect from the homepage.
 
 ## Current State Analysis
 
@@ -14,7 +14,7 @@ Create a code-first image generation toolkit (`@repo/canvas-kit`) that allows de
 
 ### Key Discoveries:
 - Package exports use explicit path mapping (`./components/*`, `./lib/*`)
-- TypeScript extends `@repo/typescript-config/react-library.json`
+- TypeScript extends `@polychromos/typescript-config/react-library.json`
 - React 19 is used across the monorepo
 - `html-to-image` is not installed - needs to be added
 
@@ -94,7 +94,7 @@ packages/tools/canvas-kit/
 
 ```json
 {
-  "name": "@repo/canvas-kit",
+  "name": "@polychromos/canvas-kit",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -111,9 +111,9 @@ packages/tools/canvas-kit/
     "format": "prettier --check . --ignore-path ../../../.gitignore"
   },
   "devDependencies": {
-    "@repo/eslint-config": "workspace:*",
-    "@repo/prettier-config": "workspace:*",
-    "@repo/typescript-config": "workspace:*",
+    "@polychromos/eslint-config": "workspace:*",
+    "@polychromos/prettier-config": "workspace:*",
+    "@polychromos/typescript-config": "workspace:*",
     "@types/react": "catalog:react19",
     "@types/react-dom": "catalog:react19",
     "eslint": "catalog:",
@@ -124,7 +124,7 @@ packages/tools/canvas-kit/
     "react": "catalog:react19",
     "react-dom": "catalog:react19"
   },
-  "prettier": "@repo/prettier-config"
+  "prettier": "@polychromos/prettier-config"
 }
 ```
 
@@ -133,12 +133,12 @@ packages/tools/canvas-kit/
 
 ```json
 {
-  "extends": "@repo/typescript-config/react-library.json",
+  "extends": "@polychromos/typescript-config/react-library.json",
   "compilerOptions": {
     "outDir": "dist",
     "baseUrl": ".",
     "paths": {
-      "@repo/canvas-kit/*": ["./src/*"]
+      "@polychromos/canvas-kit/*": ["./src/*"]
     }
   },
   "include": ["src"],
@@ -153,7 +153,7 @@ packages/tools/canvas-kit/
 - [x] `pnpm typecheck` passes for the new package
 
 #### Manual Verification:
-- [ ] Package appears in `node_modules/@repo/canvas-kit`
+- [ ] Package appears in `node_modules/@polychromos/canvas-kit`
 
 **Implementation Note**: After completing this phase, run `pnpm install` to bootstrap the new package before proceeding.
 
@@ -520,12 +520,12 @@ Create the Twitter banner generator route with the layered "I" effect as a demon
 
 #### 1. Add canvas-kit Dependency to www
 **File**: `apps/www/package.json`
-**Changes**: Add `@repo/canvas-kit` to dependencies
+**Changes**: Add `@polychromos/canvas-kit` to dependencies
 
 ```json
 {
   "dependencies": {
-    "@repo/canvas-kit": "workspace:*",
+    "@polychromos/canvas-kit": "workspace:*",
     // ... existing deps
   }
 }
@@ -589,7 +589,7 @@ import {
   ImageCanvas,
   ExportControls,
   type ImageCanvasRef,
-} from "@repo/canvas-kit/components/image-canvas";
+} from "@polychromos/canvas-kit/components/image-canvas";
 import { LayeredI } from "~/components/layered-i";
 
 export const Route = createFileRoute("/tools/twitter-banner")({
@@ -674,8 +674,8 @@ The import for `ExportControls` needs adjustment since it's in a separate file. 
 import {
   ImageCanvas,
   type ImageCanvasRef,
-} from "@repo/canvas-kit/components/image-canvas";
-import { ExportControls } from "@repo/canvas-kit/components/export-controls";
+} from "@polychromos/canvas-kit/components/image-canvas";
+import { ExportControls } from "@polychromos/canvas-kit/components/export-controls";
 ```
 
 ### Success Criteria:

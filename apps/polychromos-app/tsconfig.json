@@ -1,5 +1,5 @@
 {
-  "extends": "@repo/typescript-config/base.json",
+  "extends": "@polychromos/typescript-config/base.json",
   "compilerOptions": {
     "lib": ["ES2022", "dom", "dom.iterable"],
     "jsx": "react-jsx",
@@ -9,9 +9,9 @@
     },
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "types": ["vite/client"],
+    "types": ["vite/client", "node", "@testing-library/jest-dom"],
     "checkJs": false
   },
-  "include": ["src", "vite.config.ts", "convex/**/*.ts", "e2e/**/*.ts", "playwright.config.ts"],
+  "include": ["src", "vite.config.ts", "convex/**/*.ts", "e2e/**/*.ts", "playwright.config.ts", "test/**/*.ts"],
   "exclude": ["node_modules", "dist", ".output", "convex/_generated"]
 }

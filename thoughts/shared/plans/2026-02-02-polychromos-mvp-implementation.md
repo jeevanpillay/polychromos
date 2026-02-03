@@ -58,9 +58,9 @@ Implement **Polychromos V1** - a code-driven design platform where users edit JS
 #### From Monorepo Pattern
 - **Workspace**: Auto-discovers `apps/*` and `packages/*`
 - **Catalog dependencies**: Centralized versions in `pnpm-workspace.yaml`
-- **App naming**: `@repo/<app-name>` for internal apps
+- **App naming**: `@polychromos/<app-name>` for internal apps
 - **CLI publishing**: Use scoped namespace `@polychromos/*` for published packages
-- **Config inheritance**: Apps extend internal `@repo/eslint-config`, `@repo/typescript-config`, `@repo/prettier-config`
+- **Config inheritance**: Apps extend internal `@polychromos/eslint-config`, `@polychromos/typescript-config`, `@polychromos/prettier-config`
 
 ---
 
@@ -205,7 +205,7 @@ Create the basic directory structure, configure build tools, and define the JSON
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@repo/typescript-config": "workspace:*",
+    "@polychromos/typescript-config": "workspace:*",
     "typescript": "catalog:"
   }
 }
@@ -214,7 +214,7 @@ Create the basic directory structure, configure build tools, and define the JSON
 `packages/polychromos-types/tsconfig.json`:
 ```json
 {
-  "extends": "@repo/typescript-config/base.json",
+  "extends": "@polychromos/typescript-config/base.json",
   "compilerOptions": {
     "lib": ["ES2022"],
     "outDir": "dist",
@@ -490,7 +490,7 @@ apps/polychromos/
 `apps/polychromos/package.json`:
 ```json
 {
-  "name": "@repo/polychromos",
+  "name": "@polychromos/polychromos",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -509,7 +509,7 @@ apps/polychromos/
     "@fontsource/geist-sans": "^5.1.1",
     "@paper-design/shaders-react": "^0.0.71",
     "@polychromos/types": "workspace:*",
-    "@repo/ui": "workspace:*",
+    "@polychromos/ui": "workspace:*",
     "@t3-oss/env-core": "^0.13.10",
     "@tanstack/react-query": "^5.0.0",
     "@tanstack/react-router": "catalog:",
@@ -522,9 +522,9 @@ apps/polychromos/
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@repo/eslint-config": "workspace:*",
-    "@repo/prettier-config": "workspace:*",
-    "@repo/typescript-config": "workspace:*",
+    "@polychromos/eslint-config": "workspace:*",
+    "@polychromos/prettier-config": "workspace:*",
+    "@polychromos/typescript-config": "workspace:*",
     "@tailwindcss/vite": "catalog:",
     "@tanstack/router-devtools": "catalog:",
     "@tanstack/router-plugin": "catalog:",
@@ -539,14 +539,14 @@ apps/polychromos/
     "vite-plugin-image-optimizer": "^2.1.0",
     "vite-tsconfig-paths": "^5.1.4"
   },
-  "prettier": "@repo/prettier-config"
+  "prettier": "@polychromos/prettier-config"
 }
 ```
 
 `apps/polychromos/tsconfig.json`:
 ```json
 {
-  "extends": "@repo/typescript-config/base.json",
+  "extends": "@polychromos/typescript-config/base.json",
   "compilerOptions": {
     "lib": ["ES2022", "dom", "dom.iterable"],
     "jsx": "react-jsx",
@@ -597,9 +597,9 @@ export default defineConfig({
 
 `apps/polychromos/eslint.config.js`:
 ```javascript
-import baseConfig from "@repo/eslint-config/base";
-import reactConfig from "@repo/eslint-config/react";
-import tanstackConfig from "@repo/eslint-config/tanstack";
+import baseConfig from "@polychromos/eslint-config/base";
+import reactConfig from "@polychromos/eslint-config/react";
+import tanstackConfig from "@polychromos/eslint-config/tanstack";
 
 export default [
   {
@@ -649,8 +649,8 @@ VITE_CONVEX_URL=https://your-deployment.convex.cloud
 ```json
 {
   "scripts": {
-    "dev:polychromos": "turbo watch dev -F @repo/polychromos --continue",
-    "build:polychromos": "turbo run build -F @repo/polychromos"
+    "dev:polychromos": "turbo watch dev -F @polychromos/polychromos --continue",
+    "build:polychromos": "turbo run build -F @polychromos/polychromos"
   }
 }
 ```
@@ -665,7 +665,7 @@ VITE_CONVEX_URL=https://your-deployment.convex.cloud
 - [x] ESLint passes for type package: `cd packages/polychromos-types && npx eslint .`
 - [x] Prettier check passes: `pnpm format`
 - [x] `pnpm install` completes without conflicts
-- [x] Monorepo recognizes both new packages: `pnpm ls -r | grep "@polychromos\|@repo/polychromos"`
+- [x] Monorepo recognizes both new packages: `pnpm ls -r | grep "@polychromos\|@polychromos/polychromos"`
 
 #### Manual Verification
 - [x] `pnpm dev:polychromos` starts Vite dev server on port 3001 without errors
@@ -1029,7 +1029,7 @@ export const Route = createFileRoute("/$")(
 **Create** `apps/polychromos/src/components/error-component.tsx`:
 ```typescript
 import { ErrorComponentProps, useRouter } from "@tanstack/react-router";
-import { Button } from "@repo/ui/components/ui/button";
+import { Button } from "@polychromos/ui/components/ui/button";
 
 export function CustomErrorComponent({ error }: ErrorComponentProps) {
   const router = useRouter();
@@ -1055,7 +1055,7 @@ export function CustomErrorComponent({ error }: ErrorComponentProps) {
 **Create** `apps/polychromos/src/components/not-found-component.tsx`:
 ```typescript
 import { Link } from "@tanstack/react-router";
-import { Button } from "@repo/ui/components/ui/button";
+import { Button } from "@polychromos/ui/components/ui/button";
 
 export function CustomNotFoundComponent() {
   return (
@@ -1118,7 +1118,7 @@ export function LoadingComponent() {
 **Create** `apps/polychromos/src/styles/app.css`:
 ```css
 @import "tailwindcss";
-@import "@repo/ui/globals.css";
+@import "@polychromos/ui/globals.css";
 ```
 
 **Create** `apps/polychromos/src/vite-env.d.ts`:
@@ -1639,7 +1639,7 @@ Build the home page that displays a Convex-backed design canvas, wire up real-ti
 import { createFileRoute, useSearch } from "@tanstack/react-router";
 import { Suspense } from "react";
 import { useConvex } from "convex/react";
-import { Button } from "@repo/ui/components/ui/button";
+import { Button } from "@polychromos/ui/components/ui/button";
 import { Renderer } from "~/components/renderer";
 import { LoadingComponent } from "~/components/loading-component";
 
@@ -1811,7 +1811,7 @@ Create the `@polychromos/cli` package with file watching, Convex synchronization
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@repo/typescript-config": "workspace:*",
+    "@polychromos/typescript-config": "workspace:*",
     "typescript": "catalog:"
   }
 }
@@ -1820,7 +1820,7 @@ Create the `@polychromos/cli` package with file watching, Convex synchronization
 **Create** `packages/polychromos/tsconfig.json`:
 ```json
 {
-  "extends": "@repo/typescript-config/base.json",
+  "extends": "@polychromos/typescript-config/base.json",
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": "src",
@@ -2104,7 +2104,7 @@ export function CanvasContainer({ workspaceId, componentId }: CanvasContainerPro
 
 **Create** `apps/polychromos/src/components/version-controls.tsx`:
 ```typescript
-import { Button } from "@repo/ui/components/ui/button";
+import { Button } from "@polychromos/ui/components/ui/button";
 import { useConvex } from "convex/react";
 import { api } from "convex/_generated/api";
 import { useState } from "react";
@@ -2259,7 +2259,7 @@ Implement the UI and backend logic for exporting designs to HTML/CSS and Tailwin
 **Create** `apps/polychromos/src/components/export-modal.tsx`:
 ```typescript
 import { useState } from "react";
-import { Button } from "@repo/ui/components/ui/button";
+import { Button } from "@polychromos/ui/components/ui/button";
 import { PolychromosComponent } from "@polychromos/types";
 import { exportToHTML, exportToTailwind } from "~/lib/generators";
 

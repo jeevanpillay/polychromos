@@ -206,8 +206,8 @@ Runs browser tests against **cloud Convex**:
 env:
   VITE_CONVEX_URL: ${{ vars.VITE_CONVEX_URL }}  # Cloud URL
 steps:
-  - run: pnpm --filter @repo/polychromos-app build
-  - run: pnpm --filter @repo/polychromos-app test:e2e:playwright
+  - run: pnpm --filter @polychromos/polychromos-app build
+  - run: pnpm --filter @polychromos/polychromos-app test:e2e:playwright
 ```
 
 #### `.github/workflows/e2e-cli.yml` (CLI + Cross-Platform E2E)

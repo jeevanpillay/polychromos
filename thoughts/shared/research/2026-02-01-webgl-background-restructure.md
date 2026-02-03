@@ -111,7 +111,7 @@ Dark mode background color (line 152):
 Simple import structure:
 ```css
 @import "tailwindcss";
-@import "@repo/ui/globals.css";
+@import "@polychromos/ui/globals.css";
 ```
 
 ### Required Changes for Restructure

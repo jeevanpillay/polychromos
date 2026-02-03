@@ -6,7 +6,7 @@ import * as SheetPrimitive from "@radix-ui/react-dialog";
 import { cva } from "class-variance-authority";
 import { X } from "lucide-react";
 
-import { cn } from "@repo/ui/lib/utils";
+import { cn } from "@polychromos/ui/lib/utils";
 
 const Sheet = SheetPrimitive.Root;
 

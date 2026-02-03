@@ -9,7 +9,7 @@ Integrate Resend email service with the existing contact form dialog to enable e
 ### Existing Implementation
 - **Contact Form**: `apps/www/src/components/contact-dialog.tsx`
   - Uses Zod schema for validation (name, email, company, message)
-  - Uses React Hook Form with `@repo/ui` form components
+  - Uses React Hook Form with `@polychromos/ui` form components
   - Currently has placeholder `onSubmit` that only logs to console (line 49-52)
 
 - **Environment Setup**: `apps/www/src/env.ts`
@@ -20,7 +20,7 @@ Integrate Resend email service with the existing contact form dialog to enable e
 - **Server Functions**: No existing server functions using `createServerFn`
   - Only `loader()` pattern used in `sitemap[.]xml.tsx`
 
-- **Toast Notifications**: `@repo/ui` has toast components but not wired up in root layout
+- **Toast Notifications**: `@polychromos/ui` has toast components but not wired up in root layout
 
 ### Key Discoveries
 - TanStack Start uses `createServerFn({ method: 'POST' })` for server-side form handling
@@ -71,7 +71,7 @@ Install Resend SDK and configure environment variables for secure API key handli
 **Command**: Run in monorepo root
 
 ```bash
-pnpm add resend -F @repo/www
+pnpm add resend -F @polychromos/www
 ```
 
 #### 2. Update Environment Configuration
@@ -230,7 +230,7 @@ import { useState } from "react";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { z } from "zod";
 
-import { Lissajous } from "@repo/ui/components/lissajous";
+import { Lissajous } from "@polychromos/ui/components/lissajous";
 
 import {
   Dialog,
@@ -239,9 +239,9 @@ import {
   DialogClose,
   DialogPortal,
   DialogOverlay,
-} from "@repo/ui/components/ui/dialog";
-import { Input } from "@repo/ui/components/ui/input";
-import { Textarea } from "@repo/ui/components/ui/textarea";
+} from "@polychromos/ui/components/ui/dialog";
+import { Input } from "@polychromos/ui/components/ui/input";
+import { Textarea } from "@polychromos/ui/components/ui/textarea";
 import {
   Form,
   FormControl,
@@ -250,7 +250,7 @@ import {
   FormLabel,
   FormMessage,
   useForm,
-} from "@repo/ui/components/ui/form";
+} from "@polychromos/ui/components/ui/form";
 
 import { sendContactEmail } from "~/functions/contact";
 

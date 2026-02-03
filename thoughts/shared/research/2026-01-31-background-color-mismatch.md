@@ -109,7 +109,7 @@ The project uses Tailwind v4 with CSS-based theme configuration:
 - Colors use HSL format in light mode, OKLCH format in dark mode
 
 The styling imports chain:
-1. `apps/www/src/styles/app.css` imports `tailwindcss` and `@repo/ui/globals.css`
+1. `apps/www/src/styles/app.css` imports `tailwindcss` and `@polychromos/ui/globals.css`
 2. `packages/ui/src/globals.css` contains all theme definitions
 
 ## Open Questions

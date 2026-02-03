@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import "@repo/ui/globals.css";
+@import "@polychromos/ui/globals.css";
 
 /* Dark mode overrides for polychromos-www */
 .dark {

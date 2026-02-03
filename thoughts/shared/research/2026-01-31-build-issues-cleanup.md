@@ -99,8 +99,8 @@ Cannot read properties of undefined (reading 'allowShortCircuit')
 ```
 
 **Affected Packages**:
-- `@repo/www`
-- `@repo/ui`
+- `@polychromos/www`
+- `@polychromos/ui`
 
 **Root Cause**: Version mismatch between `eslint` (9.39.1) and `@typescript-eslint/eslint-plugin`. The `no-unused-expressions` rule expects a configuration format that differs between ESLint versions.
 

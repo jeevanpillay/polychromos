@@ -134,8 +134,8 @@ export default defineConfig({
 
 #### Automated Verification
 - [x] Dependencies install without errors: `pnpm install`
-- [x] Build completes successfully: `pnpm build --filter=@repo/polychromos-www`
-- [x] TypeScript compiles: `pnpm typecheck --filter=@repo/polychromos-www`
+- [x] Build completes successfully: `pnpm build --filter=@polychromos/polychromos-www`
+- [x] TypeScript compiles: `pnpm typecheck --filter=@polychromos/polychromos-www`
 
 #### Manual Verification
 - [x] Verify `node_modules/@takumi-rs/` directory exists with platform binaries
@@ -263,12 +263,12 @@ function OgImage() {
 ### Success Criteria
 
 #### Automated Verification
-- [x] Build completes: `pnpm build --filter=@repo/polychromos-www`
-- [x] TypeScript compiles: `pnpm typecheck --filter=@repo/polychromos-www`
-- [x] Linting passes: `pnpm lint --filter=@repo/polychromos-www` (og.tsx passes, pre-existing env.ts issues)
+- [x] Build completes: `pnpm build --filter=@polychromos/polychromos-www`
+- [x] TypeScript compiles: `pnpm typecheck --filter=@polychromos/polychromos-www`
+- [x] Linting passes: `pnpm lint --filter=@polychromos/polychromos-www` (og.tsx passes, pre-existing env.ts issues)
 
 #### Manual Verification
-- [ ] Start dev server: `pnpm dev --filter=@repo/polychromos-www`
+- [ ] Start dev server: `pnpm dev --filter=@polychromos/polychromos-www`
 - [ ] Navigate to `http://localhost:3002/api/og` returns an image
 - [ ] Image displays correctly: dark background, logo top-right, tagline bottom-left
 - [ ] Image dimensions are 1200x630 pixels
@@ -375,9 +375,9 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
 ### Success Criteria
 
 #### Automated Verification
-- [x] Build completes: `pnpm build --filter=@repo/polychromos-www`
-- [x] TypeScript compiles: `pnpm typecheck --filter=@repo/polychromos-www`
-- [x] Linting passes: `pnpm lint --filter=@repo/polychromos-www` (seo.ts passes, pre-existing env.ts issues)
+- [x] Build completes: `pnpm build --filter=@polychromos/polychromos-www`
+- [x] TypeScript compiles: `pnpm typecheck --filter=@polychromos/polychromos-www`
+- [x] Linting passes: `pnpm lint --filter=@polychromos/polychromos-www` (seo.ts passes, pre-existing env.ts issues)
 
 #### Manual Verification
 - [ ] View page source at `http://localhost:3002/` - verify OG meta tags present

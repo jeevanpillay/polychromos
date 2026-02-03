@@ -1234,7 +1234,7 @@ export const sampleWorkspace: PolychromosWorkspace = {
 ## Verification Checklist
 
 - [ ] `pnpm --filter @polychromos/types test` passes
-- [ ] `pnpm --filter @repo/polychromos test src/lib` passes
+- [ ] `pnpm --filter @polychromos/polychromos test src/lib` passes
 - [ ] `pnpm --filter @polychromos/cli test` passes
 - [ ] Coverage reports show >80% for validators
 - [ ] Coverage reports show >80% for generators

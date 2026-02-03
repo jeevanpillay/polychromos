@@ -115,10 +115,10 @@ jobs:
         run: pnpm exec playwright install --with-deps chromium
 
       - name: Build app
-        run: pnpm --filter @repo/polychromos-app build
+        run: pnpm --filter @polychromos/polychromos-app build
 
       - name: Run E2E tests
-        run: pnpm --filter @repo/polychromos-app test:e2e:playwright
+        run: pnpm --filter @polychromos/polychromos-app test:e2e:playwright
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
@@ -343,7 +343,7 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: Run E2E Tests
-        run: pnpm --filter @repo/polychromos-app test:e2e
+        run: pnpm --filter @polychromos/polychromos-app test:e2e
         timeout-minutes: 10
 ```
 
@@ -411,7 +411,7 @@ jobs:
         uses: ./.github/actions/playwright-setup
 
       - name: Run E2E tests
-        run: pnpm --filter @repo/polychromos-app test:e2e:playwright
+        run: pnpm --filter @polychromos/polychromos-app test:e2e:playwright
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
@@ -650,7 +650,7 @@ jobs:
         uses: ./.github/actions/playwright-setup
 
       - name: Run E2E tests
-        run: pnpm --filter @repo/polychromos-app test:e2e:playwright
+        run: pnpm --filter @polychromos/polychromos-app test:e2e:playwright
 
       - name: Upload Playwright report
         uses: actions/upload-artifact@v4

@@ -28,7 +28,7 @@ Rename apps/polychromos to apps/polychromos-app and create new base TanStack app
 Successfully completed the restructure:
 
 1. **Renamed** `apps/polychromos` → `apps/polychromos-app`
-   - Updated package.json name from `@repo/polychromos` to `@repo/polychromos-app`
+   - Updated package.json name from `@polychromos/polychromos` to `@polychromos/polychromos-app`
    - All existing functionality preserved
 
 2. **Created** `apps/polychromos-www` - A new TanStack Start application
@@ -44,7 +44,7 @@ Successfully completed the restructure:
 The existing Polychromos application was renamed with the following change:
 
 **File**: `apps/polychromos-app/package.json`
-- Package name changed from `"@repo/polychromos"` to `"@repo/polychromos-app"`
+- Package name changed from `"@polychromos/polychromos"` to `"@polychromos/polychromos-app"`
 - All other configuration remains unchanged
 - Runs on port 3001
 - Includes Convex backend integration
@@ -55,7 +55,7 @@ New TanStack Start application created with the following structure:
 
 ```
 apps/polychromos-www/
-├── package.json              # @repo/polychromos-www, port 3002
+├── package.json              # @polychromos/polychromos-www, port 3002
 ├── tsconfig.json             # TypeScript config with ~/* path alias
 ├── vite.config.ts            # Vite + TanStack Start plugins
 ├── turbo.json                # Turborepo task config
@@ -76,7 +76,7 @@ apps/polychromos-www/
     │   ├── index.tsx         # Clean landing page
     │   └── $.tsx             # 404 catch-all
     ├── styles/
-    │   ├── app.css           # Tailwind + @repo/ui/globals.css
+    │   ├── app.css           # Tailwind + @polychromos/ui/globals.css
     │   └── fonts.css         # PP Neue Montreal font definitions
     └── components/
         ├── error-component.tsx
@@ -88,7 +88,7 @@ apps/polychromos-www/
 
 **package.json Dependencies:**
 - `@fontsource/geist-mono` and `@fontsource/geist-sans` for Geist fonts
-- `@repo/ui` for shared UI components
+- `@polychromos/ui` for shared UI components
 - `@tanstack/react-router` and `@tanstack/react-start` for routing/SSR
 - `lucide-react` for icons
 - React 19, Tailwind v4, TypeScript 5.9
@@ -103,7 +103,7 @@ apps/polychromos-www/
 **Fonts Included:**
 1. **Geist Sans/Mono** - NPM packages (system fonts)
 2. **PP Neue Montreal** - Custom font with 6 weights (Thin, Book, Medium, Bold, Italic, SemiBold Italic)
-3. **Joyride/JoyrideALT** - Custom display fonts (inherited from @repo/ui/globals.css)
+3. **Joyride/JoyrideALT** - Custom display fonts (inherited from @polychromos/ui/globals.css)
 
 ### Landing Page Features
 
@@ -143,17 +143,17 @@ Both apps are now registered in the pnpm workspace:
 ### Shared Resources
 
 Both polychromos apps share:
-- `@repo/ui` - UI component library
+- `@polychromos/ui` - UI component library
 - `packages/polychromos-types` - TypeScript types (polychromos-app only)
 - Fonts via globals.css and local fonts.css
 
 ## Verification
 
 - ✅ `pnpm install` - Dependencies resolved successfully
-- ✅ `pnpm --filter=@repo/polychromos-app typecheck` - Passes
-- ✅ `pnpm --filter=@repo/polychromos-www typecheck` - Passes
-- ✅ `pnpm --filter=@repo/polychromos-www lint` - Passes
-- ✅ `pnpm --filter=@repo/polychromos-www build` - Builds successfully
+- ✅ `pnpm --filter=@polychromos/polychromos-app typecheck` - Passes
+- ✅ `pnpm --filter=@polychromos/polychromos-www typecheck` - Passes
+- ✅ `pnpm --filter=@polychromos/polychromos-www lint` - Passes
+- ✅ `pnpm --filter=@polychromos/polychromos-www build` - Builds successfully
 
 ## Open Questions
 
