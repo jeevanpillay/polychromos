@@ -1,0 +1,15 @@
+{
+  "mode": "pre",
+  "tag": "alpha",
+  "initialVersions": {
+    "@repo/app": "0.1.0",
+    "@repo/www": "0.1.0",
+    "@repo/eslint-config": "0.4.0",
+    "@repo/prettier-config": "0.1.0",
+    "@repo/typescript-config": "0.0.0",
+    "polychromos": "0.1.0",
+    "@polychromos/types": "0.1.0",
+    "@repo/ui": "0.0.0"
+  },
+  "changesets": []
+}

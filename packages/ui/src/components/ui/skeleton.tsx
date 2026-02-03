@@ -1,4 +1,4 @@
-import { cn } from "@polychromos/ui/lib/utils";
+import { cn } from "@repo/ui/lib/utils";
 
 function Skeleton({
   className,

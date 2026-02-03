@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "convex/react";
 
-import { Button } from "@polychromos/ui/components/ui/button";
+import { Button } from "@repo/ui/components/ui/button";
 import { api } from "../../convex/_generated/api";
 
 interface VersionControlsProps {

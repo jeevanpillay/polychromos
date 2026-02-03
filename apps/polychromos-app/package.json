@@ -1,5 +1,5 @@
 {
-  "name": "@polychromos/app",
+  "name": "@repo/app",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -39,7 +39,7 @@
     "@fontsource/geist-sans": "^5.1.1",
     "@paper-design/shaders-react": "^0.0.71",
     "@polychromos/types": "workspace:*",
-    "@polychromos/ui": "workspace:*",
+    "@repo/ui": "workspace:*",
     "@t3-oss/env-core": "^0.13.10",
     "@tanstack/react-query": "^5.90.20",
     "@tanstack/react-router": "catalog:",
@@ -56,9 +56,9 @@
     "@clerk/testing": "^1.13.33",
     "@edge-runtime/vm": "^4.0.4",
     "@playwright/test": "^1.58.1",
-    "@polychromos/eslint-config": "workspace:*",
-    "@polychromos/prettier-config": "workspace:*",
-    "@polychromos/typescript-config": "workspace:*",
+    "@repo/eslint-config": "workspace:*",
+    "@repo/prettier-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
     "@tailwindcss/vite": "catalog:",
     "@tanstack/router-devtools": "catalog:",
     "@tanstack/router-plugin": "catalog:",
@@ -80,5 +80,5 @@
     "vite-tsconfig-paths": "^6.0.5",
     "vitest": "^3.0.0"
   },
-  "prettier": "@polychromos/prettier-config"
+  "prettier": "@repo/prettier-config"
 }

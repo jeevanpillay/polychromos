@@ -175,7 +175,7 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: Build CLI
-        run: pnpm --filter @polychromos/cli build
+        run: pnpm --filter polychromos build
 
       - name: Verify CLI version
         run: node packages/polychromos/dist/index.js --version

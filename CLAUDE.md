@@ -40,7 +40,7 @@ polychromos/
 ├── packages/
 │   ├── polychromos/       # CLI tool (published to npm)
 │   ├── polychromos-types/ # Shared types (published to npm)
-│   └── ui/                # Shared component library (@polychromos/ui)
+│   └── ui/                # Shared component library (@repo/ui)
 └── internal/              # Shared configs (eslint, prettier, typescript)
 ```
 
@@ -50,17 +50,23 @@ polychromos/
 
 - **Routing**: TanStack Router with file-based routes. Route tree auto-generated to `routeTree.gen.ts`.
 - **Styling**: Tailwind v4 uses CSS-based theme directives in `globals.css`.
-- **Components**: shadcn/ui components in `packages/ui/src/components/ui/`. Import via `@polychromos/ui/components/ui/*`.
+- **Components**: shadcn/ui components in `packages/ui/src/components/ui/`. Import via `@repo/ui/components/ui/*`.
 - **Backend**: Convex for real-time database. Functions in `apps/polychromos-app/convex/`.
 - **Auth**: Clerk for authentication, integrated with Convex.
 
 ### Package Namespaces
 
-- `@polychromos/app` - Main design application
-- `@polychromos/www` - Marketing website
-- `@polychromos/ui` - Shared UI components
+**Published packages (npm):**
+- `polychromos` - CLI tool
 - `@polychromos/types` - Shared TypeScript types
-- `polychromos` - CLI tool (npm package)
+
+**Internal packages (@repo/*):**
+- `@repo/app` - Main design application
+- `@repo/www` - Marketing website
+- `@repo/ui` - Shared UI components
+- `@repo/eslint-config` - ESLint configuration
+- `@repo/prettier-config` - Prettier configuration
+- `@repo/typescript-config` - TypeScript configuration
 
 ## E2E Testing
 
@@ -76,13 +82,13 @@ Ensure `.vercel/.env.development.local` in `apps/polychromos-app/` contains:
 
 ```bash
 # Run all E2E tests
-pnpm --filter @polychromos/app test:e2e:all
+pnpm --filter @repo/app test:e2e:all
 
 # Run only browser tests
-pnpm --filter @polychromos/app test:e2e:browser
+pnpm --filter @repo/app test:e2e:browser
 
 # Run only CLI tests
-pnpm --filter @polychromos/app test:e2e:cli
+pnpm --filter @repo/app test:e2e:cli
 ```
 
 ## Release Commands

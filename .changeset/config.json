@@ -11,8 +11,8 @@
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
   "ignore": [
-    "@polychromos/app",
-    "@polychromos/www",
-    "@polychromos/ui"
+    "@repo/app",
+    "@repo/www",
+    "@repo/ui"
   ]
 }

@@ -69,7 +69,7 @@ importers:
       '@changesets/cli':
         specifier: ^2.29.8
         version: 2.29.8(@types/node@25.2.0)
-      '@polychromos/prettier-config':
+      '@repo/prettier-config':
         specifier: workspace:*
         version: link:internal/prettier
       '@vitest/coverage-v8':
@@ -108,7 +108,7 @@ importers:
       '@polychromos/types':
         specifier: workspace:*
         version: link:../../packages/polychromos-types
-      '@polychromos/ui':
+      '@repo/ui':
         specifier: workspace:*
         version: link:../../packages/ui
       '@t3-oss/env-core':
@@ -154,13 +154,13 @@ importers:
       '@playwright/test':
         specifier: ^1.58.1
         version: 1.58.1
-      '@polychromos/eslint-config':
+      '@repo/eslint-config':
         specifier: workspace:*
         version: link:../../internal/eslint
-      '@polychromos/prettier-config':
+      '@repo/prettier-config':
         specifier: workspace:*
         version: link:../../internal/prettier
-      '@polychromos/typescript-config':
+      '@repo/typescript-config':
         specifier: workspace:*
         version: link:../../internal/typescript
       '@tailwindcss/vite':
@@ -232,7 +232,7 @@ importers:
       '@fontsource/geist-sans':
         specifier: ^5.1.1
         version: 5.2.5
-      '@polychromos/ui':
+      '@repo/ui':
         specifier: workspace:*
         version: link:../../packages/ui
       '@t3-oss/env-core':
@@ -278,13 +278,13 @@ importers:
         specifier: ^4.3.6
         version: 4.3.6
     devDependencies:
-      '@polychromos/eslint-config':
+      '@repo/eslint-config':
         specifier: workspace:*
         version: link:../../internal/eslint
-      '@polychromos/prettier-config':
+      '@repo/prettier-config':
         specifier: workspace:*
         version: link:../../internal/prettier
-      '@polychromos/typescript-config':
+      '@repo/typescript-config':
         specifier: workspace:*
         version: link:../../internal/typescript
       '@tailwindcss/vite':
@@ -361,10 +361,10 @@ importers:
         specifier: ^8.54.0
         version: 8.54.0(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3)
     devDependencies:
-      '@polychromos/prettier-config':
+      '@repo/prettier-config':
         specifier: workspace:*
         version: link:../prettier
-      '@polychromos/typescript-config':
+      '@repo/typescript-config':
         specifier: workspace:*
         version: link:../typescript
       '@types/eslint__js':
@@ -395,7 +395,7 @@ importers:
         specifier: ^0.6.8
         version: 0.6.14(@ianvs/prettier-plugin-sort-imports@4.7.0(prettier@3.8.1))(prettier@3.8.1)
     devDependencies:
-      '@polychromos/typescript-config':
+      '@repo/typescript-config':
         specifier: workspace:*
         version: link:../typescript
       '@types/node':
@@ -431,10 +431,10 @@ importers:
         specifier: ^4.3.6
         version: 4.3.6
     devDependencies:
-      '@polychromos/eslint-config':
+      '@repo/eslint-config':
         specifier: workspace:*
         version: link:../../internal/eslint
-      '@polychromos/typescript-config':
+      '@repo/typescript-config':
         specifier: workspace:*
         version: link:../../internal/typescript
       '@types/node':
@@ -468,7 +468,7 @@ importers:
         specifier: ^4.3.6
         version: 4.3.6
     devDependencies:
-      '@polychromos/typescript-config':
+      '@repo/typescript-config':
         specifier: workspace:*
         version: link:../../internal/typescript
       '@vitest/coverage-v8':
@@ -598,13 +598,13 @@ importers:
         specifier: ^4.3.6
         version: 4.3.6
     devDependencies:
-      '@polychromos/eslint-config':
+      '@repo/eslint-config':
         specifier: workspace:*
         version: link:../../internal/eslint
-      '@polychromos/prettier-config':
+      '@repo/prettier-config':
         specifier: workspace:*
         version: link:../../internal/prettier
-      '@polychromos/typescript-config':
+      '@repo/typescript-config':
         specifier: workspace:*
         version: link:../../internal/typescript
       '@turbo/gen':

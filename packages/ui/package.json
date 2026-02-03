@@ -1,5 +1,5 @@
 {
-  "name": "@polychromos/ui",
+  "name": "@repo/ui",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -24,9 +24,9 @@
     "format": "prettier --check . --ignore-path ../../.gitignore --ignore-path ../../.prettierignore"
   },
   "devDependencies": {
-    "@polychromos/eslint-config": "workspace:*",
-    "@polychromos/prettier-config": "workspace:*",
-    "@polychromos/typescript-config": "workspace:*",
+    "@repo/eslint-config": "workspace:*",
+    "@repo/prettier-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
     "@turbo/gen": "^1.12.4",
     "@types/eslint": "^8.56.5",
     "@types/node": "catalog:",
@@ -76,5 +76,5 @@
     "vaul": "^1.1.2",
     "zod": "^4.3.6"
   },
-  "prettier": "@polychromos/prettier-config"
+  "prettier": "@repo/prettier-config"
 }

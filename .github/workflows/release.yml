@@ -73,9 +73,12 @@ jobs:
       - name: Run tests
         run: pnpm test:ci
 
+      # TODO: Remove --tag alpha when ready for stable release
+      # Alpha releases are installed with: npm install polychromos@alpha
+      # Stable releases (default): npm install polychromos
       - name: Publish to npm
         working-directory: ./packages/polychromos
-        run: npm publish --access public --provenance
+        run: npm publish --access public --provenance --tag alpha
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -95,7 +98,8 @@ jobs:
           npm view "polychromos@$VERSION" version
           echo "Package published successfully!"
 
+      # TODO: Change to 'npm install -g polychromos' when ready for stable release
       - name: Test installation
         run: |
-          npm install -g polychromos
+          npm install -g polychromos@alpha
           polychromos --version

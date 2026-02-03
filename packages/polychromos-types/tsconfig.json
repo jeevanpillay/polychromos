@@ -1,5 +1,5 @@
 {
-  "extends": "@polychromos/typescript-config/base.json",
+  "extends": "@repo/typescript-config/base.json",
   "compilerOptions": {
     "lib": ["ES2022"],
     "outDir": "dist",

@@ -1,10 +1,10 @@
 {
-  "extends": "@polychromos/typescript-config/react-library.json",
+  "extends": "@repo/typescript-config/react-library.json",
   "compilerOptions": {
     "outDir": "dist",
     "baseUrl": ".",
     "paths": {
-      "@polychromos/ui/*": ["./src/*"]
+      "@repo/ui/*": ["./src/*"]
     },
     "types": ["node"]
   },

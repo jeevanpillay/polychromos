@@ -1,7 +1,7 @@
 import type { ErrorComponentProps } from "@tanstack/react-router";
 import { useRouter } from "@tanstack/react-router";
 
-import { Button } from "@polychromos/ui/components/ui/button";
+import { Button } from "@repo/ui/components/ui/button";
 
 export function CustomErrorComponent({ error }: ErrorComponentProps) {
   const router = useRouter();

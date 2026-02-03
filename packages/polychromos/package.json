@@ -1,6 +1,6 @@
 {
   "name": "polychromos",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "CLI tool for Polychromos design system",
   "type": "module",
   "bin": {
@@ -57,8 +57,8 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@polychromos/eslint-config": "workspace:*",
-    "@polychromos/typescript-config": "workspace:*",
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
     "@types/node": "catalog:",
     "@vitest/coverage-v8": "^3.0.0",
     "dotenv-cli": "^11.0.0",
@@ -68,5 +68,5 @@
     "typescript": "catalog:",
     "vitest": "^3.0.0"
   },
-  "prettier": "@polychromos/prettier-config"
+  "prettier": "@repo/prettier-config"
 }
