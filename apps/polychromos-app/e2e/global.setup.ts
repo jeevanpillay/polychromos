@@ -1,5 +1,4 @@
 import { test as setup } from "@playwright/test";
-import { clerkSetup } from "@clerk/testing/playwright";
 import { mkdir } from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -7,10 +6,6 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const authFile = path.join(__dirname, "../playwright/.clerk/user.json");
-
-setup("clerk setup", async () => {
-  await clerkSetup();
-});
 
 setup("authenticate", async ({ page }) => {
   // Create auth directory
