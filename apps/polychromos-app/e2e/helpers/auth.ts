@@ -1,17 +1,13 @@
 import type { Page } from "@playwright/test";
 
 /**
- * Sign in if not already authenticated.
- * Works around storage state issues by doing actual sign-in.
+ * Wait for authentication to be fully established.
+ * Waits for both Clerk session and Convex auth state.
+ *
+ * With the improved storage state setup (waiting for Clerk session to fully
+ * initialize before saving), this should work reliably without fallback sign-in.
  */
-export async function ensureAuthenticated(page: Page): Promise<void> {
-  const email = process.env.E2E_CLERK_USER_EMAIL;
-  const password = process.env.E2E_CLERK_USER_PASSWORD;
-
-  if (!email || !password) {
-    throw new Error("E2E_CLERK_USER_EMAIL and E2E_CLERK_USER_PASSWORD must be set");
-  }
-
+export async function waitForAuth(page: Page, timeout = 30000): Promise<void> {
   // Wait for auth state to be determined
   await page.waitForFunction(
     () => {
@@ -19,54 +15,21 @@ export async function ensureAuthenticated(page: Page): Promise<void> {
       const hasUnauth = document.querySelector('[data-testid="unauthenticated"]');
       return hasAuth !== null || hasUnauth !== null;
     },
-    { timeout: 10000 }
+    { timeout: Math.min(timeout, 15000) }
   );
 
-  // Check if already authenticated
+  // Check if authenticated
   const isAuthenticated = await page
     .locator('[data-testid="authenticated"]')
     .isVisible()
     .catch(() => false);
 
-  if (isAuthenticated) {
-    // Already authenticated via storage state
-    return;
+  if (!isAuthenticated) {
+    // Storage state didn't work - this shouldn't happen with the improved setup
+    // but if it does, throw a clear error
+    throw new Error(
+      "Authentication failed: Storage state did not establish authenticated session. " +
+      "This indicates the global setup may not have saved Clerk session properly."
+    );
   }
-
-  // Not authenticated, need to sign in
-  console.log("Storage state auth failed, performing sign-in...");
-
-  // Clear all cookies and storage to start fresh
-  await page.context().clearCookies();
-  await page.evaluate(() => {
-    localStorage.clear();
-    sessionStorage.clear();
-  });
-
-  // Navigate to sign-in page
-  const baseUrl = page.url().match(/^https?:\/\/[^/]+/)?.[0] || "http://localhost:3001";
-  await page.goto(`${baseUrl}/sign-in`, { waitUntil: "networkidle" });
-
-  // Wait for sign-in form to load
-  await page.waitForSelector('input[type="email"]', { timeout: 15000 });
-
-  // Fill email
-  await page.fill('input[type="email"]', email);
-  await page.click('button[type="submit"]');
-
-  // Fill password
-  await page.waitForSelector('input[type="password"]', { timeout: 10000 });
-  await page.fill('input[type="password"]', password);
-  await page.click('button[type="submit"]');
-
-  // Wait for authentication to complete
-  await page.waitForSelector('[data-testid="authenticated"]', { timeout: 30000 });
-}
-
-/**
- * Wait for authentication to be fully established.
- * This includes both Clerk session and Convex auth state.
- */
-export async function waitForAuth(page: Page, timeout = 30000): Promise<void> {
-  await ensureAuthenticated(page);
 }

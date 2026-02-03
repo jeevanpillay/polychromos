@@ -33,6 +33,25 @@ setup("authenticate", async ({ page }) => {
   // Wait for authentication
   await page.waitForSelector('[data-testid="authenticated"]', { timeout: 30000 });
 
+  // CRITICAL: Wait for Clerk session to be fully established
+  // The authenticated element appears when Convex confirms auth, but Clerk's
+  // client needs additional time to fully initialize the session with all tokens
+  await page.waitForFunction(
+    () => {
+      const clerk = (window as any).Clerk;
+      return (
+        clerk?.loaded &&
+        clerk?.session?.id &&
+        clerk?.user?.id &&
+        clerk?.session?.lastActiveAt
+      );
+    },
+    { timeout: 10000 }
+  );
+
+  // Give Clerk an extra moment to finalize any async session setup
+  await page.waitForTimeout(2000);
+
   // Save storage state
   await page.context().storageState({ path: authFile });
 });
