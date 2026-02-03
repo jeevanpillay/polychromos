@@ -1,6 +1,7 @@
 {
   "name": "@polychromos/types",
-  "version": "0.1.0",
+  "version": "0.1.0-alpha.0",
+  "description": "TypeScript types and schemas for Polychromos design system",
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
@@ -8,6 +9,27 @@
     "./validators": "./src/validators.ts",
     "./fixtures": "./src/fixtures/index.ts"
   },
+  "files": [
+    "src",
+    "!src/**/*.test.*"
+  ],
+  "keywords": [
+    "polychromos",
+    "design",
+    "types",
+    "typescript"
+  ],
+  "author": "Jeevan Pillay Studios",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jeevanpillay/polychromos.git",
+    "directory": "packages/polychromos-types"
+  },
+  "bugs": {
+    "url": "https://github.com/jeevanpillay/polychromos/issues"
+  },
+  "homepage": "https://github.com/jeevanpillay/polychromos/tree/main/packages/polychromos-types#readme",
   "scripts": {
     "clean": "git clean -xdf node_modules coverage *.tsbuildinfo",
     "test": "vitest",
