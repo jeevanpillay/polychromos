@@ -66,18 +66,23 @@ async function startBackend() {
     // Ignore reset errors (may not exist yet)
   }
 
+  const isCI = process.env.CI === 'true';
+
   backendProcess = spawn('./scripts/local-backend.sh', ['run'], {
     cwd: CWD,
-    stdio: ['pipe', 'pipe', 'pipe'],
+    // In CI, use 'pipe' but in local dev keep pipes for DEBUG mode
+    stdio: isCI ? 'pipe' : ['pipe', 'pipe', 'pipe'],
     env: { ...process.env, CONVEX_TRACE_FILE: '1' }
   });
 
-  backendProcess.stdout.on('data', (data) => {
-    if (process.env.DEBUG) console.log(`[backend] ${data}`);
-  });
-  backendProcess.stderr.on('data', (data) => {
-    if (process.env.DEBUG) console.error(`[backend] ${data}`);
-  });
+  if (!isCI || process.env.DEBUG) {
+    backendProcess.stdout?.on('data', (data) => {
+      if (process.env.DEBUG) console.log(`[backend] ${data}`);
+    });
+    backendProcess.stderr?.on('data', (data) => {
+      if (process.env.DEBUG) console.error(`[backend] ${data}`);
+    });
+  }
 
   ownedBackend = true;
   await waitFor(isBackendRunning, 'Backend');
@@ -145,9 +150,14 @@ function cleanup() {
     console.log('[E2E] Stopping web app...');
     try {
       if (isCI) {
-        // In CI, force kill immediately
+        // In CI, force kill immediately and destroy stdio streams
         webAppProcess.kill('SIGKILL');
         console.log(`[E2E] Killed web app process ${webAppProcess.pid}`);
+
+        // Explicitly destroy stdio streams to prevent hanging
+        webAppProcess.stdin?.destroy();
+        webAppProcess.stdout?.destroy();
+        webAppProcess.stderr?.destroy();
       } else {
         // Local dev: try graceful then force
         webAppProcess.kill('SIGTERM');
@@ -167,10 +177,15 @@ function cleanup() {
     console.log('[E2E] Stopping backend...');
     try {
       if (isCI) {
-        // In CI, force kill immediately
+        // In CI, force kill immediately and destroy stdio streams
         // With 'exec' in the shell script, the PID is the actual backend process
         backendProcess.kill('SIGKILL');
         console.log(`[E2E] Killed backend process ${backendProcess.pid}`);
+
+        // Explicitly destroy stdio streams to prevent hanging
+        backendProcess.stdin?.destroy();
+        backendProcess.stdout?.destroy();
+        backendProcess.stderr?.destroy();
       } else {
         // Local dev: try graceful then force
         backendProcess.kill('SIGTERM');
