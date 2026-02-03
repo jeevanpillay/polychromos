@@ -1,10 +1,7 @@
 import { test, expect } from "@playwright/test";
-import { setupClerkTestingToken } from "@clerk/testing/playwright";
 
 test.describe("Authenticated Workspace Flow", () => {
-  test.beforeEach(async ({ page }) => {
-    await setupClerkTestingToken({ page });
-  });
+  // Authentication handled by global.setup.ts and storageState
 
   test("can create a new workspace", async ({ page }) => {
     await page.goto("/");

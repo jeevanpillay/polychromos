@@ -1,10 +1,7 @@
 import { test, expect } from "@playwright/test";
-import { setupClerkTestingToken } from "@clerk/testing/playwright";
 
 test.describe("Access Control - Authenticated", () => {
-  test.beforeEach(async ({ page }) => {
-    await setupClerkTestingToken({ page });
-  });
+  // Authentication handled by global.setup.ts and storageState
 
   test("shows error for invalid workspace ID", async ({ page }) => {
     // Try to access a non-existent workspace

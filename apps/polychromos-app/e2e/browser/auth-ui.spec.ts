@@ -1,9 +1,9 @@
 import { test, expect } from "@playwright/test";
-import { setupClerkTestingToken } from "@clerk/testing/playwright";
 
 test.describe("Authentication UI - Authenticated", () => {
+  // Authentication handled by global.setup.ts and storageState
+
   test("shows user button when authenticated", async ({ page }) => {
-    await setupClerkTestingToken({ page });
     await page.goto("/");
 
     // Should show user button (Clerk's UserButton component)
@@ -13,7 +13,6 @@ test.describe("Authentication UI - Authenticated", () => {
   });
 
   test("can sign out", async ({ page }) => {
-    await setupClerkTestingToken({ page });
     await page.goto("/");
 
     // Click user button to open menu
