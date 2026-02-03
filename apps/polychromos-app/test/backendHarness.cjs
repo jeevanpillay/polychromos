@@ -90,7 +90,13 @@ async function startWebApp() {
 
   console.log('[E2E] Starting web app...');
 
-  webAppProcess = spawn('pnpm', ['dev:web'], {
+  // In CI, run vite directly since env vars are passed via CI environment
+  // Locally, use dev:web which loads from .vercel/.env.development.local
+  const isCI = process.env.CI === 'true';
+  const command = isCI ? 'npx' : 'pnpm';
+  const args = isCI ? ['vite', 'dev'] : ['dev:web'];
+
+  webAppProcess = spawn(command, args, {
     cwd: CWD,
     stdio: ['pipe', 'pipe', 'pipe'],
     env: { ...process.env, VITE_CONVEX_URL: BACKEND_URL },
