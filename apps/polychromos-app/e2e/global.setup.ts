@@ -1,3 +1,4 @@
+import { clerkSetup } from "@clerk/testing/playwright";
 import { test as setup } from "@playwright/test";
 import { mkdir } from "fs/promises";
 import path from "path";
@@ -7,6 +8,16 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const authFile = path.join(__dirname, "../playwright/.clerk/user.json");
 
+// Configure serial mode - required when Playwright runs in parallel mode
+setup.describe.configure({ mode: "serial" });
+
+// Initialize Clerk testing environment FIRST
+// This obtains a Testing Token that setupClerkTestingToken() needs
+setup("clerk setup", async ({}) => {
+  await clerkSetup();
+});
+
+// Then perform authentication
 setup("authenticate", async ({ page }) => {
   // Create auth directory
   await mkdir(path.dirname(authFile), { recursive: true });
