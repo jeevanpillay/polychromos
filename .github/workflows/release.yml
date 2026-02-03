@@ -1,0 +1,101 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/polychromos/package.json'
+
+concurrency:
+  group: release-${{ github.workflow }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  check-release:
+    name: Check Release
+    runs-on: ubuntu-latest
+    outputs:
+      should_release: ${{ steps.check.outputs.should_release }}
+      version: ${{ steps.check.outputs.version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Check if release commit
+        id: check
+        run: |
+          # Get the commit message
+          COMMIT_MSG=$(git log -1 --pretty=%B)
+
+          # Check if this is a version packages commit
+          if [[ "$COMMIT_MSG" == *"version packages"* ]]; then
+            # Extract version from package.json
+            VERSION=$(node -p "require('./packages/polychromos/package.json').version")
+            echo "should_release=true" >> $GITHUB_OUTPUT
+            echo "version=$VERSION" >> $GITHUB_OUTPUT
+            echo "Release triggered for version $VERSION"
+          else
+            echo "should_release=false" >> $GITHUB_OUTPUT
+            echo "Not a version packages commit, skipping release"
+          fi
+
+  release:
+    name: Publish to npm
+    needs: check-release
+    if: needs.check-release.outputs.should_release == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build packages
+        run: pnpm build
+
+      - name: Run tests
+        run: pnpm test:ci
+
+      - name: Publish to npm
+        working-directory: ./packages/polychromos
+        run: npm publish --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  verify-release:
+    name: Verify Release
+    needs: [check-release, release]
+    if: needs.check-release.outputs.should_release == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for npm propagation
+        run: sleep 60
+
+      - name: Verify npm package
+        run: |
+          VERSION="${{ needs.check-release.outputs.version }}"
+          echo "Verifying polychromos@$VERSION on npm..."
+          npm view "polychromos@$VERSION" version
+          echo "Package published successfully!"
+
+      - name: Test installation
+        run: |
+          npm install -g polychromos
+          polychromos --version
