@@ -144,17 +144,10 @@ function cleanup() {
   if (ownedWebApp && webAppProcess) {
     console.log('[E2E] Stopping web app...');
     try {
-      const pid = webAppProcess.pid;
-      if (isCI && pid) {
-        // In CI, kill the entire process group to ensure all child processes are terminated
-        try {
-          process.kill(-pid, 'SIGKILL'); // Negative PID kills process group
-          console.log(`[E2E] Killed web app process group ${pid}`);
-        } catch (e) {
-          // If process group kill fails, try killing just the process
-          webAppProcess.kill('SIGKILL');
-          console.log(`[E2E] Killed web app process ${pid}`);
-        }
+      if (isCI) {
+        // In CI, force kill immediately
+        webAppProcess.kill('SIGKILL');
+        console.log(`[E2E] Killed web app process ${webAppProcess.pid}`);
       } else {
         // Local dev: try graceful then force
         webAppProcess.kill('SIGTERM');
@@ -173,17 +166,11 @@ function cleanup() {
   if (ownedBackend && backendProcess) {
     console.log('[E2E] Stopping backend...');
     try {
-      const pid = backendProcess.pid;
-      if (isCI && pid) {
-        // In CI, kill the entire process group to ensure all child processes are terminated
-        try {
-          process.kill(-pid, 'SIGKILL'); // Negative PID kills process group
-          console.log(`[E2E] Killed backend process group ${pid}`);
-        } catch (e) {
-          // If process group kill fails, try killing just the process
-          backendProcess.kill('SIGKILL');
-          console.log(`[E2E] Killed backend process ${pid}`);
-        }
+      if (isCI) {
+        // In CI, force kill immediately
+        // With 'exec' in the shell script, the PID is the actual backend process
+        backendProcess.kill('SIGKILL');
+        console.log(`[E2E] Killed backend process ${backendProcess.pid}`);
       } else {
         // Local dev: try graceful then force
         backendProcess.kill('SIGTERM');
