@@ -5,6 +5,7 @@ import { Button } from "@repo/ui/components/ui/button";
 import { Input } from "@repo/ui/components/ui/input";
 import { Label } from "@repo/ui/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@repo/ui/components/ui/card";
+import { Github } from "lucide-react";
 
 export const Route = createFileRoute("/sign-in")({
   component: SignInPage,
@@ -71,6 +72,23 @@ function SignInPage() {
       const message = (err as { errors?: { message?: string }[] }).errors?.[0]?.message ?? "Invalid password";
       setError(message);
     } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGitHubSignIn = async () => {
+    setError("");
+    setLoading(true);
+
+    try {
+      await signIn?.authenticateWithRedirect({
+        strategy: "oauth_github",
+        redirectUrl: "/sso-callback",
+        redirectUrlComplete: "/",
+      });
+    } catch (err: unknown) {
+      const message = (err as { errors?: { message?: string }[] }).errors?.[0]?.message ?? "Failed to authenticate with GitHub";
+      setError(message);
       setLoading(false);
     }
   };
@@ -154,6 +172,26 @@ function SignInPage() {
               </div>
             </form>
           )}
+
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">Or</span>
+            </div>
+          </div>
+
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full"
+            onClick={handleGitHubSignIn}
+            disabled={loading}
+          >
+            <Github className="mr-2 h-4 w-4" />
+            Continue with GitHub
+          </Button>
 
           <div className="mt-6 text-center text-sm text-muted-foreground">
             Don't have an account?{" "}
