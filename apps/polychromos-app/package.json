@@ -14,7 +14,7 @@
     "convex:start": "./scripts/local-backend.sh run",
     "convex:deploy": "./scripts/local-backend.sh convex deploy",
     "build": "vite build",
-    "clean": "git clean -xdf .cache .output dist node_modules",
+    "clean": "git clean -xdf .cache .output .tanstack .turbo dist node_modules coverage test-results playwright-report blob-report playwright/.cache playwright/.clerk convex-local-backend convex-local-backend.exe convex_local_storage convex_local_backend.sqlite3 convex-local-backend.log *.tsbuildinfo *.zip",
     "format": "prettier --check . --ignore-path .prettierignore --ignore-path ../../../.gitignore",
     "lint": "eslint .",
     "start": "node .output/server/index.mjs",

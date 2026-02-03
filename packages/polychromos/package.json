@@ -37,6 +37,7 @@
   },
   "scripts": {
     "build": "tsc",
+    "clean": "git clean -xdf .cache .turbo dist node_modules coverage *.tsbuildinfo",
     "dev": "tsc --watch",
     "format": "prettier --check .",
     "lint": "eslint .",

@@ -6,5 +6,8 @@
   "publishConfig": {
     "access": "public"
   },
+  "scripts": {
+    "clean": "git clean -xdf node_modules"
+  },
   "files": ["*.json"]
 }
