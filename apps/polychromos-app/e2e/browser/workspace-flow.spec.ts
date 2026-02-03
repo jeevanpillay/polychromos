@@ -1,15 +1,12 @@
 import { test, expect } from "@playwright/test";
+import { waitForAuth } from "../helpers/auth";
 
 test.describe("Authenticated Workspace Flow", () => {
   // Authentication handled by global.setup.ts and storageState
 
   test("can create a new workspace", async ({ page }) => {
     await page.goto("/");
-
-    // Should see authenticated content
-    await expect(page.locator("[data-testid='authenticated']")).toBeVisible({
-      timeout: 15000,
-    });
+    await waitForAuth(page);
 
     // Click create workspace button
     await page.getByRole("button", { name: /create new design/i }).click();
@@ -71,11 +68,7 @@ test.describe("Authenticated Workspace Flow", () => {
 
   test("workspace preview shows after creation", async ({ page }) => {
     await page.goto("/");
-
-    // Wait for authenticated content
-    await expect(page.locator("[data-testid='authenticated']")).toBeVisible({
-      timeout: 15000,
-    });
+    await waitForAuth(page);
 
     // Create workspace
     await page.getByRole("button", { name: /create new design/i }).click();
