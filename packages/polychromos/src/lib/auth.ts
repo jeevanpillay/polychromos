@@ -25,3 +25,15 @@ export function getAuthUrl(code: string): string {
 export function getConvexUrl(): string {
   return process.env.POLYCHROMOS_CONVEX_URL ?? "https://dainty-toucan-799.convex.cloud";
 }
+
+/**
+ * Check if running in development mode.
+ * Development mode is indicated by custom URLs or NODE_ENV.
+ */
+export function isDevelopment(): boolean {
+  return (
+    Boolean(process.env.POLYCHROMOS_APP_URL) ||
+    Boolean(process.env.POLYCHROMOS_CONVEX_URL) ||
+    process.env.NODE_ENV === "development"
+  );
+}
