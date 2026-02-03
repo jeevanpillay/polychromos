@@ -1,0 +1,30 @@
+packages:
+  - apps/*
+  - packages/*
+  - internal/*
+catalog:
+  lucide-react: ^0.559.0
+  tailwindcss: ^4.1.17
+  '@tailwindcss/vite': ^4.1.17
+  eslint: ^9.39.1
+  prettier: ^3.7.4
+  typescript: ^5.9.3
+  '@types/node': ^25.0.0
+  '@tanstack/react-start': ^1.157.17
+  '@tanstack/react-router': ^1.157.17
+  '@tanstack/router-devtools': ^1.157.17
+  '@tanstack/router-plugin': ^1.157.17
+  vite: ^7.2.7
+  '@vitejs/plugin-react': ^5.1.2
+  '@corentints/tanstack-router-sitemap': ^1.0.1
+catalogs:
+  react18:
+    react: 18.3.1
+    react-dom: 18.3.1
+    '@types/react': ^18.3.11
+    '@types/react-dom': ^18.3.1
+  react19:
+    react: ^19.2.1
+    react-dom: ^19.2.1
+    '@types/react': ^19.2.7
+    '@types/react-dom': ^19.2.3

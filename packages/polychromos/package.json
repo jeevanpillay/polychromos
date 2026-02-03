@@ -25,13 +25,13 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jeevanpillaystudios/x.git",
+    "url": "git+https://github.com/jeevanpillay/polychromos.git",
     "directory": "packages/polychromos"
   },
   "bugs": {
-    "url": "https://github.com/jeevanpillaystudios/x/issues"
+    "url": "https://github.com/jeevanpillay/polychromos/issues"
   },
-  "homepage": "https://github.com/jeevanpillaystudios/x/tree/main/packages/polychromos#readme",
+  "homepage": "https://github.com/jeevanpillay/polychromos/tree/main/packages/polychromos#readme",
   "engines": {
     "node": ">=18.0.0"
   },
@@ -57,8 +57,8 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@repo/eslint-config": "workspace:*",
-    "@repo/typescript-config": "workspace:*",
+    "@polychromos/eslint-config": "workspace:*",
+    "@polychromos/typescript-config": "workspace:*",
     "@types/node": "catalog:",
     "@vitest/coverage-v8": "^3.0.0",
     "dotenv-cli": "^11.0.0",
@@ -68,5 +68,5 @@
     "typescript": "catalog:",
     "vitest": "^3.0.0"
   },
-  "prettier": "@repo/prettier-config"
+  "prettier": "@polychromos/prettier-config"
 }

@@ -1,0 +1,19 @@
+# Build outputs
+**/.next
+**/.output
+**/.nitro
+**/.vinxi
+**/.turbo
+**/.cache
+**/dist
+**/build
+
+# Dependencies
+**/node_modules
+
+# Auto-generated files
+**/routeTree.gen.ts
+**/*.gen.ts
+
+# Lock files
+pnpm-lock.yaml

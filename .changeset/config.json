@@ -1,0 +1,18 @@
+{
+  "$schema": "https://unpkg.com/@changesets/config@3.1.1/schema.json",
+  "changelog": [
+    "@changesets/changelog-github",
+    { "repo": "jeevanpillay/polychromos" }
+  ],
+  "commit": false,
+  "fixed": [["polychromos", "@polychromos/types"]],
+  "linked": [],
+  "access": "public",
+  "baseBranch": "main",
+  "updateInternalDependencies": "patch",
+  "ignore": [
+    "@polychromos/app",
+    "@polychromos/www",
+    "@polychromos/ui"
+  ]
+}

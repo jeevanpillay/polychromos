@@ -1,5 +1,5 @@
 {
-  "name": "@repo/polychromos-www",
+  "name": "@polychromos/www",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -15,7 +15,7 @@
   "dependencies": {
     "@fontsource/geist-mono": "^5.1.1",
     "@fontsource/geist-sans": "^5.1.1",
-    "@repo/ui": "workspace:*",
+    "@polychromos/ui": "workspace:*",
     "@t3-oss/env-core": "^0.13.10",
     "@takumi-rs/core": "^0.66.13",
     "@takumi-rs/helpers": "^0.66.13",
@@ -35,9 +35,9 @@
     "@takumi-rs/core-linux-x64-gnu": "^0.66.13"
   },
   "devDependencies": {
-    "@repo/eslint-config": "workspace:*",
-    "@repo/prettier-config": "workspace:*",
-    "@repo/typescript-config": "workspace:*",
+    "@polychromos/eslint-config": "workspace:*",
+    "@polychromos/prettier-config": "workspace:*",
+    "@polychromos/typescript-config": "workspace:*",
     "@tailwindcss/vite": "catalog:",
     "@tanstack/router-devtools": "catalog:",
     "@tanstack/router-plugin": "catalog:",
@@ -53,5 +53,5 @@
     "vite-plugin-image-optimizer": "^2.0.3",
     "vite-tsconfig-paths": "^6.0.5"
   },
-  "prettier": "@repo/prettier-config"
+  "prettier": "@polychromos/prettier-config"
 }
