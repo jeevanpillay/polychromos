@@ -10,6 +10,8 @@ export default [
       ".vinxi/**",
       "convex/_generated/**",
       "test/**",
+      "e2e/**",
+      "scripts/**",
     ],
   },
   ...baseConfig,

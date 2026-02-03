@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/non-nullable-type-assertion-style */
+/* eslint-disable @typescript-eslint/non-nullable-type-assertion-style */
 import { describe, it, expect } from 'vitest';
 import { render } from '@testing-library/react';
 import { Box } from '../box';
