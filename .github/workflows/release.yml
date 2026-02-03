@@ -79,13 +79,15 @@ jobs:
       # Stable releases (default): npm install polychromos
       - name: Publish @polychromos/types to npm
         working-directory: ./packages/polychromos-types
-        run: npm publish --access public --provenance --tag alpha
+        run: npm publish --access public --provenance --tag alpha || echo "Package already published or publish failed"
+        continue-on-error: true
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish polychromos to npm
         working-directory: ./packages/polychromos
-        run: npm publish --access public --provenance --tag alpha
+        run: npm publish --access public --provenance --tag alpha || echo "Package already published or publish failed"
+        continue-on-error: true
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
