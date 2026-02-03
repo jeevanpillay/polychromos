@@ -1,6 +1,6 @@
 {
   "name": "polychromos",
-  "version": "0.1.0-alpha.2",
+  "version": "0.1.0-alpha.3",
   "description": "CLI tool for Polychromos design system",
   "type": "module",
   "bin": {
@@ -74,4 +74,3 @@
   },
   "prettier": "@repo/prettier-config"
 }
-

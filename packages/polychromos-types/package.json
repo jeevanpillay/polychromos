@@ -1,6 +1,6 @@
 {
   "name": "@polychromos/types",
-  "version": "0.1.0-alpha.2",
+  "version": "0.1.0-alpha.3",
   "description": "TypeScript types and schemas for Polychromos design system",
   "type": "module",
   "exports": {
