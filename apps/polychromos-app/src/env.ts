@@ -38,3 +38,4 @@ export const env = createEnv({
     process.env.npm_lifecycle_event === "build",
   emptyStringAsUndefined: true,
 });
+
