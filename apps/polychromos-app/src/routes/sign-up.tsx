@@ -23,6 +23,8 @@ function SignUpPage() {
   const [loading, setLoading] = useState(false);
   const [pendingVerification, setPendingVerification] = useState(false);
 
+  const isProduction = import.meta.env.VERCEL_ENV === "production";
+
   useEffect(() => {
     if (isLoaded && isSignedIn) {
       void navigate({ to: "/" });
@@ -108,11 +110,13 @@ function SignUpPage() {
           <CardDescription>
             {pendingVerification
               ? "Check your email for a verification code"
-              : "Sign up for Polychromos"}
+              : isProduction
+                ? "Sign up with GitHub"
+                : "Sign up for Polychromos"}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {!pendingVerification ? (
+          {!isProduction && !pendingVerification ? (
             <>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
@@ -171,7 +175,18 @@ function SignUpPage() {
                 Continue with GitHub
               </Button>
             </>
-          ) : (
+          ) : isProduction && !pendingVerification ? (
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              onClick={handleGitHubSignUp}
+              disabled={loading}
+            >
+              <Github className="mr-2 h-4 w-4" />
+              Continue with GitHub
+            </Button>
+          ) : !isProduction && pendingVerification ? (
             <form onSubmit={handleVerify} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="code">Verification code</Label>
@@ -195,7 +210,7 @@ function SignUpPage() {
                 {loading ? "Verifying..." : "Verify email"}
               </Button>
             </form>
-          )}
+          ) : null}
 
           <div className="mt-6 text-center text-sm text-muted-foreground">
             Already have an account?{" "}

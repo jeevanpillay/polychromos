@@ -22,6 +22,8 @@ function SignInPage() {
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState<"email" | "password">("email");
 
+  const isProduction = import.meta.env.VERCEL_ENV === "production";
+
   // Redirect if already signed in
   useEffect(() => {
     if (isLoaded && isSignedIn) {
@@ -107,13 +109,15 @@ function SignInPage() {
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">Sign in to Polychromos</CardTitle>
           <CardDescription>
-            {step === "email"
-              ? "Enter your email to continue"
-              : "Enter your password"}
+            {isProduction
+              ? "Sign in with GitHub"
+              : step === "email"
+                ? "Enter your email to continue"
+                : "Enter your password"}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {step === "email" ? (
+          {!isProduction && step === "email" ? (
             <form onSubmit={handleEmailSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
@@ -137,7 +141,7 @@ function SignInPage() {
                 {loading ? "Loading..." : "Continue"}
               </Button>
             </form>
-          ) : (
+          ) : !isProduction && step === "password" ? (
             <form onSubmit={handlePasswordSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
@@ -171,16 +175,18 @@ function SignInPage() {
                 </Button>
               </div>
             </form>
-          )}
+          ) : null}
 
-          <div className="relative my-6">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
+          {!isProduction && (
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">Or</span>
+              </div>
             </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">Or</span>
-            </div>
-          </div>
+          )}
 
           <Button
             type="button"
