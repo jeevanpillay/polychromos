@@ -1,7 +1,7 @@
-import { test, expect } from "@playwright/test";
-import { setupClerkTestingToken } from "@clerk/testing/playwright";
+import { expect } from "@playwright/test";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "../../convex/_generated/api";
+import { test } from "../fixtures/auth";
 
 const CONVEX_URL = process.env.CONVEX_BACKEND_URL || "http://127.0.0.1:3210";
 
@@ -10,10 +10,6 @@ test.describe("CLI Auth Polling Flow", () => {
 
   test.beforeAll(() => {
     convexClient = new ConvexHttpClient(CONVEX_URL);
-  });
-
-  test.beforeEach(async ({ page }) => {
-    await setupClerkTestingToken({ page });
   });
 
   test("CLI can create session and poll for token", async ({ page }) => {
