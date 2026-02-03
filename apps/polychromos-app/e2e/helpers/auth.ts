@@ -36,9 +36,12 @@ export async function ensureAuthenticated(page: Page): Promise<void> {
   // Not authenticated, need to sign in
   console.log("Storage state auth failed, performing sign-in...");
 
-  // Go to sign-in page
-  await page.goto("/sign-in");
-  await page.waitForLoadState("networkidle");
+  // Navigate to sign-in page (use full URL to ensure clean navigation)
+  const baseUrl = page.url().match(/^https?:\/\/[^/]+/)?.[0] || "http://localhost:3001";
+  await page.goto(`${baseUrl}/sign-in`, { waitUntil: "domcontentloaded" });
+
+  // Wait for sign-in form to load
+  await page.waitForSelector('input[type="email"]', { timeout: 15000 });
 
   // Fill email
   await page.fill('input[type="email"]', email);
