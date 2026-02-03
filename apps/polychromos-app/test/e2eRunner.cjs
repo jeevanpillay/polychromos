@@ -56,6 +56,9 @@ async function main() {
         cwd: CWD,
         stdio: 'inherit'
       });
+    } else {
+      console.warn('\n[E2E] WARNING: CLERK_JWT_ISSUER_DOMAIN not set - Clerk auth may fail!');
+      console.warn('[E2E] Make sure this env var is set in your .vercel/.env.development.local or CI environment\n');
     }
     execSync('./scripts/local-backend.sh convex deploy', {
       cwd: CWD,

@@ -1,6 +1,7 @@
 import { clerkSetup } from "@clerk/testing/playwright";
 import { test as setup, expect } from "@playwright/test";
 import * as path from "path";
+import * as fs from "fs";
 import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -12,6 +13,12 @@ setup("global setup", async () => {
 });
 
 setup("authenticate", async ({ page }) => {
+  // Ensure auth directory exists before saving storage state
+  const authDir = path.dirname(authFile);
+  if (!fs.existsSync(authDir)) {
+    fs.mkdirSync(authDir, { recursive: true });
+  }
+
   // Navigate to the app
   await page.goto("/");
 
@@ -19,7 +26,9 @@ setup("authenticate", async ({ page }) => {
   await page.waitForLoadState("networkidle");
 
   // Click the Sign In button to open modal
-  await page.getByRole("button", { name: /sign in/i }).click();
+  const signInButton = page.getByRole("button", { name: /sign in/i });
+  await expect(signInButton).toBeVisible({ timeout: 10000 });
+  await signInButton.click();
 
   // Wait for Clerk modal
   await page.waitForSelector(".cl-modalContent", { timeout: 10000 });
@@ -40,6 +49,13 @@ setup("authenticate", async ({ page }) => {
   const passwordInput = page.getByRole("textbox", { name: /password/i });
   await passwordInput.fill(password);
   await page.getByRole("button", { name: "Continue" }).click();
+
+  // Wait for modal to close and navigation to complete
+  await page.waitForSelector(".cl-modalContent", {
+    state: "hidden",
+    timeout: 15000,
+  });
+  await page.waitForLoadState("networkidle");
 
   // Wait for authentication to complete (redirect back to app)
   await expect(page.locator("[data-testid='authenticated']")).toBeVisible({

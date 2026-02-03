@@ -111,6 +111,12 @@ async function startWebApp() {
   webAppProcess.stderr.on('data', (data) => {
     if (shouldLog) console.error(`[web] ${data}`);
   });
+  webAppProcess.on('exit', (code, signal) => {
+    console.error(`[E2E] Web app process exited! code=${code}, signal=${signal}`);
+  });
+  webAppProcess.on('error', (err) => {
+    console.error(`[E2E] Web app process error:`, err.message);
+  });
 
   ownedWebApp = true;
   await waitFor(isWebAppRunning, 'Web app', 120);
