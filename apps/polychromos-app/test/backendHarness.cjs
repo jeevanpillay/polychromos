@@ -139,15 +139,53 @@ async function deployConvexSchema() {
 }
 
 function cleanup() {
+  const isCI = process.env.CI === 'true';
+  // In CI, use SIGKILL for immediate termination to avoid hanging
+  const signal = isCI ? 'SIGKILL' : 'SIGTERM';
+
   if (ownedWebApp && webAppProcess) {
     console.log('[E2E] Stopping web app...');
-    webAppProcess.kill('SIGTERM');
-    webAppProcess = null;
+    try {
+      webAppProcess.kill(signal);
+      if (!isCI) {
+        // Give process a moment to exit gracefully in local dev
+        const exitHandler = () => { webAppProcess = null; };
+        webAppProcess.once('exit', exitHandler);
+        setTimeout(() => {
+          if (webAppProcess) {
+            webAppProcess.kill('SIGKILL');
+            webAppProcess = null;
+          }
+        }, 2000);
+      } else {
+        webAppProcess = null;
+      }
+    } catch (e) {
+      console.log('[E2E] Web app process already exited!', e.message);
+      webAppProcess = null;
+    }
   }
   if (ownedBackend && backendProcess) {
     console.log('[E2E] Stopping backend...');
-    backendProcess.kill('SIGTERM');
-    backendProcess = null;
+    try {
+      backendProcess.kill(signal);
+      if (!isCI) {
+        // Give process a moment to exit gracefully in local dev
+        const exitHandler = () => { backendProcess = null; };
+        backendProcess.once('exit', exitHandler);
+        setTimeout(() => {
+          if (backendProcess) {
+            backendProcess.kill('SIGKILL');
+            backendProcess = null;
+          }
+        }, 2000);
+      } else {
+        backendProcess = null;
+      }
+    } catch (e) {
+      console.log('[E2E] Backend process already exited!', e.message);
+      backendProcess = null;
+    }
   }
 }
 
