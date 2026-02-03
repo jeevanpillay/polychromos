@@ -90,6 +90,14 @@ async function main() {
 
     // Run CLI E2E tests
     if (runCli) {
+      // CLI tests need Playwright auth state - create it if it doesn't exist
+      console.log('\n[E2E] Setting up authentication for CLI tests...');
+      execSync('pnpm exec playwright test --project=setup', {
+        cwd: CWD,
+        stdio: 'inherit',
+        env: process.env
+      });
+
       await runCommand(
         'CLI E2E Tests',
         'pnpm',

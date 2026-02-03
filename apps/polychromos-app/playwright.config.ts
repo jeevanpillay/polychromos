@@ -19,6 +19,11 @@ export default defineConfig({
 
   projects: [
     {
+      name: "setup",
+      testDir: "./e2e",
+      testMatch: /global\.setup\.ts/,
+    },
+    {
       name: "unauthenticated",
       testDir: "./e2e/browser",
       testMatch: /\.unauth\.spec\.ts/,
