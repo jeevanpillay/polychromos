@@ -1,5 +1,11 @@
 # Polychromos
 
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+[![npm version](https://img.shields.io/npm/v/polychromos.svg)](https://www.npmjs.com/package/polychromos)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9+-blue.svg)](https://www.typescriptlang.org/)
+[![CI Status](https://github.com/jeevanpillay/polychromos/actions/workflows/ci.yml/badge.svg)](https://github.com/jeevanpillay/polychromos/actions/workflows/ci.yml)
+[![GitHub stars](https://img.shields.io/github/stars/jeevanpillay/polychromos)](https://github.com/jeevanpillay/polychromos/stargazers)
+
 **Code-driven design platform that bridges the gap between Figma and React.**
 
 > *"Design is no longer static pixels. It is executable logic."*
