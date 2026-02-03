@@ -24,7 +24,7 @@ jobs:
       - uses: ./.github/actions/setup
 
       - name: Setup Playwright
-        uses: ./.github/actions/setup-playwright
+        uses: ./.github/actions/playwright-setup
 
       - name: Install Playwright Browsers
         working-directory: apps/polychromos-app
