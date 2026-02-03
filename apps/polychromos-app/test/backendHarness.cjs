@@ -140,52 +140,63 @@ async function deployConvexSchema() {
 
 function cleanup() {
   const isCI = process.env.CI === 'true';
-  // In CI, use SIGKILL for immediate termination to avoid hanging
-  const signal = isCI ? 'SIGKILL' : 'SIGTERM';
 
   if (ownedWebApp && webAppProcess) {
     console.log('[E2E] Stopping web app...');
     try {
-      webAppProcess.kill(signal);
-      if (!isCI) {
-        // Give process a moment to exit gracefully in local dev
-        const exitHandler = () => { webAppProcess = null; };
-        webAppProcess.once('exit', exitHandler);
+      const pid = webAppProcess.pid;
+      if (isCI && pid) {
+        // In CI, kill the entire process group to ensure all child processes are terminated
+        try {
+          process.kill(-pid, 'SIGKILL'); // Negative PID kills process group
+          console.log(`[E2E] Killed web app process group ${pid}`);
+        } catch (e) {
+          // If process group kill fails, try killing just the process
+          webAppProcess.kill('SIGKILL');
+          console.log(`[E2E] Killed web app process ${pid}`);
+        }
+      } else {
+        // Local dev: try graceful then force
+        webAppProcess.kill('SIGTERM');
         setTimeout(() => {
-          if (webAppProcess) {
+          if (webAppProcess && !webAppProcess.killed) {
             webAppProcess.kill('SIGKILL');
-            webAppProcess = null;
           }
         }, 2000);
-      } else {
-        webAppProcess = null;
       }
     } catch (e) {
-      console.log('[E2E] Web app process already exited!', e.message);
-      webAppProcess = null;
+      console.log('[E2E] Error stopping web app:', e.message);
     }
+    webAppProcess = null;
   }
+
   if (ownedBackend && backendProcess) {
     console.log('[E2E] Stopping backend...');
     try {
-      backendProcess.kill(signal);
-      if (!isCI) {
-        // Give process a moment to exit gracefully in local dev
-        const exitHandler = () => { backendProcess = null; };
-        backendProcess.once('exit', exitHandler);
+      const pid = backendProcess.pid;
+      if (isCI && pid) {
+        // In CI, kill the entire process group to ensure all child processes are terminated
+        try {
+          process.kill(-pid, 'SIGKILL'); // Negative PID kills process group
+          console.log(`[E2E] Killed backend process group ${pid}`);
+        } catch (e) {
+          // If process group kill fails, try killing just the process
+          backendProcess.kill('SIGKILL');
+          console.log(`[E2E] Killed backend process ${pid}`);
+        }
+      } else {
+        // Local dev: try graceful then force
+        backendProcess.kill('SIGTERM');
         setTimeout(() => {
-          if (backendProcess) {
+          if (backendProcess && !backendProcess.killed) {
             backendProcess.kill('SIGKILL');
-            backendProcess = null;
           }
         }, 2000);
-      } else {
-        backendProcess = null;
       }
     } catch (e) {
-      console.log('[E2E] Backend process already exited!', e.message);
-      backendProcess = null;
+      console.log('[E2E] Error stopping backend:', e.message);
     }
+    backendProcess = null;
   }
 }
 
