@@ -4,38 +4,6 @@
 /* Include sources for class scanning across monorepo */
 @source "../**/*.{ts,tsx}";
 
-/* Joyride Font - Standard */
-@font-face {
-  font-family: "Joyride";
-  src:
-    url("/fonts/joyride/JoyrideSTD.woff2") format("woff2"),
-    url("/fonts/joyride/JoyrideSTD.woff") format("woff");
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Joyride";
-  src:
-    url("/fonts/joyride/JoyrideSTDItalic.woff2") format("woff2"),
-    url("/fonts/joyride/JoyrideSTDItalic.woff") format("woff");
-  font-weight: normal;
-  font-style: italic;
-  font-display: swap;
-}
-
-/* Joyride Font - Alt */
-@font-face {
-  font-family: "JoyrideALT";
-  src:
-    url("/fonts/joyride/JoyrideALT.woff2") format("woff2"),
-    url("/fonts/joyride/JoyrideALT.woff") format("woff");
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
 @plugin '@tailwindcss/typography';
 
 @custom-variant dark (&:is(.dark *));
