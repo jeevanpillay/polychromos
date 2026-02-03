@@ -31,4 +31,17 @@ export default defineSchema({
   })
     .index("by_workspace", ["workspaceId"])
     .index("by_workspace_version", ["workspaceId", "version"]),
+
+  // CLI auth session management
+  cliAuthSessions: defineTable({
+    code: v.string(),                    // Unique session code (pol_xxx)
+    status: v.string(),                  // "pending" | "completed" | "expired"
+    token: v.optional(v.string()),       // Convex token after auth completes
+    expiresAt: v.number(),               // Token expiry timestamp (ms)
+    createdAt: v.number(),               // Session creation timestamp
+    completedAt: v.optional(v.number()), // When auth was completed
+    userId: v.optional(v.string()),      // Clerk user ID after auth
+  })
+    .index("by_code", ["code"])
+    .index("by_status_created", ["status", "createdAt"]),
 });

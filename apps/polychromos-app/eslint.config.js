@@ -9,6 +9,8 @@ export default [
       ".nitro/**",
       ".vinxi/**",
       "convex/_generated/**",
+      "convex/**/*.js",
+      "convex/**/*.d.ts",
       "test/**",
       "e2e/**",
       "scripts/**",

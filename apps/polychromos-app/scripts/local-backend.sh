@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Convex local backend configuration
-BACKEND_URL="http://127.0.0.1:3210"
-ADMIN_KEY="0135d8598650f8f5cb0f30c34ec2e2bb62793bc28717c8eb6fb577996d50be5f4281b59181095065c5d0f86a2c31ddbe9b597ec62b47ded69782cd"
+# Convex local backend configuration - can be overridden via environment
+BACKEND_PORT="${CONVEX_BACKEND_PORT:-3210}"
+BACKEND_URL="http://127.0.0.1:${BACKEND_PORT}"
+ADMIN_KEY="${CONVEX_ADMIN_KEY:-0135d8598650f8f5cb0f30c34ec2e2bb62793bc28717c8eb6fb577996d50be5f4281b59181095065c5d0f86a2c31ddbe9b597ec62b47ded69782cd}"
 
 # Get the directory where this script is located
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -27,7 +28,7 @@ case "${1:-}" in
       unzip "$pkg"
       rm "$pkg"
     fi
-    ./convex-local-backend
+    ./convex-local-backend --port "$BACKEND_PORT"
     ;;
   reset)
     cd "$APP_DIR"

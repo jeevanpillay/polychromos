@@ -2,8 +2,10 @@ const http = require('http');
 const path = require('path');
 const { spawn } = require('child_process');
 
-const BACKEND_URL = 'http://127.0.0.1:3210';
-const WEB_APP_URL = 'http://localhost:3001';
+const BACKEND_PORT = process.env.CONVEX_BACKEND_PORT || 3210;
+const WEB_APP_PORT = process.env.WEB_APP_PORT || 3001;
+const BACKEND_URL = process.env.CONVEX_BACKEND_URL || `http://127.0.0.1:${BACKEND_PORT}`;
+const WEB_APP_URL = process.env.WEB_APP_URL || `http://localhost:${WEB_APP_PORT}`;
 const CWD = path.dirname(__dirname);
 
 let backendProcess = null;
@@ -99,7 +101,11 @@ async function startWebApp() {
   webAppProcess = spawn(command, args, {
     cwd: CWD,
     stdio: ['pipe', 'pipe', 'pipe'],
-    env: { ...process.env, VITE_CONVEX_URL: BACKEND_URL },
+    env: {
+      ...process.env,
+      VITE_CONVEX_URL: BACKEND_URL,
+      PORT: String(WEB_APP_PORT),
+    },
     shell: true
   });
 

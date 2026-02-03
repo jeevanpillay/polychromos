@@ -27,6 +27,10 @@ import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
+// Configuration from environment
+const CONVEX_BACKEND_URL = process.env.CONVEX_BACKEND_URL || 'http://127.0.0.1:3210';
+const WEB_APP_URL = process.env.WEB_APP_URL || 'http://localhost:3001';
+
 let browser: Browser | null = null;
 let convexProcess: ChildProcess | null = null;
 
@@ -168,7 +172,7 @@ export async function teardown() {
 async function startLocalConvex(): Promise<void> {
   // Check if backend already running
   try {
-    const response = await fetch('http://127.0.0.1:3210/version');
+    const response = await fetch(`${CONVEX_BACKEND_URL}/version`);
     if (response.ok || response.status === 200) {
       console.log('[CLI E2E Setup] Local Convex backend already running');
       return;
@@ -215,7 +219,7 @@ async function startLocalConvex(): Promise<void> {
       if (!resolved) {
         resolved = true;
         // Check if it's actually running despite no "ready" message
-        fetch('http://127.0.0.1:3210/version')
+        fetch(`${CONVEX_BACKEND_URL}/version`)
           .then(() => resolve())
           .catch(() => reject(new Error(`Convex backend startup timeout. Output: ${output}`)));
       }
@@ -229,7 +233,7 @@ async function waitForWebApp(): Promise<void> {
   const maxAttempts = 30;
   for (let i = 0; i < maxAttempts; i++) {
     try {
-      const response = await fetch('http://localhost:3001');
+      const response = await fetch(WEB_APP_URL);
       if (response.ok) {
         console.log('[CLI E2E Setup] Web app is ready');
         return;
@@ -249,7 +253,7 @@ async function extractClerkToken(browser: Browser): Promise<string> {
   });
 
   try {
-    await page.goto('http://localhost:3001');
+    await page.goto(WEB_APP_URL);
 
     // Wait for authentication to complete
     await page.waitForSelector('[data-testid="authenticated"]', { timeout: 30000 });

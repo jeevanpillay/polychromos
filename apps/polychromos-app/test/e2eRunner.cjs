@@ -4,7 +4,10 @@ const { spawn, execSync } = require('child_process');
 const path = require('path');
 
 const CWD = path.dirname(__dirname);
-const BACKEND_URL = 'http://127.0.0.1:3210';
+const BACKEND_PORT = process.env.CONVEX_BACKEND_PORT || 3210;
+const WEB_APP_PORT = process.env.WEB_APP_PORT || 3001;
+const BACKEND_URL = process.env.CONVEX_BACKEND_URL || `http://127.0.0.1:${BACKEND_PORT}`;
+const WEB_APP_URL = process.env.WEB_APP_URL || `http://localhost:${WEB_APP_PORT}`;
 
 // Import backend management from refactored harness
 const { startBackend, startWebApp, cleanup, deployConvexSchema } = require('./backendHarness.cjs');
@@ -18,7 +21,15 @@ async function runCommand(name, command, args = [], options = {}) {
     const proc = spawn(command, args, {
       cwd: CWD,
       stdio: 'inherit',
-      env: { ...process.env, VITE_CONVEX_URL: BACKEND_URL },
+      env: {
+        ...process.env,
+        VITE_CONVEX_URL: BACKEND_URL,
+        CONVEX_BACKEND_URL: BACKEND_URL,
+        CONVEX_BACKEND_PORT: String(BACKEND_PORT),
+        WEB_APP_URL: WEB_APP_URL,
+        WEB_APP_PORT: String(WEB_APP_PORT),
+        PLAYWRIGHT_BASE_URL: WEB_APP_URL,
+      },
       shell: true,
       ...options
     });

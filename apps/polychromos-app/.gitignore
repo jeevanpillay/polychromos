@@ -37,6 +37,13 @@ convex_local_backend.sqlite3
 convex-local-backend.log
 *.zip
 
+# Convex compiled files (generated during dev)
+convex/**/*.js
+convex/**/*.js.map
+convex/**/*.d.ts
+convex/**/*.d.ts.map
+!convex/_generated/**
+
 # Playwright
 /test-results/
 /playwright-report/

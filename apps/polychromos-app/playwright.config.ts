@@ -1,6 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
 
-const baseURL = process.env.PLAYWRIGHT_BASE_URL || "http://localhost:3001";
+const webAppPort = process.env.WEB_APP_PORT || "3001";
+const baseURL = process.env.PLAYWRIGHT_BASE_URL || `http://localhost:${webAppPort}`;
 
 export default defineConfig({
   testDir: "./e2e/browser",
