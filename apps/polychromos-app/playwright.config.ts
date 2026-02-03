@@ -41,6 +41,7 @@ export default defineConfig({
       name: "cross-platform",
       testDir: "./e2e/cross-platform",
       testMatch: /\.spec\.ts/,
+      dependencies: ["setup"],
       use: {
         ...devices["Desktop Chrome"],
       },
