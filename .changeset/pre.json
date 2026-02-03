@@ -11,7 +11,5 @@
     "@polychromos/types": "0.1.0",
     "@repo/ui": "0.0.0"
   },
-  "changesets": [
-    "initial-alpha-release"
-  ]
+  "changesets": []
 }
