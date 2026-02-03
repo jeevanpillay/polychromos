@@ -28,7 +28,7 @@ case "${1:-}" in
       unzip "$pkg"
       rm "$pkg"
     fi
-    ./convex-local-backend --port "$BACKEND_PORT"
+    exec ./convex-local-backend --port "$BACKEND_PORT"
     ;;
   reset)
     cd "$APP_DIR"
