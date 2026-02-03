@@ -23,7 +23,7 @@ export function getAuthUrl(code: string): string {
  * Uses environment variable or defaults to production.
  */
 export function getConvexUrl(): string {
-  return process.env.POLYCHROMOS_CONVEX_URL ?? "https://dainty-toucan-799.convex.cloud";
+  return process.env.POLYCHROMOS_CONVEX_URL ?? "https://pleasant-ox-89.convex.cloud";
 }
 
 /**

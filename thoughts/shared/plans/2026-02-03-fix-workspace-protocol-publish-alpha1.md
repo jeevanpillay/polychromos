@@ -137,7 +137,7 @@ The `--no-git-checks` flag is required because:
 - [x] pnpm filter syntax works: `pnpm --filter @polychromos/types exec pwd`
 
 #### Manual Verification:
-- [ ] Workflow changes reviewed in GitHub PR
+- [x] Workflow changes reviewed in GitHub PR
 
 ---
 
@@ -406,14 +406,14 @@ git push origin main
 ### Success Criteria
 
 #### Automated Verification:
-- [ ] Commit exists with correct message: `git log -1 --pretty=%B | grep -i "version packages"`
-- [ ] No uncommitted changes: `git status --porcelain | wc -l` returns 0
+- [x] Commit exists with correct message: `git log -1 --pretty=%B | grep -i "version packages"`
+- [x] No uncommitted changes: `git status --porcelain | wc -l` returns 0
 
 #### Manual Verification:
-- [ ] GitHub Actions shows release workflow triggered
-- [ ] Release workflow completes successfully
-- [ ] npm shows new versions: `npm view polychromos@0.1.0-alpha.2`
-- [ ] Installation works: `npm install polychromos@alpha && polychromos --version`
+- [x] GitHub Actions shows release workflow triggered
+- [x] Release workflow completes successfully
+- [x] npm shows new versions: `npm view polychromos@0.1.0-alpha.1`
+- [x] Installation works: `npm install polychromos@alpha && polychromos --version`
 
 ---
 

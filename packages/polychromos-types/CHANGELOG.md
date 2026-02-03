@@ -1,5 +1,11 @@
 # @polychromos/types
 
+## 0.1.0-alpha.2
+
+### Patch Changes
+
+- Bump version to match polychromos CLI release
+
 ## 0.1.0-alpha.1
 
 ### Patch Changes
