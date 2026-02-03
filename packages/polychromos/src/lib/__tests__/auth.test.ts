@@ -62,7 +62,7 @@ describe("getConvexUrl", () => {
   it("should use default production URL", () => {
     delete process.env.POLYCHROMOS_CONVEX_URL;
     const url = getConvexUrl();
-    expect(url).toBe("https://dainty-toucan-799.convex.cloud");
+    expect(url).toBe("https://pleasant-ox-89.convex.cloud");
   });
 
   it("should use environment variable when set", () => {
