@@ -22,9 +22,9 @@ test.describe("Authentication UI - Authenticated", () => {
     // Click sign out
     await page.getByRole("menuitem", { name: /sign out/i }).click();
 
-    // Should redirect to sign-in state
+    // Should redirect to unauthenticated state with sign-in link
     await expect(
-      page.getByRole("button", { name: /sign in/i }),
+      page.getByTestId("sign-in-link"),
     ).toBeVisible({
       timeout: 10000,
     });

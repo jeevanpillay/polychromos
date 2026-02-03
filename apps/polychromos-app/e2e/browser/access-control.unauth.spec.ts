@@ -8,9 +8,9 @@ test.describe("Access Control - Unauthenticated", () => {
     // Wait for Clerk to load
     await page.waitForLoadState("networkidle");
 
-    // Should see sign-in button
+    // Should see sign-in link (styled as button)
     await expect(
-      page.getByRole("button", { name: /sign in/i }),
+      page.getByTestId("sign-in-link"),
     ).toBeVisible({ timeout: 10000 });
 
     // Should NOT see create button

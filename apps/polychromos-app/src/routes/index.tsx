@@ -124,7 +124,7 @@ function AuthenticatedContent() {
             Code-driven design platform
           </p>
         </div>
-        <div data-testid="authenticated">
+        <div data-testid="user-menu">
           <UserButton afterSignOutUrl="/" />
         </div>
       </div>
