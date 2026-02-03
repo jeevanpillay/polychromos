@@ -9,12 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SsoCallbackRouteImport } from './routes/sso-callback'
 import { Route as SignUpRouteImport } from './routes/sign-up'
 import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as CliAuthRouteImport } from './routes/cli-auth'
 import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
 
+const SsoCallbackRoute = SsoCallbackRouteImport.update({
+  id: '/sso-callback',
+  path: '/sso-callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SignUpRoute = SignUpRouteImport.update({
   id: '/sign-up',
   path: '/sign-up',
@@ -47,6 +53,7 @@ export interface FileRoutesByFullPath {
   '/cli-auth': typeof CliAuthRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
+  '/sso-callback': typeof SsoCallbackRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -54,6 +61,7 @@ export interface FileRoutesByTo {
   '/cli-auth': typeof CliAuthRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
+  '/sso-callback': typeof SsoCallbackRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,13 +70,27 @@ export interface FileRoutesById {
   '/cli-auth': typeof CliAuthRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
+  '/sso-callback': typeof SsoCallbackRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/$' | '/cli-auth' | '/sign-in' | '/sign-up'
+  fullPaths:
+    | '/'
+    | '/$'
+    | '/cli-auth'
+    | '/sign-in'
+    | '/sign-up'
+    | '/sso-callback'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/$' | '/cli-auth' | '/sign-in' | '/sign-up'
-  id: '__root__' | '/' | '/$' | '/cli-auth' | '/sign-in' | '/sign-up'
+  to: '/' | '/$' | '/cli-auth' | '/sign-in' | '/sign-up' | '/sso-callback'
+  id:
+    | '__root__'
+    | '/'
+    | '/$'
+    | '/cli-auth'
+    | '/sign-in'
+    | '/sign-up'
+    | '/sso-callback'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -77,10 +99,18 @@ export interface RootRouteChildren {
   CliAuthRoute: typeof CliAuthRoute
   SignInRoute: typeof SignInRoute
   SignUpRoute: typeof SignUpRoute
+  SsoCallbackRoute: typeof SsoCallbackRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sso-callback': {
+      id: '/sso-callback'
+      path: '/sso-callback'
+      fullPath: '/sso-callback'
+      preLoaderRoute: typeof SsoCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sign-up': {
       id: '/sign-up'
       path: '/sign-up'
@@ -125,6 +155,7 @@ const rootRouteChildren: RootRouteChildren = {
   CliAuthRoute: CliAuthRoute,
   SignInRoute: SignInRoute,
   SignUpRoute: SignUpRoute,
+  SsoCallbackRoute: SsoCallbackRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
