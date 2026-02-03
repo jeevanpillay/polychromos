@@ -2,6 +2,8 @@ import { createEnv } from "@t3-oss/env-core";
 import { vercel } from "@t3-oss/env-core/presets-zod";
 import { z } from "zod";
 
+/** Environment configuration with t3-env validation */
+
 const appUrl =
   process.env.VITE_APP_URL ??
   (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined) ??
