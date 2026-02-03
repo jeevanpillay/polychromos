@@ -36,7 +36,7 @@ jobs:
 
   # Lint, typecheck, and unit tests run in parallel
   quality:
-    runs-on: depot-ubuntu-24.04
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
@@ -66,7 +66,7 @@ jobs:
     name: E2E Browser Tests
     needs: [changes, quality]
     if: needs.changes.outputs.polychromos-app == 'true' || needs.changes.outputs.polychromos-cli == 'true'
-    runs-on: depot-ubuntu-24.04
+    runs-on: ubuntu-latest
     timeout-minutes: 15
 
     env:
@@ -110,7 +110,7 @@ jobs:
     name: E2E CLI Tests
     needs: [changes, quality]
     if: needs.changes.outputs.polychromos-cli == 'true' || needs.changes.outputs.convex == 'true'
-    runs-on: depot-ubuntu-24.04
+    runs-on: ubuntu-latest
     timeout-minutes: 20
 
     env:
@@ -163,7 +163,7 @@ jobs:
     name: CLI Smoke Tests (macOS)
     needs: [changes]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.changes.outputs.polychromos-cli == 'true'
-    runs-on: depot-macos-14
+    runs-on: macos-14
     timeout-minutes: 15
 
     steps:
