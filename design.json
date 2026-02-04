@@ -1,0 +1,398 @@
+{
+  "id": "ws_1770114094338",
+  "version": "1.0",
+  "name": "OG Image Design",
+  "settings": {
+    "defaultUnits": "px",
+    "rootFontSize": 16
+  },
+  "tokens": {
+    "colors": {
+      "bg-dark": "#ffffff",
+      "bg-grid": "#1a1a1a",
+      "accent-cyan": "#06b6d4",
+      "accent-cyan-glow": "#06b6d433",
+      "text-primary": "#fafafa",
+      "text-muted": "#a1a1aa",
+      "text-dark": "#52525b"
+    },
+    "spacing": {
+      "xs": "8px",
+      "sm": "12px",
+      "md": "16px",
+      "lg": "24px",
+      "xl": "64px",
+      "2xl": "72px"
+    }
+  },
+  "components": {
+    "main": {
+      "id": "og-canvas",
+      "name": "OG Image Canvas",
+      "width": 1200,
+      "height": 630,
+      "root": {
+        "id": "root",
+        "type": "box",
+        "layout": {
+          "display": "flex",
+          "position": "relative"
+        },
+        "width": "100%",
+        "height": "100%",
+        "style": {
+          "backgroundColor": "#0f0f0f",
+          "overflow": "hidden"
+        },
+        "children": [
+          {
+            "id": "grid-background",
+            "type": "box",
+            "layout": {
+              "position": "absolute",
+              "display": "flex"
+            },
+            "width": "100%",
+            "height": "100%",
+            "style": {
+              "backgroundImage": "linear-gradient(#1a1a1a 1px, transparent 1px), linear-gradient(90deg, #1a1a1a 1px, transparent 1px)",
+              "backgroundSize": "60px 60px",
+              "opacity": "0.3"
+            }
+          },
+          {
+            "id": "gradient-glow",
+            "type": "box",
+            "layout": {
+              "position": "absolute",
+              "display": "flex"
+            },
+            "width": "800px",
+            "height": "800px",
+            "style": {
+              "right": "-200px",
+              "top": "-200px",
+              "background": "radial-gradient(circle, #06b6d433 0%, transparent 70%)"
+            }
+          },
+          {
+            "id": "content-container",
+            "type": "box",
+            "layout": {
+              "display": "flex",
+              "flexDirection": "column",
+              "position": "relative"
+            },
+            "width": "100%",
+            "height": "100%",
+            "style": {
+              "padding": "64px 72px",
+              "zIndex": "1"
+            },
+            "children": [
+              {
+                "id": "header-section",
+                "type": "box",
+                "layout": {
+                  "display": "flex",
+                  "flexDirection": "column",
+                  "gap": "16px"
+                },
+                "children": [
+                  {
+                    "id": "brand-row",
+                    "type": "box",
+                    "layout": {
+                      "display": "flex",
+                      "alignItems": "center",
+                      "gap": "20px"
+                    },
+                    "children": [
+                      {
+                        "id": "logo-mark",
+                        "type": "box",
+                        "width": "8px",
+                        "height": "40px",
+                        "style": {
+                          "background": "linear-gradient(180deg, #06b6d4 0%, #0891b2 100%)"
+                        }
+                      },
+                      {
+                        "id": "brand-name",
+                        "type": "text",
+                        "text": {
+                          "content": "POLYCHROMOS",
+                          "fontSize": 28,
+                          "letterSpacing": "0.08em",
+                          "color": "#fafafa"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "descriptor-row",
+                    "type": "box",
+                    "layout": {
+                      "display": "flex",
+                      "alignItems": "center",
+                      "gap": "12px"
+                    },
+                    "style": {
+                      "marginLeft": "28px"
+                    },
+                    "children": [
+                      {
+                        "id": "accent-line",
+                        "type": "box",
+                        "width": "32px",
+                        "height": "1px",
+                        "style": {
+                          "backgroundColor": "#06b6d4"
+                        }
+                      },
+                      {
+                        "id": "descriptor",
+                        "type": "text",
+                        "text": {
+                          "content": "DESIGN EXECUTION ENGINE",
+                          "fontSize": 16,
+                          "letterSpacing": "0.05em",
+                          "color": "#a1a1aa"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "spacer",
+                "type": "box",
+                "style": {
+                  "flex": "1"
+                }
+              },
+              {
+                "id": "message-section",
+                "type": "box",
+                "layout": {
+                  "display": "flex",
+                  "flexDirection": "column",
+                  "gap": "24px"
+                },
+                "children": [
+                  {
+                    "id": "code-artifacts",
+                    "type": "box",
+                    "layout": {
+                      "display": "flex",
+                      "gap": "12px",
+                      "alignItems": "center"
+                    },
+                    "style": {
+                      "opacity": "0.4"
+                    },
+                    "children": [
+                      {
+                        "id": "artifact-1",
+                        "type": "text",
+                        "text": {
+                          "content": "{ execute() }",
+                          "fontSize": 14,
+                          "letterSpacing": "0.05em",
+                          "color": "#06b6d4"
+                        }
+                      },
+                      {
+                        "id": "dot-1",
+                        "type": "box",
+                        "width": "4px",
+                        "height": "4px",
+                        "style": {
+                          "backgroundColor": "#06b6d4",
+                          "borderRadius": "50%"
+                        }
+                      },
+                      {
+                        "id": "artifact-2",
+                        "type": "text",
+                        "text": {
+                          "content": "<render />",
+                          "fontSize": 14,
+                          "letterSpacing": "0.05em",
+                          "color": "#06b6d4"
+                        }
+                      },
+                      {
+                        "id": "dot-2",
+                        "type": "box",
+                        "width": "4px",
+                        "height": "4px",
+                        "style": {
+                          "backgroundColor": "#06b6d4",
+                          "borderRadius": "50%"
+                        }
+                      },
+                      {
+                        "id": "artifact-3",
+                        "type": "text",
+                        "text": {
+                          "content": "=> logic",
+                          "fontSize": 14,
+                          "letterSpacing": "0.05em",
+                          "color": "#06b6d4"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "primary-message",
+                    "type": "box",
+                    "layout": {
+                      "display": "flex",
+                      "flexDirection": "column",
+                      "gap": "12px"
+                    },
+                    "children": [
+                      {
+                        "id": "static-pixels",
+                        "type": "text",
+                        "text": {
+                          "content": "STATIC PIXELS",
+                          "fontSize": 52,
+                          "lineHeight": 1.0,
+                          "letterSpacing": "-0.02em",
+                          "color": "#52525b",
+                          "textDecoration": "line-through"
+                        }
+                      },
+                      {
+                        "id": "transform-indicator",
+                        "type": "box",
+                        "layout": {
+                          "display": "flex",
+                          "alignItems": "center",
+                          "gap": "16px"
+                        },
+                        "children": [
+                          {
+                            "id": "arrow-line",
+                            "type": "box",
+                            "width": "80px",
+                            "height": "2px",
+                            "style": {
+                              "background": "linear-gradient(90deg, #06b6d4 0%, transparent 100%)"
+                            }
+                          },
+                          {
+                            "id": "transform-text",
+                            "type": "text",
+                            "text": {
+                              "content": "TRANSFORMS INTO",
+                              "fontSize": 20,
+                              "letterSpacing": "0.1em",
+                              "color": "#06b6d4"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "id": "executable-logic",
+                        "type": "box",
+                        "layout": {
+                          "display": "flex",
+                          "gap": "20px",
+                          "alignItems": "baseline"
+                        },
+                        "children": [
+                          {
+                            "id": "executable",
+                            "type": "text",
+                            "text": {
+                              "content": "EXECUTABLE",
+                              "fontSize": 96,
+                              "lineHeight": 0.9,
+                              "letterSpacing": "-0.03em",
+                              "color": "#fafafa"
+                            }
+                          },
+                          {
+                            "id": "logic",
+                            "type": "text",
+                            "text": {
+                              "content": "LOGIC",
+                              "fontSize": 96,
+                              "lineHeight": 0.9,
+                              "letterSpacing": "-0.03em",
+                              "color": "#06b6d4"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "corner-accent",
+            "type": "box",
+            "layout": {
+              "position": "absolute",
+              "display": "flex",
+              "flexDirection": "column",
+              "alignItems": "flex-end",
+              "gap": "8px"
+            },
+            "style": {
+              "bottom": "64px",
+              "right": "72px",
+              "opacity": "0.5"
+            },
+            "children": [
+              {
+                "id": "accent-graphic",
+                "type": "box",
+                "layout": {
+                  "display": "flex",
+                  "gap": "8px",
+                  "alignItems": "center"
+                },
+                "children": [
+                  {
+                    "id": "accent-line-bottom",
+                    "type": "box",
+                    "width": "24px",
+                    "height": "1px",
+                    "style": {
+                      "backgroundColor": "#06b6d4"
+                    }
+                  },
+                  {
+                    "id": "accent-box",
+                    "type": "box",
+                    "width": "8px",
+                    "height": "8px",
+                    "style": {
+                      "border": "1px solid #06b6d4"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "tagline",
+                "type": "text",
+                "text": {
+                  "content": "DESIGN × CODE × RUNTIME",
+                  "fontSize": 12,
+                  "letterSpacing": "0.1em",
+                  "color": "#52525b"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}
