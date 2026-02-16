@@ -31,7 +31,7 @@ describe("whoami command", () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
-    // eslint-disable-next-line turbo/no-undeclared-env-vars
+     
     delete process.env.POLYCHROMOS_TOKEN;
   });
 
@@ -192,7 +192,7 @@ describe("whoami command", () => {
       .mockImplementation(() => undefined);
 
     // Set env var instead of file
-    // eslint-disable-next-line turbo/no-undeclared-env-vars
+     
     process.env.POLYCHROMOS_TOKEN = "env_token";
 
     // Add project config

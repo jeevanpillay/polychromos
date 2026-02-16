@@ -1,6 +1,10 @@
 #!/usr/bin/env node
 import { Command } from "commander";
 
+// Initialize Sentry before anything else
+import { initSentry, closeSentry } from "./lib/sentry.js";
+initSentry();
+
 import { checkpointCommand } from "./commands/checkpoint.js";
 import { devCommand } from "./commands/dev.js";
 import { exportCommand } from "./commands/export.js";
@@ -9,6 +13,7 @@ import { initCommand } from "./commands/init.js";
 import { loginCommand } from "./commands/login.js";
 import { logoutCommand } from "./commands/logout.js";
 import { redoCommand } from "./commands/redo.js";
+import { telemetryCommand } from "./commands/telemetry.js";
 import { undoCommand } from "./commands/undo.js";
 import { whoamiCommand } from "./commands/whoami.js";
 import { getVersion } from "./lib/version.js";
@@ -65,5 +70,22 @@ program
   .command("export <format>")
   .description("Export design (html, tailwind)")
   .action(exportCommand);
+
+// Telemetry command
+program
+  .command("telemetry <action>")
+  .description("Manage anonymous telemetry (enable|disable|status)")
+  .action(telemetryCommand);
+
+// Ensure Sentry flushes before exit
+process.on("beforeExit", () => {
+  void closeSentry();
+});
+
+process.on("SIGTERM", () => {
+  void closeSentry().then(() => {
+    process.exit(0);
+  });
+});
 
 program.parse();

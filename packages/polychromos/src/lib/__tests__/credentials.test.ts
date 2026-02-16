@@ -9,13 +9,13 @@ describe("credentials", () => {
     vol.mkdirSync(homedir(), { recursive: true });
     vi.clearAllMocks();
     vi.resetModules();
-    // eslint-disable-next-line turbo/no-undeclared-env-vars
+     
     delete process.env.POLYCHROMOS_TOKEN;
   });
 
   afterEach(() => {
     vi.restoreAllMocks();
-    // eslint-disable-next-line turbo/no-undeclared-env-vars
+     
     delete process.env.POLYCHROMOS_TOKEN;
   });
 
@@ -80,7 +80,7 @@ describe("credentials", () => {
     });
 
     it("prefers POLYCHROMOS_TOKEN env var over file", async () => {
-      // eslint-disable-next-line turbo/no-undeclared-env-vars
+       
       process.env.POLYCHROMOS_TOKEN = "env_token";
 
       const credsDir = `${homedir()}/.polychromos`;

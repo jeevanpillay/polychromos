@@ -5,6 +5,8 @@ import {
   Outlet,
   Scripts,
 } from "@tanstack/react-router";
+import { useAuth } from "@clerk/clerk-react";
+import { useEffect } from "react";
 
 import "@fontsource/geist-mono";
 import "@fontsource/geist-sans";
@@ -27,6 +29,19 @@ export const Route = createRootRouteWithContext<{
 });
 
 function RootComponent() {
+  const { userId, isSignedIn } = useAuth();
+
+  useEffect(() => {
+    void (async () => {
+      const { setUser } = await import("@sentry/tanstackstart-react");
+      if (isSignedIn && userId) {
+        setUser({ id: userId });
+      } else {
+        setUser(null);
+      }
+    })();
+  }, [isSignedIn, userId]);
+
   return (
     <RootDocument>
       <Outlet />

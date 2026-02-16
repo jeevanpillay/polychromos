@@ -48,7 +48,7 @@ export async function saveCredentials(tokens: TokenData): Promise<void> {
 
 export async function loadCredentials(): Promise<TokenData | null> {
   // Check environment variable first (for CI/headless)
-  // eslint-disable-next-line turbo/no-undeclared-env-vars
+   
   const envToken = process.env.POLYCHROMOS_TOKEN;
   if (envToken) {
     return { accessToken: envToken };

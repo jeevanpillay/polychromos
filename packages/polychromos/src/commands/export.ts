@@ -3,6 +3,7 @@ import type {
   PolychromosElement,
   PolychromosWorkspace,
 } from "@polychromos/types";
+import { captureException } from "../lib/sentry.js";
 
 interface ExportResult {
   html: string;
@@ -24,6 +25,7 @@ export async function exportCommand(format: string): Promise<void> {
     const content = await readFile("design.json", "utf-8");
     workspace = JSON.parse(content) as PolychromosWorkspace;
   } catch (error) {
+    captureException(error);
     console.error("Error reading design.json:", error);
     console.error("Run 'polychromos init <name>' to create a design file.");
     process.exit(1);

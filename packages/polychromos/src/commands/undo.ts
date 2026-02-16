@@ -3,6 +3,7 @@ import { ConvexHttpClient } from "convex/browser";
 
 import { loadConfig } from "../lib/config.js";
 import { getValidToken } from "../lib/credentials.js";
+import { captureException } from "../lib/sentry.js";
 
 interface UndoResult {
   success: boolean;
@@ -46,6 +47,7 @@ export async function undoCommand(): Promise<void> {
       `✓ Undone: v${result.previousVersion} → v${result.currentVersion}`,
     );
   } catch (error) {
+    captureException(error);
     console.error(
       "Undo failed:",
       error instanceof Error ? error.message : error,

@@ -11,6 +11,7 @@ import {
 import { getValidToken } from "../lib/credentials.js";
 import { withRetry } from "../lib/retry.js";
 import { getVersion } from "../lib/version.js";
+import { closeSentry, captureException } from "../lib/sentry.js";
 
 let pendingMutation: Promise<void> | null = null;
 let pendingData: unknown = null;
@@ -154,6 +155,7 @@ export async function devCommand(): Promise<void> {
             ) {
               console.error("✗ Access denied to this workspace");
             } else {
+              captureException(convexError);
               console.error(
                 "✗ Sync failed after retries:",
                 convexError instanceof Error
@@ -166,6 +168,7 @@ export async function devCommand(): Promise<void> {
 
         await pendingMutation;
       } catch (error) {
+        captureException(error);
         console.error("✗ Sync failed:", error);
       } finally {
         pendingMutation = null;
@@ -192,6 +195,7 @@ export async function devCommand(): Promise<void> {
           const data: unknown = JSON.parse(content);
           await syncWithSingleFlight(data);
         } catch (error) {
+          captureException(error);
           console.error("✗ Error reading file:", error);
         }
       })();
@@ -201,6 +205,7 @@ export async function devCommand(): Promise<void> {
   watcher.on("change", handleChange);
 
   watcher.on("error", (error) => {
+    captureException(error);
     console.error("Watcher error:", error);
   });
 
@@ -210,6 +215,8 @@ export async function devCommand(): Promise<void> {
 
   process.on("SIGINT", () => {
     clearInterval(tokenRefreshInterval);
-    process.exit(0);
+    void closeSentry().then(() => {
+      process.exit(0);
+    });
   });
 }
