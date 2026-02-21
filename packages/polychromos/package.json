@@ -53,6 +53,7 @@
   },
   "dependencies": {
     "@polychromos/types": "workspace:*",
+    "@sentry/node": "^9.0.0",
     "chokidar": "^3.6.0",
     "commander": "^12.1.0",
     "convex": "^1.31.7",

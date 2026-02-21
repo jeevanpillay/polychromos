@@ -2,6 +2,7 @@ import open from "open";
 import { ConvexHttpClient } from "convex/browser";
 import { saveCredentials, loadCredentials } from "../lib/credentials.js";
 import { generateSessionCode, getAuthUrl, getConvexUrl } from "../lib/auth.js";
+import { captureException } from "../lib/sentry.js";
 
 const POLL_INTERVAL_MS = 2000; // Poll every 2 seconds
 const POLL_TIMEOUT_MS = 5 * 60 * 1000; // 5 minute timeout
@@ -80,6 +81,7 @@ export async function loginCommand(): Promise<void> {
     console.error("Authentication timed out. Please try again.");
     process.exit(1);
   } catch (error) {
+    captureException(error);
     console.error(
       "Login failed:",
       error instanceof Error ? error.message : error

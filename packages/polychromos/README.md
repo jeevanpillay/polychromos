@@ -31,6 +31,50 @@ polychromos export tailwind
 polychromos logout
 ```
 
+## Telemetry
+
+Polychromos CLI collects anonymous error reports to help us fix bugs and improve the tool. This is **enabled by default** but you can opt-out at any time.
+
+### Commands
+
+```bash
+# Check telemetry status
+polychromos telemetry status
+
+# Disable telemetry
+polychromos telemetry disable
+
+# Enable telemetry
+polychromos telemetry enable
+```
+
+### Environment Variable
+
+You can also disable telemetry using an environment variable:
+
+```bash
+export POLYCHROMOS_TELEMETRY_DISABLED=1
+```
+
+### What We Collect
+
+- Error messages and stack traces (with PII scrubbed)
+- CLI version
+- Command that failed
+- Operating system type
+
+We **do not** collect:
+- File contents
+- File paths (usernames are anonymized)
+- Personal information
+- Project details
+
+### Configuration
+
+Telemetry preferences are stored in `~/.polychromos/config.json`
+
+Learn more: https://polychromos.dev/telemetry
+
 ## Development
 
 ### Environment Variables

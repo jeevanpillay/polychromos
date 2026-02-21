@@ -7,20 +7,12 @@ import { ConvexProviderWithClerk } from "convex/react-clerk";
 import { ConvexReactClient } from "convex/react";
 
 import { routeTree } from "./routeTree.gen";
+import { env, getEnvironment } from "./env";
 
 export function getRouter() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
-  const CONVEX_URL = (import.meta as any).env.VITE_CONVEX_URL as string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
-  const CLERK_PUBLISHABLE_KEY = (import.meta as any).env
-    .VITE_CLERK_PUBLISHABLE_KEY as string;
-
-  if (!CONVEX_URL) {
-    console.error("missing envar VITE_CONVEX_URL");
-  }
-  if (!CLERK_PUBLISHABLE_KEY) {
-    console.error("missing envar VITE_CLERK_PUBLISHABLE_KEY");
-  }
+  const CONVEX_URL = env.VITE_CONVEX_URL;
+  const CLERK_PUBLISHABLE_KEY = env.VITE_CLERK_PUBLISHABLE_KEY;
+  const SENTRY_DSN = env.VITE_SENTRY_DSN;
 
   const convex = new ConvexReactClient(CONVEX_URL);
 
@@ -46,7 +38,7 @@ export function getRouter() {
       defaultErrorComponent: (err) => <p>{err.error.stack}</p>,
       defaultNotFoundComponent: () => <p>not found</p>,
       Wrap: ({ children }) => (
-        <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY}>
+        <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY ?? ""}>
           <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
             {children}
           </ConvexProviderWithClerk>
@@ -55,6 +47,24 @@ export function getRouter() {
     }),
     queryClient,
   );
+
+  // Initialize Sentry on client only
+  if (!router.isServer && SENTRY_DSN) {
+    void (async () => {
+      const { tanstackRouterBrowserTracingIntegration, replayIntegration, init } = await import("@sentry/tanstackstart-react");
+      init({
+        dsn: SENTRY_DSN,
+        environment: getEnvironment(),
+        integrations: [
+          tanstackRouterBrowserTracingIntegration(router),
+          replayIntegration(),
+        ],
+        tracesSampleRate: 0.1, // 10% in production
+        replaysSessionSampleRate: 0.1, // 10% of sessions
+        replaysOnErrorSampleRate: 1.0, // 100% on error
+      });
+    })();
+  }
 
   return router;
 }

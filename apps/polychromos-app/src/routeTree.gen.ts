@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SsoCallbackRouteImport } from './routes/sso-callback'
 import { Route as SignUpRouteImport } from './routes/sign-up'
 import { Route as SignInRouteImport } from './routes/sign-in'
+import { Route as SentryTestRouteImport } from './routes/sentry-test'
 import { Route as CliAuthRouteImport } from './routes/cli-auth'
 import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
@@ -29,6 +30,11 @@ const SignUpRoute = SignUpRouteImport.update({
 const SignInRoute = SignInRouteImport.update({
   id: '/sign-in',
   path: '/sign-in',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SentryTestRoute = SentryTestRouteImport.update({
+  id: '/sentry-test',
+  path: '/sentry-test',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CliAuthRoute = CliAuthRouteImport.update({
@@ -51,6 +57,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/cli-auth': typeof CliAuthRoute
+  '/sentry-test': typeof SentryTestRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/sso-callback': typeof SsoCallbackRoute
@@ -59,6 +66,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/cli-auth': typeof CliAuthRoute
+  '/sentry-test': typeof SentryTestRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/sso-callback': typeof SsoCallbackRoute
@@ -68,6 +76,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/cli-auth': typeof CliAuthRoute
+  '/sentry-test': typeof SentryTestRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/sso-callback': typeof SsoCallbackRoute
@@ -78,16 +87,25 @@ export interface FileRouteTypes {
     | '/'
     | '/$'
     | '/cli-auth'
+    | '/sentry-test'
     | '/sign-in'
     | '/sign-up'
     | '/sso-callback'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/$' | '/cli-auth' | '/sign-in' | '/sign-up' | '/sso-callback'
+  to:
+    | '/'
+    | '/$'
+    | '/cli-auth'
+    | '/sentry-test'
+    | '/sign-in'
+    | '/sign-up'
+    | '/sso-callback'
   id:
     | '__root__'
     | '/'
     | '/$'
     | '/cli-auth'
+    | '/sentry-test'
     | '/sign-in'
     | '/sign-up'
     | '/sso-callback'
@@ -97,6 +115,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SplatRoute: typeof SplatRoute
   CliAuthRoute: typeof CliAuthRoute
+  SentryTestRoute: typeof SentryTestRoute
   SignInRoute: typeof SignInRoute
   SignUpRoute: typeof SignUpRoute
   SsoCallbackRoute: typeof SsoCallbackRoute
@@ -123,6 +142,13 @@ declare module '@tanstack/react-router' {
       path: '/sign-in'
       fullPath: '/sign-in'
       preLoaderRoute: typeof SignInRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sentry-test': {
+      id: '/sentry-test'
+      path: '/sentry-test'
+      fullPath: '/sentry-test'
+      preLoaderRoute: typeof SentryTestRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/cli-auth': {
@@ -153,6 +179,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SplatRoute: SplatRoute,
   CliAuthRoute: CliAuthRoute,
+  SentryTestRoute: SentryTestRoute,
   SignInRoute: SignInRoute,
   SignUpRoute: SignUpRoute,
   SsoCallbackRoute: SsoCallbackRoute,

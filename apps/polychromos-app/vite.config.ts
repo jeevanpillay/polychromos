@@ -1,4 +1,5 @@
 import tailwindcss from "@tailwindcss/vite";
+import { sentryTanstackStart } from "@sentry/tanstackstart-react";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import { nitro } from "nitro/vite";
@@ -16,6 +17,11 @@ export default defineConfig({
     }),
     tailwindcss(),
     tanstackStart(),
+    sentryTanstackStart({
+      org: "jps0000",
+      project: "polychromos-app",
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+    }),
     nitro(),
     viteReact(),
     ViteImageOptimizer({
